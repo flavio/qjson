@@ -6,8 +6,6 @@ IF(COMMAND cmake_policy)
 ENDIF(COMMAND cmake_policy)
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
 
-# include specific modules
-set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # compile in debug mode
 IF(NOT CMAKE_BUILD_TYPE)
@@ -34,7 +32,6 @@ INCLUDE( ${QT_USE_FILE} )
 
 # Subdirs
 ADD_SUBDIRECTORY(lib)
-#ADD_SUBDIRECTORY(lib)
 
 #CONFIGURE_FILE(
 #  "${CMAKE_MODULE_PATH}/cmake_uninstall.cmake.in"
