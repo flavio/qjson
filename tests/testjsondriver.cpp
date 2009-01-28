@@ -145,10 +145,13 @@ void TestJSonDriver::testTrueFalseNullValues() {
 }
 
 void TestJSonDriver::testEscapeChars() {
-  QString json = "[\"\b \f \n \r \t \", \" \\ \\/ \\\" \"]";
+  QString json = "[\"\\b \\f \\n \\r \\t \", \" \\\\ \\/ \\\" \", \"http://foo.com\"]";
+
   QVariantList list;
   list.append (QVariant("\b \f \n \r \t "));
-  list.append (QVariant(" \\ \\/ \\\" "));
+  list.append (QVariant(" \\\\ / \\\" "));
+  list.append (QVariant("http://foo.com"));
+
   QVariant expected (list);
 
   JSonDriver driver;

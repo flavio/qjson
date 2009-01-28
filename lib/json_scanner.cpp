@@ -110,42 +110,50 @@ int JSonScanner::yylex(YYSTYPE* yylval)
   
   if ((ch != '"') && (!m_quotmarkClosed)) {
     // we're inside a " " block
-    if ((ch == '\b') || (ch == '\f') || (ch == '\n')
-        || (ch == '\r') || (ch == '\t')) {
-      *yylval = QVariant(QString(ch));
-      qDebug() << "JSonScanner::yylex - special word token";
-      return yy::json_parser::token::WORD;
-    }
-      //TODO: how can I escape \u ?
-//     else if (ch == '\u') {
-//       // \u must be followed by four hex digits
-//       char buf [4];
-//       QRegExp rx("([0-9A-F]){4}");
-//       if (m_io->peek(buf, sizeof(buf)) != sizeof(buf) || (!rx.exactMatch (buf)))
-//         qDebug() << "JSonScanner::yylex - error decoding \u sequence";
-//         return -1;
-//       }
-//       m_io->read (buf, 4);
-//       QString sequence ("\u");
-//       sequence += buf;
-//       *yylval = QVariant(sequence);
-//       return yy::json_parser::token::WORD;
-//     }
-    else if (ch == '\\') {
+    if (ch == '\\') {
       char buf;
-      if (m_io->peek(&buf, sizeof(buf)) != sizeof(buf) ||
-          ((ch != '\\') && (ch != '"') && (ch != '/'))) {
+      if ((m_io->read (&buf, 1) == -1) || 
+            ((buf != '"') && (buf != '\\') && (buf != '/') && 
+            (buf != 'b') && (buf != 'f') && (buf != 'n') &&
+            (buf != 'r') && (buf != 't') && (buf != 'u')))
+      {
+        qDebug() << "Just read" << buf;
         qDebug() << "JSonScanner::yylex - error decoding escaped sequence";
         return -1;
       }
-
-      m_io->read (&buf, 1);
+    
+      //TODO handle /u
+      
       QString sequence ("\\");
-      sequence += buf;
-      *yylval = QVariant(QString(sequence));
+      switch (buf) {
+        case 'b':
+          sequence = '\b';
+          break;
+        case 'f':
+          sequence = '\f';
+          break;
+        case 'n':
+          sequence = '\n';
+          break;
+        case 'r':
+          sequence = '\r';
+          break;            
+        case 't':
+          sequence = '\t';
+          break;
+        case 'u':
+          break;
+        case '/':
+          sequence = '/';
+          break;
+        default:
+          sequence += buf;
+          break;
+      }
 
+      *yylval = QVariant(QString(sequence));
       qDebug() << "JSonScanner::yylex - yy::json_parser::token::WORD ("
-             << yylval->toString() << ")";
+               << yylval->toString() << ")";
       return yy::json_parser::token::WORD;
     }
     else {
