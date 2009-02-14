@@ -1,6 +1,7 @@
 SET(
 	TESTS
 	testjsondriver
+	cmdline_tester
 )
 
 ##### Probably don't want to edit below this line ##### 
