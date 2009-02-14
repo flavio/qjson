@@ -33,7 +33,6 @@ class JSonDriver;
 
 namespace yy {
   class location;
-  // int yylex(YYSTYPE *yylval, JSonDriver* driver);
   int yylex(YYSTYPE *yylval, yy::location *yylloc, JSonDriver* driver);
 }
 

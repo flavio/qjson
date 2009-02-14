@@ -37,7 +37,6 @@ namespace yy {
 */
 class JSonDriver
 {
-  //friend int yy::yylex(YYSTYPE *yylval, JSonDriver* driver);
   friend int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, JSonDriver* driver);
   friend class yy::json_parser;
   
@@ -67,14 +66,22 @@ class JSonDriver
     * @returns a QString object containing the error message of the last parse operation
     */    
     QString error() { return m_errorMsg; }
+    
+    /**
+    * This method returns line number where the error occurred
+    * @returns the line number where the error occurred
+    */    
+    int errorLine() { return m_errorLine; }
+    
 
   private:
-    void setError(QString errorMsg);
+    void setError(QString errorMsg, int line);
     JSonScanner* scanner() { return m_scanner; };
 
     JSonScanner* m_scanner;
     bool m_negate;
     bool m_error;
+    int m_errorLine;
     QString m_errorMsg;
     QVariant m_result;
 };

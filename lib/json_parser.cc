@@ -1065,7 +1065,6 @@ namespace yy
 #line 177 "json_parser.yy"
 
 
-//int yy::yylex(YYSTYPE *yylval, JSonDriver* driver)//, yy::location *yylloc, JSonDriver* driver)
 int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, JSonDriver* driver)
 {
   JSonScanner* scanner = driver->scanner();
@@ -1084,12 +1083,11 @@ int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, JSonDriver* driver)
 void yy::json_parser::error (const yy::location& yyloc,
                                  const std::string& error)
 {
-  qDebug() << yyloc.begin.line;
+  /*qDebug() << yyloc.begin.line;
   qDebug() << yyloc.begin.column;
   qDebug() << yyloc.end.line;
-  qDebug() << yyloc.end.column;
-  qDebug("json_parser::error - %s", error.c_str()) ;
-  driver->setError(error.c_str());
-  
+  qDebug() << yyloc.end.column;*/
+  qDebug("json_parser::error [line %i] - %s", yyloc.end.line, error.c_str()) ;
+  driver->setError(error.c_str(), yyloc.end.line);  
 }
 
