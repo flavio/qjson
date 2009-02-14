@@ -32,7 +32,9 @@
 class JSonDriver;
 
 namespace yy {
-  int yylex(YYSTYPE *yylval, JSonDriver* driver);
+  class location;
+  // int yylex(YYSTYPE *yylval, JSonDriver* driver);
+  int yylex(YYSTYPE *yylval, yy::location *yylloc, JSonDriver* driver);
 }
 
 class JSonScanner
@@ -40,7 +42,7 @@ class JSonScanner
     public:
         JSonScanner(QIODevice* io);
         virtual ~JSonScanner() {};
-        int yylex(YYSTYPE* yylval);
+        int yylex(YYSTYPE* yylval, yy::location *yylloc);
         
     protected:
         bool m_quotmarkClosed;

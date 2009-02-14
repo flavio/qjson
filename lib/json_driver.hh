@@ -29,6 +29,7 @@
 
 namespace yy {
   class json_parser;
+  class location;
 }
 
 /**
@@ -36,7 +37,8 @@ namespace yy {
 */
 class JSonDriver
 {
-  friend int yy::yylex(YYSTYPE *yylval, JSonDriver* driver);
+  //friend int yy::yylex(YYSTYPE *yylval, JSonDriver* driver);
+  friend int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, JSonDriver* driver);
   friend class yy::json_parser;
   
   public:
@@ -56,16 +58,24 @@ class JSonDriver
     * @param jsonString string containing the JSON object representation
     * @param status if a conversion error occurs, *status is set to false; otherwise *status is set to true.
     * @returns a QVariant object generated from the JSON string
+    * /sa error
     */
     QVariant parse(const QString& jsonString, bool* status = 0);
 
+    /**
+    * This method returns the error message
+    * @returns a QString object containing the error message of the last parse operation
+    */    
+    QString error() { return m_errorMsg; }
+
   private:
-    void setError() { m_error = true; }
+    void setError(QString errorMsg);
     JSonScanner* scanner() { return m_scanner; };
 
     JSonScanner* m_scanner;
     bool m_negate;
     bool m_error;
+    QString m_errorMsg;
     QVariant m_result;
 };
 
