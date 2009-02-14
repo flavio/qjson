@@ -33,7 +33,7 @@ JSonScanner::JSonScanner(QIODevice* io)
   m_quotmarkCount = 0;
 }
 
-int JSonScanner::yylex(YYSTYPE* yylval)
+int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
 {
   char ch;
   
@@ -57,6 +57,11 @@ int JSonScanner::yylex(YYSTYPE* yylval)
     }
 
     qDebug() << "JSonScanner::yylex - got |" << ch << "|";
+    
+    if (ch == '\n' || ch == '\r') {
+      yylloc->lines();      
+    } else
+      yylloc->columns();
   } while (m_quotmarkClosed && (isspace(ch) != 0));
 
   if (m_quotmarkClosed && ((ch == 't') || (ch == 'T')
@@ -70,11 +75,13 @@ int JSonScanner::yylex(YYSTYPE* yylval)
       
       if (QString::compare ("rue", value, Qt::CaseInsensitive) == 0) {
         m_io->read (buf, 3);
+        yylloc->columns(3);
         qDebug() << "JSonScanner::yylex - TRUE_VAL";
         return yy::json_parser::token::TRUE_VAL;
       }
       else if (QString::compare ("ull", value, Qt::CaseInsensitive) == 0) {
         m_io->read (buf, 3);
+        yylloc->columns(3);
         qDebug() << "JSonScanner::yylex - NULL_VAL";
         return yy::json_parser::token::NULL_VAL;
       }
@@ -90,6 +97,7 @@ int JSonScanner::yylex(YYSTYPE* yylval)
       
       if (QString::compare ("alse", value, Qt::CaseInsensitive) == 0) {
         m_io->read (buf, 4);
+        yylloc->columns(4);
         qDebug() << "JSonScanner::yylex - FALSE_VAL";
         return yy::json_parser::token::FALSE_VAL;
       }
@@ -100,7 +108,8 @@ int JSonScanner::yylex(YYSTYPE* yylval)
     QString ret (ch);
     if (m_io->peek(buf, sizeof(buf)) == sizeof(buf)) {
       if ((buf[0] == '+' ) || (buf[0] == '-' )) {
-        m_io->read (buf, 1);
+        m_io->read (buf, 1);  
+        yylloc->columns();
         ret += buf[0];
       }
     }

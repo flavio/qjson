@@ -28,6 +28,7 @@ JSonDriver::JSonDriver()
   m_scanner = 0;
   m_negate = false;
   m_error = false;
+  m_errorMsg = "";
 }
 
 JSonDriver::~JSonDriver()
@@ -36,8 +37,14 @@ JSonDriver::~JSonDriver()
     delete m_scanner;
 }
 
+void JSonDriver::setError(QString errorMsg) { 
+  m_error = true;
+  m_errorMsg = errorMsg;
+}
+
 QVariant JSonDriver::parse (QIODevice* io, bool* status)
 {
+  m_errorMsg = "";
   if (m_scanner)
     delete m_scanner;
 

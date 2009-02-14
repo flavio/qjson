@@ -41,6 +41,8 @@
 %parse-param { JSonDriver* driver }
 %lex-param { JSonDriver* driver }
 
+%locations
+
 %debug
 %error-verbose
 
@@ -174,17 +176,18 @@ string_arg: /*empty */ { $$ = QVariant (""); }
 
 %%
 
-int yy::yylex(YYSTYPE *yylval, JSonDriver* driver)//, yy::location *yylloc, JSonDriver* driver)
+//int yy::yylex(YYSTYPE *yylval, JSonDriver* driver)//, yy::location *yylloc, JSonDriver* driver)
+int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, JSonDriver* driver)
 {
   JSonScanner* scanner = driver->scanner();
   yylval->clear();
-  int ret = scanner->yylex(yylval);
+  int ret = scanner->yylex(yylval, yylloc);
 
   char buff [50];
   snprintf (buff, 50 * sizeof (char), "%i", ret);
 
-  qDebug() << ("json_parser::yylex - calling scanner yylval==|" + yylval->toString()
-                    + "|, ret==|" + buff + "|");
+  qDebug() << "json_parser::yylex - calling scanner yylval==|" 
+           << yylval->toString() << "|, ret==|" << buff << "|";
   
   return ret;
 }
@@ -192,6 +195,11 @@ int yy::yylex(YYSTYPE *yylval, JSonDriver* driver)//, yy::location *yylloc, JSon
 void yy::json_parser::error (const yy::location& yyloc,
                                  const std::string& error)
 {
+  qDebug() << yyloc.begin.line;
+  qDebug() << yyloc.begin.column;
+  qDebug() << yyloc.end.line;
+  qDebug() << yyloc.end.column;
   qDebug("json_parser::error - %s", error.c_str()) ;
-  driver->setError();
+  driver->setError(error.c_str());
+  
 }
