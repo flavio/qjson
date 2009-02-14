@@ -37,9 +37,10 @@ JSonDriver::~JSonDriver()
     delete m_scanner;
 }
 
-void JSonDriver::setError(QString errorMsg) { 
+void JSonDriver::setError(QString errorMsg, int errorLine) { 
   m_error = true;
   m_errorMsg = errorMsg;
+  m_errorLine = errorLine;
 }
 
 QVariant JSonDriver::parse (QIODevice* io, bool* status)

@@ -42,6 +42,8 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
     return -1;
   }
 
+  yylloc->step();
+
   do {
     bool ret;
     if (m_io->atEnd()) {
@@ -58,10 +60,11 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
 
     qDebug() << "JSonScanner::yylex - got |" << ch << "|";
     
-    if (ch == '\n' || ch == '\r') {
-      yylloc->lines();      
-    } else
-      yylloc->columns();
+    yylloc->columns();
+    
+    if (ch == '\n' || ch == '\r')
+      yylloc->lines();
+      
   } while (m_quotmarkClosed && (isspace(ch) != 0));
 
   if (m_quotmarkClosed && ((ch == 't') || (ch == 'T')
@@ -121,13 +124,18 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
     // we're inside a " " block
     if (ch == '\\') {
       char buf;
-      if ((m_io->read (&buf, 1) == -1) || 
-            ((buf != '"') && (buf != '\\') && (buf != '/') && 
-            (buf != 'b') && (buf != 'f') && (buf != 'n') &&
-            (buf != 'r') && (buf != 't') && (buf != 'u')))
+      if (m_io->read (&buf, 1) == -1)
       {
-        qDebug() << "Just read" << buf;
-        qDebug() << "JSonScanner::yylex - error decoding escaped sequence";
+        yylloc->columns();
+        if (((buf != '"') && (buf != '\\') && (buf != '/') && 
+            (buf != 'b') && (buf != 'f') && (buf != 'n') &&
+            (buf != 'r') && (buf != 't') && (buf != 'u'))) {
+              qDebug() << "Just read" << buf;
+              qDebug() << "JSonScanner::yylex - error decoding escaped sequence";
+              return -1;
+        }
+      } else {
+        qDebug() << "JSonScanner::yylex - error decoding escaped sequence : io error";
         return -1;
       }
     
