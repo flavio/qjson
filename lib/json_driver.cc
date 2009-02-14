@@ -41,6 +41,21 @@ QVariant JSonDriver::parse (QIODevice* io, bool* status)
   if (m_scanner)
     delete m_scanner;
 
+  if (!io->isOpen()) {
+    if (!io->open(QIODevice::ReadOnly)) {
+      *status = false;
+      qFatal ("Error opening device");
+      return QVariant();
+    }
+  }
+  
+  if (!io->isReadable()) {
+    *status = false;
+    qFatal ("Device is not readable");
+    io->close();
+    return QVariant();
+  }
+  
   m_scanner = new JSonScanner (io);
   yy::json_parser parser (this);
   parser.parse ();
@@ -50,7 +65,8 @@ QVariant JSonDriver::parse (QIODevice* io, bool* status)
 
   if (status != 0)
     *status = m_error;
-  
+
+  io->close();
   return m_result;
 }
 
