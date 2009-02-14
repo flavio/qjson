@@ -46,7 +46,9 @@ int main(int argc, char *argv[]) {
 
   QVariant data = driver.parse (new QFile(filename), &status);
   if (status) {
-    qFatal("An error occured during parsing");
+    QString message;
+    message.sprintf("%s:%i - Error: %s", filename.toLatin1().data(), driver.errorLine(), driver.error().toLatin1().data());
+    qFatal(message.toLatin1().data());
     exit (1);
   }
   else {
