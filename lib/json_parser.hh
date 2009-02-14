@@ -62,9 +62,11 @@ namespace yy
   class JSonScanner;
 
 
+  #define YYERROR_VERBOSE 1
 
-/* Line 35 of lalr1.cc.  */
-#line 68 "json_parser.hh"
+
+/* Line 303 of lalr1.cc.  */
+#line 70 "json_parser.hh"
 
 #include "location.hh"
 
@@ -126,25 +128,22 @@ namespace yy
       /* Tokens.  */
    enum yytokentype {
      END = 0,
-     WORD = 258,
-     KEYWORD = 259,
-     RELATION = 260,
-     MODIFIER = 261,
-     CURLY_BRACKET_OPEN = 262,
-     CURLY_BRACKET_CLOSE = 263,
-     SQUARE_BRACKET_OPEN = 264,
-     SQUARE_BRACKET_CLOSE = 265,
-     COLON = 266,
-     COMMA = 267,
-     MINUS = 268,
-     DOT = 269,
-     DIGIT = 270,
-     E = 271,
-     QUOTMARKOPEN = 272,
-     QUOTMARKCLOSE = 273,
-     TRUE_VAL = 274,
-     FALSE_VAL = 275,
-     NULL_VAL = 276
+     CURLY_BRACKET_OPEN = 1,
+     CURLY_BRACKET_CLOSE = 2,
+     SQUARE_BRACKET_OPEN = 3,
+     SQUARE_BRACKET_CLOSE = 4,
+     COLON = 5,
+     COMMA = 6,
+     MINUS = 7,
+     DOT = 8,
+     DIGIT = 9,
+     E = 10,
+     TRUE_VAL = 11,
+     FALSE_VAL = 12,
+     NULL_VAL = 13,
+     QUOTMARKOPEN = 14,
+     QUOTMARKCLOSE = 15,
+     WORD = 16
    };
 
     };

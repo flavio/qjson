@@ -34,6 +34,8 @@
   class JSonDriver;
   class JSonScanner;
 
+
+  #define YYERROR_VERBOSE 1
 %}
 
 %parse-param { JSonDriver* driver }
@@ -42,23 +44,26 @@
 %debug
 %error-verbose
 
-%token WORD
-
-%token KEYWORD RELATION MODIFIER
-
-%token CURLY_BRACKET_OPEN CURLY_BRACKET_CLOSE
-%token SQUARE_BRACKET_OPEN SQUARE_BRACKET_CLOSE
-
-%token COLON
-%token COMMA
-%token MINUS
-%token DOT
-%token DIGIT
-%token E
-%token QUOTMARKOPEN QUOTMARKCLOSE
-%token TRUE_VAL FALSE_VAL NULL_VAL
-
 %token END 0 "end of file"
+
+%token CURLY_BRACKET_OPEN 1 "{"
+%token CURLY_BRACKET_CLOSE 2 "}"
+%token SQUARE_BRACKET_OPEN 3 "["
+%token SQUARE_BRACKET_CLOSE 4 "]"
+
+%token COLON 5 ":"
+%token COMMA 6 ","
+%token MINUS 7 "-"
+%token DOT 8 "."
+%token DIGIT 9 "digit"
+%token E 10 "exponential"
+%token TRUE_VAL 11 "true"
+%token FALSE_VAL 12 "false"
+%token NULL_VAL 13 "null"
+%token QUOTMARKOPEN 14 "open quotation mark"
+%token QUOTMARKCLOSE 15 "close quotation mark"
+
+%token WORD 16 "character"
 
 // define the initial token
 %start start
@@ -78,6 +83,7 @@ data: object {$$ = $1; }
           {
             qDebug()<< "json_parser - syntax error found, "
                     << "forcing exit";
+            YYABORT;
           }
       | END;
 
