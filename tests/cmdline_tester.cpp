@@ -44,7 +44,8 @@ int main(int argc, char *argv[]) {
   JSonDriver driver;
   bool status;
 
-  QVariant data = driver.parse (new QFile(filename), &status);
+  QFile file (filename);
+  QVariant data = driver.parse (&file, &status);
   if (status) {
     QString message;
     message.sprintf("%s:%i - Error: %s", filename.toLatin1().data(), driver.errorLine(), driver.error().toLatin1().data());
