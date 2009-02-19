@@ -47,9 +47,7 @@ int main(int argc, char *argv[]) {
   QFile file (filename);
   QVariant data = driver.parse (&file, &status);
   if (status) {
-    QString message;
-    message.sprintf("%s:%i - Error: %s", filename.toLatin1().data(), driver.errorLine(), driver.error().toLatin1().data());
-    qFatal(message.toLatin1().data());
+    qFatal("%s:%i - Error: %s", filename.toLatin1().data(), driver.errorLine(), driver.error().toLatin1().data());
     exit (1);
   }
   else {
