@@ -31,13 +31,13 @@ int main(int argc, char *argv[]) {
   QCoreApplication app (argc, argv);
   
   if (app.arguments().size() != 2) {
-    qFatal("You have to specify the file containing the json code");
+    qCritical("You have to specify the file containing the json code");
     exit (1);
   }
   
   QString filename = app.arguments()[1];
   if (!QFile::exists ( filename )) {
-    qFatal ("The file you specified doesn't exist!");
+    qCritical ("The file you specified doesn't exist!");
     exit (1);
   }
   
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
   QFile file (filename);
   QVariant data = driver.parse (&file, &status);
   if (status) {
-    qFatal("%s:%i - Error: %s", filename.toLatin1().data(), driver.errorLine(), driver.error().toLatin1().data());
+    qCritical("%s:%i - Error: %s", filename.toLatin1().data(), driver.errorLine(), driver.error().toLatin1().data());
     exit (1);
   }
   else {
@@ -57,3 +57,4 @@ int main(int argc, char *argv[]) {
   
   return 0;
 }
+
