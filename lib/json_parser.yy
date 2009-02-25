@@ -85,7 +85,7 @@ data: object {$$ = $1; }
           {
             qDebug()<< "json_parser - syntax error found, "
                     << "forcing exit";
-            YYABORT;
+            //YYABORT;
           }
       | END;
 
