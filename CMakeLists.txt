@@ -37,8 +37,6 @@ IF (KDE4_BUILD_TESTS)
 ENDIF (KDE4_BUILD_TESTS)
 
 
-
-
 #CONFIGURE_FILE(
 #  "${CMAKE_MODULE_PATH}/cmake_uninstall.cmake.in"
 #  "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
