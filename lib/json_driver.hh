@@ -23,6 +23,7 @@
 
 #include "json_parser.hh"
 #include "json_scanner.h"
+#include "qjson_export.h"
 
 #include <QIODevice>
 #include <QVariant>
@@ -35,7 +36,7 @@ namespace yy {
 /**
 * @brief Main class used for converting JSON data to QVariant objects
 */
-class JSonDriver
+class QJSON_EXPORT JSonDriver
 {
   friend int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, JSonDriver* driver);
   friend class yy::json_parser;
