@@ -54,7 +54,8 @@ int main(int argc, char *argv[]) {
     qDebug() << "json object successfully converted to:";
     qDebug() << data;
   }
-  
+
+  qDebug() << "JOB DONE, BYE";
   return 0;
 }
 

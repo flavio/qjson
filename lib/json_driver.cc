@@ -51,14 +51,16 @@ QVariant JSonDriver::parse (QIODevice* io, bool* status)
 
   if (!io->isOpen()) {
     if (!io->open(QIODevice::ReadOnly)) {
-      *status = false;
+      if (status != 0)
+        *status = false;
       qFatal ("Error opening device");
       return QVariant();
     }
   }
   
   if (!io->isReadable()) {
-    *status = false;
+    if (status != 0)
+      *status = false;
     qFatal ("Device is not readable");
     io->close();
     return QVariant();
@@ -73,7 +75,7 @@ QVariant JSonDriver::parse (QIODevice* io, bool* status)
 
   if (status != 0)
     *status = m_error;
-
+  
   io->close();
   return m_result;
 }
