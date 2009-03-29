@@ -26,6 +26,14 @@
 #include <QDebug>
 #include <QRegExp>
 
+bool ishexnstring(const QString& string) {
+  for (unsigned int i = 0; i < string.length(); i++) {
+    if (isxdigit(string[i] == 0))
+      return false;
+  }
+  return true;
+}
+
 JSonScanner::JSonScanner(QIODevice* io)
   : m_io (io)
 {
@@ -70,20 +78,17 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
   if (m_quotmarkClosed && ((ch == 't') || (ch == 'T')
       || (ch == 'n') || (ch == 'N'))) {
     // check true & null value
-    char buf [3];
+    QString buf = m_io->peek(3);
   
-    if (m_io->peek(buf, sizeof(buf)) == sizeof(buf)) {
-      QString value (buf);
-      value.truncate (3);
-      
-      if (QString::compare ("rue", value, Qt::CaseInsensitive) == 0) {
-        m_io->read (buf, 3);
+    if (buf.length() == 3) {
+      if (QString::compare ("rue", buf, Qt::CaseInsensitive) == 0) {
+        m_io->read (3);
         yylloc->columns(3);
         qDebug() << "JSonScanner::yylex - TRUE_VAL";
         return yy::json_parser::token::TRUE_VAL;
       }
-      else if (QString::compare ("ull", value, Qt::CaseInsensitive) == 0) {
-        m_io->read (buf, 3);
+      else if (QString::compare ("ull", buf, Qt::CaseInsensitive) == 0) {
+        m_io->read (3);
         yylloc->columns(3);
         qDebug() << "JSonScanner::yylex - NULL_VAL";
         return yy::json_parser::token::NULL_VAL;
@@ -92,14 +97,10 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
   }
   else if (m_quotmarkClosed && ((ch == 'f') || (ch == 'F'))) {
     // check false value
-    char buf [4];
-    
-    if (m_io->peek(buf, sizeof(buf)) == sizeof(buf)) {
-      QString value (buf);
-      value.truncate (4);
-      
-      if (QString::compare ("alse", value, Qt::CaseInsensitive) == 0) {
-        m_io->read (buf, 4);
+    QString buf = m_io->peek(4);
+    if (buf.length() == 4) {
+      if (QString::compare ("alse", buf, Qt::CaseInsensitive) == 0) {
+        m_io->read (4);
         yylloc->columns(4);
         qDebug() << "JSonScanner::yylex - FALSE_VAL";
         return yy::json_parser::token::FALSE_VAL;
@@ -107,13 +108,12 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
     }
   }
   else if (m_quotmarkClosed && ((ch == 'e') || (ch == 'E'))) {
-    char buf [1];
     QString ret (ch);
-    if (m_io->peek(buf, sizeof(buf)) == sizeof(buf)) {
+    QString buf = m_io->peek(1);
+    if (!buf.isEmpty()) {
       if ((buf[0] == '+' ) || (buf[0] == '-' )) {
-        m_io->read (buf, 1);  
+        ret += m_io->read (1);  
         yylloc->columns();
-        ret += buf[0];
       }
     }
     *yylval = QVariant(QString(ret));
@@ -124,7 +124,7 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
     // we're inside a " " block
     if (ch == '\\') {
       char buf;
-      if (m_io->read (&buf, 1) == -1)
+      if (m_io->getChar (&buf))
       {
         yylloc->columns();
         if (((buf != '"') && (buf != '\\') && (buf != '/') && 
@@ -139,8 +139,6 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
         return -1;
       }
     
-      //TODO handle /u
-      
       QString sequence ("\\");
       switch (buf) {
         case 'b':
@@ -159,7 +157,25 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
           sequence = '\t';
           break;
         case 'u':
+        {
+          QString hex_digits;
+          hex_digits = m_io->read (4);
+          if ( !hex_digits.isEmpty())
+          {
+            yylloc->columns(4);
+            if (ishexnstring(hex_digits)) {
+              sequence = '\t';
+              sequence += hex_digits;
+            } else {
+              qDebug() << "Not an hex string:" << hex_digits;
+              return -1;
+            }
+          } else {
+            qDebug() << "JSonScanner::yylex - error decoding escaped sequence : io error";
+            return -1;
+          }
           break;
+        }          
         case '/':
           sequence = '/';
           break;

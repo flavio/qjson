@@ -29,6 +29,7 @@ class TestJSonDriver: public QObject
   Q_OBJECT
   private slots:
     void parseSimpleObject();
+    void parseUrl();
     void parseMultipleObject();
 
     void parseSimpleArray();
@@ -77,6 +78,22 @@ void TestJSonDriver::parseMultipleObject() {
   QVERIFY (result.toMap()["array"].canConvert<QVariantList>());
 }
 
+void TestJSonDriver::parseUrl(){
+  //"http:\/\/www.last.fm\/venue\/8926427"
+  QString json = "[\"http:\\/\\/www.last.fm\\/venue\\/8926427\"]";
+  QVariantList list;
+  list.append (QVariant(QString("http://www.last.fm/venue/8926427")));
+  QVariant expected (list);
+
+  JSonDriver driver;
+  bool status;
+  QVariant result = driver.parse (json, &status);
+  qDebug() << "expected: " << expected;
+  qDebug() << "result: " << result;
+  QVERIFY (!status);
+  QCOMPARE(result, expected);
+}
+
  void TestJSonDriver::parseSimpleArray() {
   QString json = "[\"foo\",\"bar\"]";
   QVariantList list;
@@ -99,16 +116,15 @@ void TestJSonDriver::parseMultipleArray() {
   QVariantMap map;
   map.insert ("foo", "bar");
 
+  QVariantList array;
+  array.append (QString("item1"));
+  array.append (123);
+  
   QVariantList list;
   list.append (map);
   list.append (QString("number"));
   list.append (QString("51.3"));
-
-
-  QVariantList array;
-  array.append (QString("item1"));
-  array.append (123);
-  list.append (array);
+  list.append ((QVariant) array);
 
   QVariant expected (list);
 
