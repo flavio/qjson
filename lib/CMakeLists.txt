@@ -24,4 +24,4 @@ install(FILES
         DESTINATION include/qjson
 )
 
-install(TARGETS qjson DESTINATION ${LIB_DESTINATION}/qjson)
+install(TARGETS qjson DESTINATION ${LIB_DESTINATION})
