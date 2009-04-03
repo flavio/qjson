@@ -1,4 +1,5 @@
 PROJECT(qjson)
+
 # Stop cmake 2.6 from whining
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 IF(COMMAND cmake_policy)
@@ -25,7 +26,16 @@ SET( QT_DONT_USE_QTGUI TRUE )
 
 #add extra search paths for libraries and includes
 SET (LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)" )
-SET (LIB_DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Library directory name" FORCE)
+SET (LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Directory where lib will install")
+
+
+set(QJSON_LIB_MAJOR_VERSION "0")
+set(QJSON_LIB_MINOR_VERSION "5")
+set(QJSON_LIB_PATCH_VERSION "0")
+
+set(QJSON_LIB_VERSION_STRING "${QJSON_LIB_MAJOR_VERSION}.${QJSON_LIB_MINOR_VERSION}.${QJSON_LIB_PATCH_VERSION}")
+
+set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib${LIB_SUFFIX}" )
 
 # Include the cmake file needed to use qt4
 INCLUDE( ${QT_USE_FILE} )
