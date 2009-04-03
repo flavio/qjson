@@ -1,0 +1,18 @@
+Installing QJson
+--------------
+
+QJson requires:
+- Qt 4.0 or greater
+- cmake 2.6 or greater
+
+For Unix/Linux/Mac:
+
+  mkdir build
+  cd build
+  cmake -DCMAKE_INSTALL_PREFIX=_preferred_path_ ..
+  make
+  make install
+  /sbin/ldconfig, if necessary
+
+Please report problems to:
+  https://lists.sourceforge.net/mailman/listinfo/qjson-devel
