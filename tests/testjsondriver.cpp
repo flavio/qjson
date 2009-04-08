@@ -28,6 +28,7 @@ class TestJSonDriver: public QObject
 {
   Q_OBJECT
   private slots:
+    void parseNonAsciiString();
     void parseSimpleObject();
     void parseUrl();
     void parseMultipleObject();
@@ -44,6 +45,27 @@ void TestJSonDriver::parseSimpleObject() {
   QString json = "{\"foo\":\"bar\"}";
   QVariantMap map;
   map.insert ("foo", "bar");
+  QVariant expected (map);
+
+  JSonDriver driver;
+  bool status;
+  QVariant result = driver.parse (json, &status);
+  qDebug() << "expected: " << expected;
+  qDebug() << "result: " << result;
+  QVERIFY (!status);
+  QCOMPARE(result, expected);
+}
+
+void TestJSonDriver::parseNonAsciiString() {
+  QString json = "{\"artist\":\"Queensr\\u00ffche\"}";
+  QVariantMap map;
+
+  QChar unicode_char (0x00ff);
+  QString unicode_string;
+  unicode_string.setUnicode(&unicode_char, 1);
+  unicode_string = "Queensr" + unicode_string + "che";
+  
+  map.insert ("artist", unicode_string);
   QVariant expected (map);
 
   JSonDriver driver;
