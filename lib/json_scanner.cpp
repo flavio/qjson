@@ -164,8 +164,15 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
           {
             yylloc->columns(4);
             if (ishexnstring(hex_digits)) {
-              sequence = '\t';
-              sequence += hex_digits;
+              bool ok;
+              ushort hex_code = hex_digits.toShort ( &ok, 16);
+              if (!ok) {
+                qDebug() << "error converting hex value to short:" << hex_digits;
+                return -1;
+              } else {
+                QChar unicode_char (hex_code);
+                sequence.setUnicode(&unicode_char, 1);                
+              }
             } else {
               qDebug() << "Not an hex string:" << hex_digits;
               return -1;
