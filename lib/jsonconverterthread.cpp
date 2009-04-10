@@ -38,7 +38,7 @@ void JSonConverterThread::run()
   QVariant result = driver.parse (m_data, &status);
   if (!status) {
     qDebug() << "successfully converted json item to qobject";
-    emit conversionFinished(result, true, "");
+    emit conversionFinished(result, true, QString());
   } else {
     QString errorText = QString("An error occured while parsing json: %1").arg(driver.error());
     qCritical() << errorText;
