@@ -36,7 +36,7 @@ class JSonConverterThread  : public QThread
     * @param data contains the JSON data that has to be converted
     * @param parent thread's parent
     **/
-    JSonConverterThread(QString& data, QObject* parent = 0);
+    explicit JSonConverterThread(QString& data, QObject* parent = 0);
 
     void run();
 
@@ -47,7 +47,7 @@ class JSonConverterThread  : public QThread
     * @param status if a conversion error occurs status is set to false, otherwise is set to true.
     * @param error_msg contains a string explaining the failure reason
     **/
-    void conversionFinished(QVariant json, bool status, QString error_msg);
+    void conversionFinished(const QVariant& json, bool status, const QString& error_msg);
 
   private:
     QString m_data;

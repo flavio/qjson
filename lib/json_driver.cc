@@ -23,21 +23,20 @@
 
 #include <QBuffer>
 
-JSonDriver::JSonDriver()
+JSonDriver::JSonDriver() :
+    m_scanner(0)
+  , m_negate(false)
+  , m_error(false)
+  , m_errorMsg()
 {
-  m_scanner = 0;
-  m_negate = false;
-  m_error = false;
-  m_errorMsg = "";
 }
 
 JSonDriver::~JSonDriver()
 {
-  if (m_scanner)
-    delete m_scanner;
+  delete m_scanner;
 }
 
-void JSonDriver::setError(QString errorMsg, int errorLine) { 
+void JSonDriver::setError(QString errorMsg, int errorLine) {
   m_error = true;
   m_errorMsg = errorMsg;
   m_errorLine = errorLine;
@@ -45,9 +44,8 @@ void JSonDriver::setError(QString errorMsg, int errorLine) {
 
 QVariant JSonDriver::parse (QIODevice* io, bool* status)
 {
-  m_errorMsg = "";
-  if (m_scanner)
-    delete m_scanner;
+  m_errorMsg.clear();
+  delete m_scanner;
 
   if (!io->isOpen()) {
     if (!io->open(QIODevice::ReadOnly)) {
@@ -57,7 +55,7 @@ QVariant JSonDriver::parse (QIODevice* io, bool* status)
       return QVariant();
     }
   }
-  
+
   if (!io->isReadable()) {
     if (status != 0)
       *status = false;
@@ -65,7 +63,7 @@ QVariant JSonDriver::parse (QIODevice* io, bool* status)
     io->close();
     return QVariant();
   }
-  
+
   m_scanner = new JSonScanner (io);
   yy::json_parser parser (this);
   parser.parse ();
@@ -75,7 +73,7 @@ QVariant JSonDriver::parse (QIODevice* io, bool* status)
 
   if (status != 0)
     *status = m_error;
-  
+
   io->close();
   return m_result;
 }

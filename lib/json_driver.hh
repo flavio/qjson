@@ -40,7 +40,7 @@ class QJSON_EXPORT JSonDriver
 {
   friend int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, JSonDriver* driver);
   friend class yy::json_parser;
-  
+
   public:
     JSonDriver();
     virtual ~JSonDriver();
@@ -65,15 +65,15 @@ class QJSON_EXPORT JSonDriver
     /**
     * This method returns the error message
     * @returns a QString object containing the error message of the last parse operation
-    */    
-    QString error() { return m_errorMsg; }
-    
+    */
+    QString error() const { return m_errorMsg; }
+
     /**
     * This method returns line number where the error occurred
     * @returns the line number where the error occurred
-    */    
-    int errorLine() { return m_errorLine; }
-    
+    */
+    int errorLine() const { return m_errorLine; }
+
 
   private:
     void setError(QString errorMsg, int line);
