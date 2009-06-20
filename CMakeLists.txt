@@ -5,7 +5,10 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 IF(COMMAND cmake_policy)
   CMAKE_POLICY(SET CMP0003 NEW)
 ENDIF(COMMAND cmake_policy)
-SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR})
+
+# where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
+
 
 
 # compile in debug mode
@@ -46,6 +49,7 @@ IF (KDE4_BUILD_TESTS)
   ADD_SUBDIRECTORY(tests)
 ENDIF (KDE4_BUILD_TESTS)
 
+add_subdirectory(cmake/modules)
 
 
 #CONFIGURE_FILE(
