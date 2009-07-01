@@ -9,7 +9,7 @@ ENDIF(COMMAND cmake_policy)
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
-
+set(CMAKE_INSTALL_NAME_DIR ${LIB_INSTALL_DIR})
 
 # compile in debug mode
 IF(NOT CMAKE_BUILD_TYPE)
