@@ -39,6 +39,11 @@ class TestJSonDriver: public QObject
     void testTrueFalseNullValues();
     void testEscapeChars();
     void testNumbers();
+    void testNumberConversion();
+
+    void testReadWriteEmptyDocument();
+    void testReadWrite();
+    void testReadWrite_data();
 };
 
 void TestJSonDriver::parseSimpleObject() {
@@ -224,6 +229,55 @@ void TestJSonDriver::testNumbers() {
   QCOMPARE(result, expected);
 }
 
+void TestJSonDriver::testNumberConversion()
+{
+  QString json = "[5]";
+  JSonDriver driver;
+  bool status;
+  QVariant result = driver.parse (json, &status);
+  QVERIFY( result.type() == QVariant::Int );
+}
+
+void TestJSonDriver::testReadWriteEmptyDocument()
+{
+  QString json = QString("");
+  JSonDriver driver;
+  bool status;
+  QVariant result = driver.parse( json, &status );
+  QVERIFY(!status);
+  const QString serialized = driver.serialize( result );
+  QVERIFY( !serialized.isNull() );
+  QVERIFY( serialized.isEmpty() );
+}
+
+void TestJSonDriver::testReadWrite()
+{
+  QFETCH( QString, json );
+  JSonDriver driver;
+  bool status;
+  QVariant result = driver.parse( json, &status );
+  QVERIFY(!status);
+  const QString serialized = driver.serialize( result );
+  QVariant writtenThenRead = driver.parse( serialized, &status );
+  //qWarning() << serialized;
+  QCOMPARE( result, writtenThenRead );
+}
+
+void TestJSonDriver::testReadWrite_data()
+{
+    QTest::addColumn<QString>( "json" );
+
+    // array tests
+    QTest::newRow( "empty array") << "[]";
+    QTest::newRow( "basic array") << "[\"foo\",\"bar\"]";
+    QTest::newRow( "int array") << "[6]";
+
+    // document tests
+    QTest::newRow( "empty object") << "{}";
+    QTest::newRow( "basic document") << "{ \"foo\":\"bar\" }";
+    QTest::newRow( "object with ints" ) << "{ \"foo\":6 }";
+
+}
 
 QTEST_MAIN(TestJSonDriver)
 #include "moc_testjsondriver.cxx"
