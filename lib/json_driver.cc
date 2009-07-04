@@ -22,6 +22,9 @@
 #include "json_parser.hh"
 
 #include <QBuffer>
+#include <QStringList>
+#include <QTextStream>
+#include <QDebug>
 
 JSonDriver::JSonDriver() :
     m_scanner(0)
@@ -86,3 +89,79 @@ QVariant JSonDriver::parse(const QString& jsonString, bool* status) {
   return parse (&buffer, status);
 }
 
+void JSonDriver::serialize( const QVariant& v, QIODevice* io, bool* b )
+{
+  if (!io->isOpen()) {
+    if (!io->open(QIODevice::WriteOnly)) {
+      if ( b != 0 )
+        *b = false;
+      qFatal ("Error opening device");
+      return;
+    }
+  }
+
+  if (!io->isWritable()) {
+    if (b != 0)
+      *b = false;
+    qFatal ("Device is not readable");
+    io->close();
+    return;
+  }
+
+  bool error = false;
+  const QString str = serialize( v );
+  if ( !str.isNull() ) {
+    QTextStream stream( io );
+    stream << str;
+  } else {
+    if ( b )
+      *b = error;
+  }
+}
+
+static QString sanitizeString( const QString& s )
+{
+  return QLatin1String("\"") + s + QLatin1String("\"");
+}
+
+const QString JSonDriver::serialize( const QVariant &v )
+{
+  if ( !v.isValid() )
+    return QString(""); // no parse error
+  QString str;
+  bool error = false;
+
+  // two major cases, either it's an array or ... not
+  if ( v.canConvert<QVariantList>() ) {
+    const QVariantList list = v.toList();
+    QStringList values;
+    Q_FOREACH( const QVariant& v, list ) {
+      values << serialize( v );
+    }
+    str = QLatin1String("[ ") + values.join(", ") + QLatin1String(" ]");
+  } else {
+    // not a list, so it must be an object
+    if ( !v.canConvert<QVariantMap>() ) {
+      // not a map, so it must be a value
+      if ( v.type() == QVariant::String )
+        str = sanitizeString( v.toString() );
+      else
+        str = v.toString();
+    } else {
+      const QVariantMap vmap = v.toMap();
+      QStringList values;
+      QMapIterator<QString, QVariant> it( vmap );
+      while ( it.hasNext() ) {
+        it.next();
+        QString value = it.value().toString();
+        if ( it.value().type() == QVariant::String )
+          value = sanitizeString( value );
+      }
+      str = QLatin1String("{ ") + values.join(", ") + QLatin1String(" }");
+    }
+  }
+  if ( !error )
+    return str;
+  else
+    return QString();
+}
