@@ -45,23 +45,23 @@ void JSonDriver::setError(QString errorMsg, int errorLine) {
   m_errorLine = errorLine;
 }
 
-QVariant JSonDriver::parse (QIODevice* io, bool* status)
+QVariant JSonDriver::parse (QIODevice* io, bool* ok)
 {
   m_errorMsg.clear();
   delete m_scanner;
 
   if (!io->isOpen()) {
     if (!io->open(QIODevice::ReadOnly)) {
-      if (status != 0)
-        *status = false;
+      if (ok != 0)
+        *ok = false;
       qFatal ("Error opening device");
       return QVariant();
     }
   }
 
   if (!io->isReadable()) {
-    if (status != 0)
-      *status = false;
+    if (ok != 0)
+      *ok = false;
     qFatal ("Device is not readable");
     io->close();
     return QVariant();
@@ -74,35 +74,35 @@ QVariant JSonDriver::parse (QIODevice* io, bool* status)
   delete m_scanner;
   m_scanner = 0;
 
-  if (status != 0)
-    *status = m_error;
+  if (ok != 0)
+    *ok = !m_error;
 
   io->close();
   return m_result;
 }
 
-QVariant JSonDriver::parse(const QString& jsonString, bool* status) {
+QVariant JSonDriver::parse(const QString& jsonString, bool* ok) {
   QBuffer buffer;
   buffer.open(QBuffer::ReadWrite);
   buffer.write(jsonString.toAscii());
   buffer.seek(0);
-  return parse (&buffer, status);
+  return parse (&buffer, ok);
 }
 
-void JSonDriver::serialize( const QVariant& v, QIODevice* io, bool* b )
+void JSonDriver::serialize( const QVariant& v, QIODevice* io, bool* ok )
 {
   if (!io->isOpen()) {
     if (!io->open(QIODevice::WriteOnly)) {
-      if ( b != 0 )
-        *b = false;
+      if ( ok != 0 )
+        *ok = false;
       qFatal ("Error opening device");
       return;
     }
   }
 
   if (!io->isWritable()) {
-    if (b != 0)
-      *b = false;
+    if (ok != 0)
+      *ok = false;
     qFatal ("Device is not readable");
     io->close();
     return;
@@ -114,8 +114,8 @@ void JSonDriver::serialize( const QVariant& v, QIODevice* io, bool* b )
     QTextStream stream( io );
     stream << str;
   } else {
-    if ( b )
-      *b = error;
+    if ( ok )
+      *ok = error;
   }
 }
 
