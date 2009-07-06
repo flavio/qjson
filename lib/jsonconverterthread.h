@@ -21,7 +21,7 @@
 #ifndef JSONCONVERTERTHREAD_H
 #define JSONCONVERTERTHREAD_H
 
-#include <QThread>
+#include <QtCore/QThread>
 #include <QtCore/QVariant>
 
 /**

@@ -24,8 +24,8 @@
 #include <fstream>
 #include <string>
 
-#include <QIODevice>
-#include <QVariant>
+#include <QtCore/QIODevice>
+#include <QtCore/QVariant>
 
 #define YYSTYPE QVariant
 

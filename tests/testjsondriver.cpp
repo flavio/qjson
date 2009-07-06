@@ -22,7 +22,7 @@
 
 #include "json_driver.hh"
 
-#include <QVariant>
+#include <QtCore/QVariant>
 
 class TestJSonDriver: public QObject
 {
