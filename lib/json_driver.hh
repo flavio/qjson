@@ -25,8 +25,8 @@
 #include "json_scanner.h"
 #include "qjson_export.h"
 
-#include <QIODevice>
-#include <QVariant>
+#include <QtCore/QIODevice>
+#include <QtCore/QVariant>
 
 namespace yy {
   class json_parser;

@@ -23,8 +23,8 @@
 
 #include <ctype.h>
 
-#include <QDebug>
-#include <QRegExp>
+#include <QtCore/QDebug>
+#include <QtCore/QRegExp>
 
 bool ishexnstring(const QString& string) {
   for (unsigned int i = 0; i < string.length(); i++) {

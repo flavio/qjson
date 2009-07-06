@@ -21,10 +21,10 @@
 #include "json_driver.hh"
 #include "json_parser.hh"
 
-#include <QBuffer>
-#include <QStringList>
-#include <QTextStream>
-#include <QDebug>
+#include <QtCore/QBuffer>
+#include <QtCore/QStringList>
+#include <QtCore/QTextStream>
+#include <QtCore/QDebug>
 
 JSonDriver::JSonDriver() :
     m_scanner(0)

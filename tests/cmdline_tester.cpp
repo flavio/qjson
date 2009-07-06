@@ -18,11 +18,11 @@
  * Boston, MA 02110-1301, USA.
  */
  
-#include <QCoreApplication>
-#include <QDebug>
-#include <QFile>
-#include <QStringList>
-#include <QVariant>
+#include <QtCore/QCoreApplication>
+#include <QtCore/QDebug>
+#include <QtCore/QFile>
+#include <QtCore/QStringList>
+#include <QtCore/QVariant>
 
 #include <json_driver.hh>
 

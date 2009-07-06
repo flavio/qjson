@@ -50,10 +50,10 @@ namespace yy
 /* First part of user declarations.  */
 #line 25 "json_parser.yy"
 
-  #include <QDebug>
-  #include <QMap>
-  #include <QString>
-  #include <QVariant>
+  #include <QtCore/QDebug>
+  #include <QtCore/QMap>
+  #include <QtCore/QString>
+  #include <QtCore/QVariant>
 
   #include "json_driver.hh"
   #include "json_scanner.h"
