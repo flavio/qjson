@@ -18,10 +18,10 @@ Converting JSON's data to QVariant instance is really simple:
 // create a JSonDriver instance
 JSonDriver driver;
 
-bool status;
+bool ok;
 
 // json is a QString containing the data to convert
-QVariant result = driver.parse (json, &status);
+QVariant result = driver.parse (json, &ok);
 \endcode
 
 Suppose you're going to convert this JSON data:
@@ -40,10 +40,10 @@ Suppose you're going to convert this JSON data:
 The following code would convert the JSON data and parse it:
 \code
 JSonDriver driver;
-bool status;
+bool ok;
 
-QVariantMap result = driver.parse (json, &status).toMap();
-if (status) {
+QVariantMap result = driver.parse (json, &ok).toMap();
+if (!ok) {
   qFatal("An error occured during parsing");
   exit (1);
 }
