@@ -24,7 +24,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 
-#include <json_driver.hh>
+#include <json_driver.h>
 
 
 int main(int argc, char *argv[]) {

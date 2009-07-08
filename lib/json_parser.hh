@@ -55,8 +55,8 @@ namespace yy
   #include <QtCore/QString>
   #include <QtCore/QVariant>
 
-  #include "json_driver.hh"
-  #include "json_driver_p.hh"
+  #include "json_driver.h"
+  #include "json_driver_p.h"
   #include "json_scanner.h"
 
   class JSonDriver;
