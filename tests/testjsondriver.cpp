@@ -40,7 +40,6 @@ class TestJSonDriver: public QObject
     void testTrueFalseNullValues();
     void testEscapeChars();
     void testNumbers();
-    void testNumberConversion();
 
     void testReadWriteEmptyDocument();
     void testReadWrite();
@@ -237,15 +236,12 @@ void TestJSonDriver::testNumbers() {
   qDebug() << "result: " << result;
   QVERIFY (ok);
   QCOMPARE(result, expected);
-}
 
-void TestJSonDriver::testNumberConversion()
-{
-  QString json = "[5]";
-  JSonDriver driver;
-  bool ok;
-  QVariant result = driver.parse (json, &ok);
-  QVERIFY( result.type() == QVariant::Int );
+  QVariantList numbers = result.toList();
+  QVERIFY( numbers[0].type() == QVariant::Int );
+  QVERIFY( numbers[1].type() == QVariant::Double );
+  QVERIFY( numbers[2].type() == QVariant::Int );
+  QVERIFY( numbers[3].type() == QVariant::Double );
 }
 
 void TestJSonDriver::testReadWriteEmptyDocument()
