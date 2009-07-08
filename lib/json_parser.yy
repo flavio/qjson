@@ -137,15 +137,22 @@ value: string { $$ = $1; }
           $$ = null_variant;
         };
 
-number: int { $$ = QVariant ($1); }
-        | int fract {  $$ = QVariant ($1.toString().append($2.toString())); }
+number: int {
+            $$ = QVariant (QVariant::Int);
+            $$.setValue($1.toInt());
+          }
+        | int fract {
+            QString value = ($1.toString().append($2.toString()));
+            $$ = QVariant(QVariant::Double);
+            $$.setValue(value.toDouble());
+          }
         | int exp {  $$ = QVariant ($1.toString().append($2.toString())); }
         | int fract exp {
-          QString value = $1.toString();
-          value += $2.toString();
-          value += $3.toString();
-          $$ = QVariant (value);
-        };
+            QString value = $1.toString();
+            value += $2.toString();
+            value += $3.toString();
+            $$ = QVariant (value);
+          };
 
 int:  DIGIT digits { $$ = QVariant ($1.toString().append($2.toString())); }
       | MINUS DIGIT digits { $$ = QVariant ($3.toString().prepend($2.toString().prepend("-"))); };
