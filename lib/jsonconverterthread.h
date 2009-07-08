@@ -52,6 +52,8 @@ class JSonConverterThread  : public QThread
     void conversionFinished(const QVariant& json, bool status, const QString& error_msg);
 
   private:
+    Q_DISABLE_COPY(JSonConverterThread)
+
     JSonConverterThreadPrivate *d;
 };
 
