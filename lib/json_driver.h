@@ -85,6 +85,8 @@ class QJSON_EXPORT JSonDriver
     int errorLine() const;
     
   private:
+    Q_DISABLE_COPY(JSonDriver)
+
     JSonDriverPrivate *d;
 };
 
