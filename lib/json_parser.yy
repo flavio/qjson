@@ -29,6 +29,7 @@
   #include <QtCore/QVariant>
 
   #include "json_driver.hh"
+  #include "json_driver_p.hh"
   #include "json_scanner.h"
 
   class JSonDriver;
@@ -38,8 +39,8 @@
   #define YYERROR_VERBOSE 1
 %}
 
-%parse-param { JSonDriver* driver }
-%lex-param { JSonDriver* driver }
+%parse-param { JSonDriverPrivate* driver }
+%lex-param { JSonDriverPrivate* driver }
 
 %locations
 
@@ -183,9 +184,9 @@ string_arg: /*empty */ { $$ = QVariant (""); }
 
 %%
 
-int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, JSonDriver* driver)
+int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, JSonDriverPrivate* driver)
 {
-  JSonScanner* scanner = driver->scanner();
+  JSonScanner* scanner = driver->m_scanner;
   yylval->clear();
   int ret = scanner->yylex(yylval, yylloc);
 

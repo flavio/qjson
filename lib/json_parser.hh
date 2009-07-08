@@ -56,6 +56,7 @@ namespace yy
   #include <QtCore/QVariant>
 
   #include "json_driver.hh"
+  #include "json_driver_p.hh"
   #include "json_scanner.h"
 
   class JSonDriver;
@@ -66,7 +67,7 @@ namespace yy
 
 
 /* Line 35 of lalr1.cc.  */
-#line 70 "json_parser.hh"
+#line 71 "json_parser.hh"
 
 #include "location.hh"
 
@@ -151,7 +152,7 @@ namespace yy
     typedef token::yytokentype token_type;
 
     /// Build a parser object.
-    json_parser (JSonDriver* driver_yyarg);
+    json_parser (JSonDriverPrivate* driver_yyarg);
     virtual ~json_parser ();
 
     /// Parse.
@@ -310,7 +311,7 @@ namespace yy
 
 
     /* User arguments.  */
-    JSonDriver* driver;
+    JSonDriverPrivate* driver;
   };
 }
 

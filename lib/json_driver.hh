@@ -21,26 +21,18 @@
 #ifndef _JSON_DRIVER
 #define _JSON_DRIVER
 
-#include "json_parser.hh"
-#include "json_scanner.h"
 #include "qjson_export.h"
 
 #include <QtCore/QIODevice>
 #include <QtCore/QVariant>
 
-namespace yy {
-  class json_parser;
-  class location;
-}
+class JSonDriverPrivate;
 
 /**
 * @brief Main class used for converting JSON data to QVariant objects
 */
 class QJSON_EXPORT JSonDriver
 {
-  friend int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, JSonDriver* driver);
-  friend class yy::json_parser;
-
   public:
     JSonDriver();
     virtual ~JSonDriver();
@@ -84,25 +76,16 @@ class QJSON_EXPORT JSonDriver
     * This method returns the error message
     * @returns a QString object containing the error message of the last parse operation
     */
-    QString error() const { return m_errorMsg; }
+    QString error() const;
 
     /**
     * This method returns line number where the error occurred
     * @returns the line number where the error occurred
     */
-    int errorLine() const { return m_errorLine; }
-
-
+    int errorLine() const;
+    
   private:
-    void setError(QString errorMsg, int line);
-    JSonScanner* scanner() { return m_scanner; };
-
-    JSonScanner* m_scanner;
-    bool m_negate;
-    bool m_error;
-    int m_errorLine;
-    QString m_errorMsg;
-    QVariant m_result;
+    JSonDriverPrivate *d;
 };
 
 #endif
