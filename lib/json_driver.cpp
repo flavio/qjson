@@ -65,7 +65,7 @@ QVariant JSonDriver::parse (QIODevice* io, bool* ok)
     if (!io->open(QIODevice::ReadOnly)) {
       if (ok != 0)
         *ok = false;
-      qFatal ("Error opening device");
+      qCritical ("Error opening device");
       return QVariant();
     }
   }
@@ -73,7 +73,7 @@ QVariant JSonDriver::parse (QIODevice* io, bool* ok)
   if (!io->isReadable()) {
     if (ok != 0)
       *ok = false;
-    qFatal ("Device is not readable");
+    qCritical ("Device is not readable");
     io->close();
     return QVariant();
   }
@@ -106,7 +106,7 @@ void JSonDriver::serialize( const QVariant& v, QIODevice* io, bool* ok )
     if (!io->open(QIODevice::WriteOnly)) {
       if ( ok != 0 )
         *ok = false;
-      qFatal ("Error opening device");
+      qCritical ("Error opening device");
       return;
     }
   }
@@ -114,7 +114,7 @@ void JSonDriver::serialize( const QVariant& v, QIODevice* io, bool* ok )
   if (!io->isWritable()) {
     if (ok != 0)
       *ok = false;
-    qFatal ("Device is not readable");
+    qCritical ("Device is not readable");
     io->close();
     return;
   }
