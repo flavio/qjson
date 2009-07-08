@@ -19,6 +19,7 @@
  */
 
 #include "json_driver.hh"
+#include "json_driver_p.hh"
 #include "json_parser.hh"
 
 #include <QtCore/QBuffer>
@@ -26,29 +27,39 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QDebug>
 
-JSonDriver::JSonDriver() :
+JSonDriverPrivate::JSonDriverPrivate() :
     m_scanner(0)
   , m_negate(false)
   , m_error(false)
-  , m_errorMsg()
 {
 }
 
-JSonDriver::~JSonDriver()
+JSonDriverPrivate::~JSonDriverPrivate()
 {
   delete m_scanner;
 }
 
-void JSonDriver::setError(QString errorMsg, int errorLine) {
+void JSonDriverPrivate::setError(QString errorMsg, int errorLine) {
   m_error = true;
   m_errorMsg = errorMsg;
   m_errorLine = errorLine;
 }
 
+JSonDriver::JSonDriver() :
+    d(new JSonDriverPrivate)
+{
+}
+
+JSonDriver::~JSonDriver()
+{
+  delete d;
+}
+
 QVariant JSonDriver::parse (QIODevice* io, bool* ok)
 {
-  m_errorMsg.clear();
-  delete m_scanner;
+  d->m_errorMsg.clear();
+  delete d->m_scanner;
+  d->m_scanner = 0;
 
   if (!io->isOpen()) {
     if (!io->open(QIODevice::ReadOnly)) {
@@ -67,18 +78,18 @@ QVariant JSonDriver::parse (QIODevice* io, bool* ok)
     return QVariant();
   }
 
-  m_scanner = new JSonScanner (io);
-  yy::json_parser parser (this);
+  d->m_scanner = new JSonScanner (io);
+  yy::json_parser parser (d);
   parser.parse ();
 
-  delete m_scanner;
-  m_scanner = 0;
+  delete d->m_scanner;
+  d->m_scanner = 0;
 
   if (ok != 0)
-    *ok = !m_error;
+    *ok = !d->m_error;
 
   io->close();
-  return m_result;
+  return d->m_result;
 }
 
 QVariant JSonDriver::parse(const QString& jsonString, bool* ok) {
@@ -164,4 +175,14 @@ const QString JSonDriver::serialize( const QVariant &v )
     return str;
   else
     return QString();
+}
+
+QString JSonDriver::error() const
+{
+  return d->m_errorMsg;
+}
+
+int JSonDriver::errorLine() const
+{
+  return d->m_errorLine;
 }

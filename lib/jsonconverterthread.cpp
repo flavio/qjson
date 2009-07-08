@@ -22,10 +22,18 @@
 
 #include "json_driver.hh"
 
-JSonConverterThread::JSonConverterThread(QString& data, QObject* parent)
-    : QThread(parent)
+#include <QtCore/QDebug>
+
+class JSonConverterThreadPrivate
 {
-  m_data = data;
+  public:
+    QString m_data;
+};
+
+JSonConverterThread::JSonConverterThread(QString& data, QObject* parent)
+    : QThread(parent), d(new JSonConverterThreadPrivate)
+{
+  d->m_data = data;
   qRegisterMetaType<QVariant>("QVariant");
 }
 
@@ -35,7 +43,7 @@ void JSonConverterThread::run()
 
   bool status;
   JSonDriver driver;
-  QVariant result = driver.parse (m_data, &status);
+  QVariant result = driver.parse (d->m_data, &status);
   if (!status) {
     qDebug() << "successfully converted json item to qobject";
     emit conversionFinished(result, true, QString());

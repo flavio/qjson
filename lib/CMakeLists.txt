@@ -1,22 +1,17 @@
 include_directories (./)
 
-# add_custom_command (OUTPUT json_parser.cc
+# add_custom_command (OUTPUT ${qjson_SOURCE_DIR}/lib/json_parser.cc
 #                    PRE_BUILD
 #                    COMMAND bison -t -o json_parser.cc -d json_parser.yy
 #                    DEPENDS json_parser.yy
-#                    WORKING_DIRECTORY ${qjson_SOURCE_DIR}/src/
+#                    WORKING_DIRECTORY ${qjson_SOURCE_DIR}/lib/
 #                    )
 
 install(FILES
         json_driver.hh
-        json_parser.hh
-        json_scanner.h
-        location.hh
-        position.hh
-        stack.hh
         jsonconverterthread.h
         qjson_export.h
-        DESTINATION include/qjson
+        DESTINATION ${INCLUDE_INSTALL_DIR}/qjson
 )
 
 set(qjson_MOC_HDRS

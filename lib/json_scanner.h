@@ -29,11 +29,11 @@
 
 #define YYSTYPE QVariant
 
-class JSonDriver;
+class JSonDriverPrivate;
 
 namespace yy {
   class location;
-  int yylex(YYSTYPE *yylval, yy::location *yylloc, JSonDriver* driver);
+  int yylex(YYSTYPE *yylval, yy::location *yylloc, JSonDriverPrivate* driver);
 }
 
 class JSonScanner

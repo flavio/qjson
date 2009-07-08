@@ -24,6 +24,8 @@
 #include <QtCore/QThread>
 #include <QtCore/QVariant>
 
+class JSonConverterThreadPrivate;
+
 /**
 * @brief Convenience class for converting JSON data to QVariant objects using a dedicated thread
 */
@@ -50,7 +52,7 @@ class JSonConverterThread  : public QThread
     void conversionFinished(const QVariant& json, bool status, const QString& error_msg);
 
   private:
-    QString m_data;
+    JSonConverterThreadPrivate *d;
 };
 
 #endif // JSONCONVERTERTHREAD_H
