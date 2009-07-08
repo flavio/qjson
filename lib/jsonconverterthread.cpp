@@ -20,7 +20,7 @@
 
 #include "jsonconverterthread.h"
 
-#include "json_driver.hh"
+#include "json_driver.h"
 
 #include <QtCore/QDebug>
 

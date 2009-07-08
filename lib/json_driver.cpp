@@ -18,8 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "json_driver.hh"
-#include "json_driver_p.hh"
+#include "json_driver.h"
+#include "json_driver_p.h"
 #include "json_parser.hh"
 
 #include <QtCore/QBuffer>
