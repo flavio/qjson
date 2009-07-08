@@ -191,8 +191,8 @@ void TestJSonDriver::testTrueFalseNullValues() {
   qDebug() << "result: " << result;
   QVERIFY (ok);
   QCOMPARE(result, expected);
-  QVERIFY (result.toList().at(0).toBool() == true);
-  QVERIFY (result.toList().at(1).toBool() == false);
+  QCOMPARE (result.toList().at(0).toBool(), true);
+  QCOMPARE (result.toList().at(1).toBool(), false);
   QVERIFY (result.toList().at(2).isNull());
 }
 
@@ -238,10 +238,10 @@ void TestJSonDriver::testNumbers() {
   QCOMPARE(result, expected);
 
   QVariantList numbers = result.toList();
-  QVERIFY( numbers[0].type() == QVariant::Int );
-  QVERIFY( numbers[1].type() == QVariant::Double );
-  QVERIFY( numbers[2].type() == QVariant::Int );
-  QVERIFY( numbers[3].type() == QVariant::Double );
+  QCOMPARE( numbers[0].type(),QVariant::Int );
+  QCOMPARE( numbers[1].type(), QVariant::Double );
+  QCOMPARE( numbers[2].type(), QVariant::Int );
+  QCOMPARE( numbers[3].type(), QVariant::Double );
 }
 
 void TestJSonDriver::testReadWriteEmptyDocument()
