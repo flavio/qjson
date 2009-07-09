@@ -58,6 +58,7 @@ namespace yy
   #include "json_driver.h"
   #include "json_driver_p.h"
   #include "json_scanner.h"
+  #include "qjson_debug.h"
 
   class JSonDriver;
   class JSonScanner;
@@ -67,7 +68,7 @@ namespace yy
 
 
 /* Line 35 of lalr1.cc.  */
-#line 71 "json_parser.hh"
+#line 72 "json_parser.hh"
 
 #include "location.hh"
 
