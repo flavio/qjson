@@ -18,39 +18,41 @@
   * Boston, MA 02110-1301, USA.
   */
 
-#include "jsonconverterthread.h"
+#include "parserrunnable.h"
 
 #include "json_driver.h"
 
 #include <QtCore/QDebug>
 
-class JSonConverterThreadPrivate
+class ParserRunnablePrivate
 {
   public:
     QString m_data;
 };
 
-JSonConverterThread::JSonConverterThread(QString& data, QObject* parent)
-    : QThread(parent), d(new JSonConverterThreadPrivate)
+ParserRunnable::ParserRunnable(QString& data, QObject* parent)
+    : QObject(parent),
+      QRunnable(),
+      d(new ParserRunnablePrivate)
 {
   d->m_data = data;
   qRegisterMetaType<QVariant>("QVariant");
 }
 
-void JSonConverterThread::run()
+void ParserRunnable::run()
 {
   qDebug() << Q_FUNC_INFO;
 
-  bool status;
+  bool ok;
   JSonDriver driver;
-  QVariant result = driver.parse (d->m_data, &status);
-  if (!status) {
-    qDebug() << "successfully converted json item to qobject";
-    emit conversionFinished(result, true, QString());
+  QVariant result = driver.parse (d->m_data, &ok);
+  if (ok) {
+    qDebug() << "successfully converted json item to QVariant object";
+    emit parsingFinished(result, true, QString());
   } else {
     QString errorText = QString("An error occured while parsing json: %1").arg(driver.error());
     qCritical() << errorText;
-    emit conversionFinished(QVariant(), false, errorText);
+    emit parsingFinished(QVariant(), false, errorText);
   }
 }
 

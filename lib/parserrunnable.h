@@ -18,43 +18,44 @@
   * Boston, MA 02110-1301, USA.
   */
 
-#ifndef JSONCONVERTERTHREAD_H
-#define JSONCONVERTERTHREAD_H
+#ifndef PARSERRUNNABLE_H
+#define PARSERRUNNABLE_H
 
-#include <QtCore/QThread>
+#include <QtCore/QObject>
+#include <QtCore/QRunnable>
 #include <QtCore/QVariant>
 
-class JSonConverterThreadPrivate;
+class ParserRunnablePrivate;
 
 /**
 * @brief Convenience class for converting JSON data to QVariant objects using a dedicated thread
 */
-class JSonConverterThread  : public QThread
+class ParserRunnable  : public QObject, public QRunnable
 {
   Q_OBJECT
   public:
     /**
     * This signal is emitted when the conversion process has been completed
     * @param data contains the JSON data that has to be converted
-    * @param parent thread's parent
+    * @param parent parent of the object
     **/
-    explicit JSonConverterThread(QString& data, QObject* parent = 0);
+    explicit ParserRunnable(QString& data, QObject* parent = 0);
 
     void run();
 
   Q_SIGNALS:
     /**
-    * This signal is emitted when the conversion process has been completed
-    * @param json contains the result of the conversion
-    * @param status if a conversion error occurs status is set to false, otherwise is set to true.
+    * This signal is emitted when the parsing process has been completed
+    * @param json contains the result of the parsing
+    * @param ok if a parsing error occurs ok is set to false, otherwise it's set to true.
     * @param error_msg contains a string explaining the failure reason
     **/
-    void conversionFinished(const QVariant& json, bool status, const QString& error_msg);
+    void parsingFinished(const QVariant& json, bool ok, const QString& error_msg);
 
   private:
-    Q_DISABLE_COPY(JSonConverterThread)
+    Q_DISABLE_COPY(ParserRunnable)
 
-    JSonConverterThreadPrivate *d;
+    ParserRunnablePrivate *d;
 };
 
-#endif // JSONCONVERTERTHREAD_H
+#endif // PARSERRUNNABLE_H
