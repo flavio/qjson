@@ -50,7 +50,7 @@ void TestJSonDriver::parseSimpleObject() {
   QString json = "{\"foo\":\"bar\"}";
   QVariantMap map;
   map.insert ("foo", "bar");
-  QVariant expected (map);
+  QVariant expected(map);
 
   JSonDriver driver;
   bool ok;
@@ -58,6 +58,7 @@ void TestJSonDriver::parseSimpleObject() {
   qDebug() << "expected: " << expected;
   qDebug() << "result: " << result;
   QVERIFY (ok);
+  QVERIFY( result.toMap()["foo"].toString() == "bar" );
   QCOMPARE(result, expected);
 }
 
@@ -264,8 +265,9 @@ void TestJSonDriver::testReadWrite()
   QVariant result = driver.parse( json, &ok );
   QVERIFY(ok);
   const QString serialized = driver.serialize( result );
+//  qWarning() << serialized;
   QVariant writtenThenRead = driver.parse( serialized, &ok );
-  //qWarning() << serialized;
+  QVERIFY(ok);
   QCOMPARE( result, writtenThenRead );
 }
 
@@ -274,15 +276,23 @@ void TestJSonDriver::testReadWrite_data()
     QTest::addColumn<QString>( "json" );
 
     // array tests
-    QTest::newRow( "empty array") << "[]";
-    QTest::newRow( "basic array") << "[\"foo\",\"bar\"]";
-    QTest::newRow( "int array") << "[6]";
+    QTest::newRow( "empty array" ) << "[]";
+    QTest::newRow( "basic array" ) << "[\"foo\",\"bar\"]";
+    QTest::newRow( "single int array" ) << "[6]";
+    QTest::newRow( "int array" ) << "[6,5,6,7]";
+    const QString json = "[1,2.4, -100, -3.4, -5e+, 2e,3e+,4.3E,5.4E-]";
+    QTest::newRow( "array of various numbers" ) << json;
 
     // document tests
-    QTest::newRow( "empty object") << "{}";
-    QTest::newRow( "basic document") << "{ \"foo\":\"bar\" }";
-    QTest::newRow( "object with ints" ) << "{ \"foo\":6 }";
+    QTest::newRow( "empty object" ) << "{}";
+    QTest::newRow( "basic document" ) << "{\"foo\":\"bar\"}";
+    QTest::newRow( "object with ints" ) << "{\"foo\":6}";
+    QString json2 = "{ \"foo\":\"bar\",\n\"number\" : 51.3 , \"array\":[\"item1\", 123]}";
+    QTest::newRow( "complicated document" ) << json2;
 
+    // more complex cases
+    const QString json3 = "[ {\"foo\":\"bar\"},\n\"number\",51.3 , [\"item1\", 123]]";
+    QTest::newRow( "complicated array" ) << json3;
 }
 
 QTEST_MAIN(TestJSonDriver)
