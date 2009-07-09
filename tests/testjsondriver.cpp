@@ -46,8 +46,6 @@ class TestJSonDriver: public QObject
     void testNumbers();
 
     void testReadWriteEmptyDocument();
-    void testSerialize();
-    void testSerialize_data();
     void testReadWrite();
     void testReadWrite_data();
 };
@@ -258,48 +256,6 @@ void TestJSonDriver::testReadWriteEmptyDocument()
   QVERIFY( !serialized.isNull() );
   QVERIFY( serialized.isEmpty() );
 }
-
-void TestJSonDriver::testSerialize()
-{
-  QFETCH( QVariant, qvariant );
-  QFETCH( QString, expected );
-  Serializer serializer;
-  bool ok;
-  QString result = serializer.serialize( qvariant);
-  result = result.replace(" ", "");
-  expected = expected.replace(" ", "");
-  QCOMPARE(result, expected);
-}
-
-void TestJSonDriver::testSerialize_data()
-{
-    QTest::addColumn<QVariant>( "qvariant" );
-    QTest::addColumn<QString>( "expected" );
-    
-    // array tests
-    QVariantList array;
-    array.clear();
-    QTest::newRow( "empty array") << (QVariant) array << "[]";
-
-    array << QVariant("foo") << QVariant("bar");
-    QTest::newRow( "basic array") << (QVariant)  array << "[\"foo\",\"bar\"]";
-
-    array.clear();
-    array << QVariant(6);
-    QTest::newRow( "int array") << (QVariant)  array << "[6]";
-
-    // document tests
-    QVariantMap map;
-    map.clear();
-    QTest::newRow( "empty object") << (QVariant)  map << "{}";
-
-    map["foo"] = QVariant("bar");
-    QTest::newRow( "basic document") << (QVariant) map << "{ \"foo\":\"bar\" }";
-
-    map["foo"] = QVariant(6);
-    QTest::newRow( "object with ints" ) << (QVariant) map << "{ \"foo\":6 }";
-}
-
 
 void TestJSonDriver::testReadWrite()
 {
