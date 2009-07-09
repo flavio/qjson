@@ -10,6 +10,7 @@ include_directories (./)
 install(FILES
         json_driver.h
         jsonconverterthread.h
+        serializer.h
         qjson_export.h
         DESTINATION ${INCLUDE_INSTALL_DIR}/qjson
 )
@@ -20,7 +21,7 @@ set(qjson_MOC_HDRS
 
 qt4_wrap_cpp(qjson_MOC_SRCS ${qjson_MOC_HDRS})
 
-set (qjson_SRCS json_driver.cpp json_scanner.cpp json_parser.cc jsonconverterthread.cpp)
+set (qjson_SRCS json_driver.cpp json_scanner.cpp json_parser.cc jsonconverterthread.cpp serializer.cpp)
 
 add_library (qjson SHARED ${qjson_SRCS} ${qjson_MOC_SRCS})
 target_link_libraries( qjson ${QT_LIBRARIES})

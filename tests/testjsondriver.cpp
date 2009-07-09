@@ -21,8 +21,11 @@
 #include <QtTest/QtTest>
 
 #include "json_driver.h"
+#include "serializer.h"
 
 #include <QtCore/QVariant>
+
+using namespace QJSon;
 
 class TestJSonDriver: public QObject
 {
@@ -250,7 +253,8 @@ void TestJSonDriver::testReadWriteEmptyDocument()
   bool ok;
   QVariant result = driver.parse( json, &ok );
   QVERIFY(ok);
-  const QString serialized = driver.serialize( result );
+  Serializer serializer;
+  const QString serialized = serializer.serialize( result );
   QVERIFY( !serialized.isNull() );
   QVERIFY( serialized.isEmpty() );
 }
@@ -259,9 +263,9 @@ void TestJSonDriver::testSerialize()
 {
   QFETCH( QVariant, qvariant );
   QFETCH( QString, expected );
-  JSonDriver driver;
+  Serializer serializer;
   bool ok;
-  QString result = driver.serialize( qvariant);
+  QString result = serializer.serialize( qvariant);
   result = result.replace(" ", "");
   expected = expected.replace(" ", "");
   QCOMPARE(result, expected);
@@ -304,7 +308,8 @@ void TestJSonDriver::testReadWrite()
   bool ok;
   QVariant result = driver.parse( json, &ok );
   QVERIFY(ok);
-  const QString serialized = driver.serialize( result );
+  Serializer serializer;
+  const QString serialized = serializer.serialize( result );
 //  qWarning() << serialized;
   QVariant writtenThenRead = driver.parse( serialized, &ok );
   QCOMPARE( result, writtenThenRead );
