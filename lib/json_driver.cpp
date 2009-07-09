@@ -160,24 +160,13 @@ const QString JSonDriver::serialize( const QVariant &v )
         str = v.toString();
     } else {
       const QVariantMap vmap = v.toMap();
-      QStringList values;
       QMapIterator<QString, QVariant> it( vmap );
+      str = QLatin1String("{ ");
       while ( it.hasNext() ) {
         it.next();
-        QString value;
-        // if it's list inside the object, recurse
-        if ( it.value().canConvert<QVariantList>() ) {
-          value = serialize( it.value() );
-        } else {
-          // otherwise it's a value
-          value = it.value().toString();
-          if ( it.value().type() == QVariant::String )
-            value = sanitizeString( value );
-        }
-        value.prepend( sanitizeString( it.key() ) + QLatin1String(":") );
-        values << value;
+        str += sanitizeString(it.key()) + QLatin1String(" : ") + serialize(it.value());
       }
-      str = QLatin1String("{ ") + values.join(", ") + QLatin1String(" }");
+      str += QLatin1String(" }");
     }
   }
   if ( !error )

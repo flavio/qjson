@@ -30,6 +30,7 @@ class TestJSonDriver: public QObject
   private slots:
     void parseNonAsciiString();
     void parseSimpleObject();
+    void parseEmptyObject();
     void parseUrl();
     void parseMultipleObject();
 
@@ -42,9 +43,13 @@ class TestJSonDriver: public QObject
     void testNumbers();
 
     void testReadWriteEmptyDocument();
+    void testSerialize();
+    void testSerialize_data();
     void testReadWrite();
     void testReadWrite_data();
 };
+
+Q_DECLARE_METATYPE(QVariant)
 
 void TestJSonDriver::parseSimpleObject() {
   QString json = "{\"foo\":\"bar\"}";
@@ -55,8 +60,18 @@ void TestJSonDriver::parseSimpleObject() {
   JSonDriver driver;
   bool ok;
   QVariant result = driver.parse (json, &ok);
-  qDebug() << "expected: " << expected;
-  qDebug() << "result: " << result;
+  QVERIFY (ok);
+  QCOMPARE(result, expected);
+}
+
+void TestJSonDriver::parseEmptyObject() {
+  QString json = "{}";
+  QVariantMap map;
+  QVariant expected (map);
+
+  JSonDriver driver;
+  bool ok;
+  QVariant result = driver.parse (json, &ok);
   QVERIFY (ok);
   QVERIFY( result.toMap()["foo"].toString() == "bar" );
   QCOMPARE(result, expected);
@@ -86,8 +101,6 @@ void TestJSonDriver::parseNonAsciiString() {
   JSonDriver driver;
   bool ok;
   QVariant result = driver.parse (json, &ok);
-  qDebug() << "expected: " << expected;
-  qDebug() << "result: " << result;
   QVERIFY (ok);
   QCOMPARE(result, expected);
 }
@@ -107,8 +120,6 @@ void TestJSonDriver::parseMultipleObject() {
   JSonDriver driver;
   bool ok;
   QVariant result = driver.parse (json, &ok);
-  qDebug() << "expected: " << expected;
-  qDebug() << "result: " << result;
   QVERIFY (ok);
   QCOMPARE(result, expected);
   QVERIFY (result.toMap()["number"].canConvert<float>());
@@ -125,8 +136,6 @@ void TestJSonDriver::parseUrl(){
   JSonDriver driver;
   bool ok;
   QVariant result = driver.parse (json, &ok);
-  qDebug() << "expected: " << expected;
-  qDebug() << "result: " << result;
   QVERIFY (ok);
   QCOMPARE(result, expected);
 }
@@ -141,8 +150,6 @@ void TestJSonDriver::parseUrl(){
   JSonDriver driver;
   bool ok;
   QVariant result = driver.parse (json, &ok);
-  qDebug() << "expected: " << expected;
-  qDebug() << "result: " << result;
   QVERIFY (ok);
   QCOMPARE(result, expected);
 }
@@ -168,8 +175,6 @@ void TestJSonDriver::parseMultipleArray() {
   JSonDriver driver;
   bool ok;
   QVariant result = driver.parse (json, &ok);
-  qDebug() << "expected: " << expected;
-  qDebug() << "result: " << result;
   QVERIFY (ok);
   QCOMPARE(result, expected);
 }
@@ -188,8 +193,6 @@ void TestJSonDriver::testTrueFalseNullValues() {
   JSonDriver driver;
   bool ok;
   QVariant result = driver.parse (json, &ok);
-  qDebug() << "expected: " << expected;
-  qDebug() << "result: " << result;
   QVERIFY (ok);
   QCOMPARE(result, expected);
   QCOMPARE (result.toList().at(0).toBool(), true);
@@ -210,8 +213,6 @@ void TestJSonDriver::testEscapeChars() {
   JSonDriver driver;
   bool ok;
   QVariant result = driver.parse (json, &ok);
-  qDebug() << "expected: " << expected;
-  qDebug() << "result: " << result;
   QVERIFY (ok);
   QCOMPARE(result, expected);
 }
@@ -233,8 +234,6 @@ void TestJSonDriver::testNumbers() {
   JSonDriver driver;
   bool ok;
   QVariant result = driver.parse (json, &ok);
-  qDebug() << "expected: " << expected;
-  qDebug() << "result: " << result;
   QVERIFY (ok);
   QCOMPARE(result, expected);
 
@@ -257,6 +256,48 @@ void TestJSonDriver::testReadWriteEmptyDocument()
   QVERIFY( serialized.isEmpty() );
 }
 
+void TestJSonDriver::testSerialize()
+{
+  QFETCH( QVariant, qvariant );
+  QFETCH( QString, expected );
+  JSonDriver driver;
+  bool ok;
+  QString result = driver.serialize( qvariant);
+  result = result.replace(" ", "");
+  expected = expected.replace(" ", "");
+  QCOMPARE(result, expected);
+}
+
+void TestJSonDriver::testSerialize_data()
+{
+    QTest::addColumn<QVariant>( "qvariant" );
+    QTest::addColumn<QString>( "expected" );
+    
+    // array tests
+    QVariantList array;
+    array.clear();
+    QTest::newRow( "empty array") << (QVariant) array << "[]";
+
+    array << QVariant("foo") << QVariant("bar");
+    QTest::newRow( "basic array") << (QVariant)  array << "[\"foo\",\"bar\"]";
+
+    array.clear();
+    array << QVariant(6);
+    QTest::newRow( "int array") << (QVariant)  array << "[6]";
+
+    // document tests
+    QVariantMap map;
+    map.clear();
+    QTest::newRow( "empty object") << (QVariant)  map << "{}";
+
+    map["foo"] = QVariant("bar");
+    QTest::newRow( "basic document") << (QVariant) map << "{ \"foo\":\"bar\" }";
+
+    map["foo"] = QVariant(6);
+    QTest::newRow( "object with ints" ) << (QVariant) map << "{ \"foo\":6 }";
+}
+
+
 void TestJSonDriver::testReadWrite()
 {
   QFETCH( QString, json );
@@ -267,7 +308,6 @@ void TestJSonDriver::testReadWrite()
   const QString serialized = driver.serialize( result );
 //  qWarning() << serialized;
   QVariant writtenThenRead = driver.parse( serialized, &ok );
-  QVERIFY(ok);
   QCOMPARE( result, writtenThenRead );
 }
 
