@@ -79,8 +79,8 @@ QVariant JSonDriver::parse (QIODevice* io, bool* ok)
   }
 
   d->m_scanner = new JSonScanner (io);
-  yy::json_parser parser (d);
-  parser.parse ();
+  yy::json_parser parser(d);
+  parser.parse();
 
   delete d->m_scanner;
   d->m_scanner = 0;
@@ -119,20 +119,20 @@ void JSonDriver::serialize( const QVariant& v, QIODevice* io, bool* ok )
     return;
   }
 
-  bool error = false;
   const QString str = serialize( v );
   if ( !str.isNull() ) {
     QTextStream stream( io );
     stream << str;
   } else {
     if ( ok )
-      *ok = error;
+      *ok = false;
   }
 }
 
 static QString sanitizeString( const QString& s )
 {
-  return QLatin1String("\"") + s + QLatin1String("\"");
+  const QString str = QLatin1String("\"") + s + QLatin1String("\"");
+  return str;
 }
 
 const QString JSonDriver::serialize( const QVariant &v )
@@ -164,9 +164,18 @@ const QString JSonDriver::serialize( const QVariant &v )
       QMapIterator<QString, QVariant> it( vmap );
       while ( it.hasNext() ) {
         it.next();
-        QString value = it.value().toString();
-        if ( it.value().type() == QVariant::String )
-          value = sanitizeString( value );
+        QString value;
+        // if it's list inside the object, recurse
+        if ( it.value().canConvert<QVariantList>() ) {
+          value = serialize( it.value() );
+        } else {
+          // otherwise it's a value
+          value = it.value().toString();
+          if ( it.value().type() == QVariant::String )
+            value = sanitizeString( value );
+        }
+        value.prepend( sanitizeString( it.key() ) + QLatin1String(":") );
+        values << value;
       }
       str = QLatin1String("{ ") + values.join(", ") + QLatin1String(" }");
     }
