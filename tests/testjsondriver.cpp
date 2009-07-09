@@ -73,7 +73,6 @@ void TestJSonDriver::parseEmptyObject() {
   bool ok;
   QVariant result = driver.parse (json, &ok);
   QVERIFY (ok);
-  QVERIFY( result.toMap()["foo"].toString() == "bar" );
   QCOMPARE(result, expected);
 }
 
