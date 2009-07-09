@@ -31,6 +31,7 @@
   #include "json_driver.h"
   #include "json_driver_p.h"
   #include "json_scanner.h"
+  #include "qjson_debug.h"
 
   class JSonDriver;
   class JSonScanner;
@@ -77,14 +78,14 @@
 
 start: data {
               driver->m_result = $1;
-              qDebug() << "json_parser - parsing finished";
+              qjsonDebug() << "json_parser - parsing finished";
             };
 
 data: object {$$ = $1; }
       | array {$$ = $1; }
       | error
           {
-            qDebug()<< "json_parser - syntax error found, "
+            qCritical()<< "json_parser - syntax error found, "
                     << "forcing exit";
             YYABORT;
           }
@@ -193,7 +194,7 @@ int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, JSonDriverPrivate* driver)
   char buff [50];
   snprintf (buff, 50 * sizeof (char), "%i", ret);
 
-  qDebug() << "json_parser::yylex - calling scanner yylval==|" 
+  qjsonDebug() << "json_parser::yylex - calling scanner yylval==|"
            << yylval->toString() << "|, ret==|" << buff << "|";
   
   return ret;
@@ -202,10 +203,10 @@ int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, JSonDriverPrivate* driver)
 void yy::json_parser::error (const yy::location& yyloc,
                                  const std::string& error)
 {
-  /*qDebug() << yyloc.begin.line;
-  qDebug() << yyloc.begin.column;
-  qDebug() << yyloc.end.line;
-  qDebug() << yyloc.end.column;*/
-  qDebug("json_parser::error [line %i] - %s", yyloc.end.line, error.c_str()) ;
+  /*qjsonDebug() << yyloc.begin.line;
+  qjsonDebug() << yyloc.begin.column;
+  qjsonDebug() << yyloc.end.line;
+  qjsonDebug() << yyloc.end.column;*/
+  qjsonDebug() << "json_parser::error [line" << yyloc.end.line << "] -" << error.c_str() ;
   driver->setError(error.c_str(), yyloc.end.line);  
 }
