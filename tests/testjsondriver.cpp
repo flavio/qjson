@@ -218,12 +218,14 @@ void TestJSonDriver::testEscapeChars() {
 }
 
 void TestJSonDriver::testNumbers() {
-  QString json = "[1,2.4, -100, -3.4, -5e+, 2e,3e+,4.3E,5.4E-]";
+  QString json = "[1,2.4, -100, -3.4, 1.00004, 01.01, -5e+, 2e,3e+,4.3E,5.4E-]";
   QVariantList list;
   list.append (QVariant(1));
   list.append (QVariant(2.4));
   list.append (QVariant(-100));
   list.append (QVariant(-3.4));
+  list.append (QVariant(1.00004));
+  list.append (QVariant(1.01));
   list.append (QVariant("-5e+"));
   list.append (QVariant("2e"));
   list.append (QVariant("3e+"));
