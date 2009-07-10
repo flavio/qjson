@@ -25,8 +25,9 @@
 #include "serializer.h"
 
 #include <QtCore/QDebug>
+#include <QtCore/QVariant>
 
-using namespace QJson;
+using namespace QJSon;
 
 class SerializerRunnable::Private
 {
@@ -57,4 +58,3 @@ void SerializerRunnable::run()
   Serializer serializer;
   emit parsingFinished( Serializer().serialize( d->json ), true, QString() );
 }
-

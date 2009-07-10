@@ -23,16 +23,15 @@
 %define "parser_class_name" "json_parser"
 
 %{
+  #include "parser_p.h"
+  #include "json_scanner.h"
+  #include "qjson_debug.h"
+
   #include <QtCore/QByteArray>
   #include <QtCore/QDebug>
   #include <QtCore/QMap>
   #include <QtCore/QString>
   #include <QtCore/QVariant>
-
-  #include "json_driver.h"
-  #include "json_driver_p.h"
-  #include "json_scanner.h"
-  #include "qjson_debug.h"
 
   class JSonScanner;
 

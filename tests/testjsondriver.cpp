@@ -20,7 +20,7 @@
 
 #include <QtTest/QtTest>
 
-#include "json_driver.h"
+#include "parser.h"
 #include "serializer.h"
 
 #include <QtCore/QVariant>

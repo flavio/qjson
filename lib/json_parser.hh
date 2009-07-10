@@ -50,16 +50,15 @@ namespace yy
 /* First part of user declarations.  */
 #line 25 "json_parser.yy"
 
+  #include "parser_p.h"
+  #include "json_scanner.h"
+  #include "qjson_debug.h"
+
   #include <QtCore/QByteArray>
   #include <QtCore/QDebug>
   #include <QtCore/QMap>
   #include <QtCore/QString>
   #include <QtCore/QVariant>
-
-  #include "json_driver.h"
-  #include "json_driver_p.h"
-  #include "json_scanner.h"
-  #include "qjson_debug.h"
 
   class JSonScanner;
 
@@ -71,7 +70,7 @@ namespace yy
 
 
 /* Line 35 of lalr1.cc.  */
-#line 75 "json_parser.hh"
+#line 74 "json_parser.hh"
 
 #include "location.hh"
 
