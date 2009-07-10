@@ -41,8 +41,10 @@ namespace QJSon {
       * @param data contains the JSON data that has to be converted
       * @param parent parent of the object
       **/
-      explicit ParserRunnable(const QByteArray& data, QObject* parent = 0);
+      explicit ParserRunnable(QObject* parent = 0);
       ~ParserRunnable();
+
+      void setData( const QByteArray& data );
 
       void run();
 

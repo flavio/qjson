@@ -33,18 +33,21 @@ class QJSon::ParserRunnable::Private
     QByteArray m_data;
 };
 
-ParserRunnable::ParserRunnable(const QByteArray& data, QObject* parent)
+ParserRunnable::ParserRunnable(QObject* parent)
     : QObject(parent),
       QRunnable(),
       d(new Private)
 {
-  d->m_data = data;
   qRegisterMetaType<QVariant>("QVariant");
 }
 
 ParserRunnable::~ParserRunnable()
 {
   delete d;
+}
+
+void ParserRunnable::setData( const QByteArray& data ) {
+  d->m_data = data;
 }
 
 void ParserRunnable::run()
