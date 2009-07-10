@@ -18,8 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _JSON_DRIVER
-#define _JSON_DRIVER
+#ifndef QJSON_PARSER_H
+#define QJSON_PARSER_H
 
 #include "qjson_export.h"
 
@@ -74,4 +74,4 @@ namespace QJSon {
   };
 }
 
-#endif
+#endif // QJSON_PARSER_H

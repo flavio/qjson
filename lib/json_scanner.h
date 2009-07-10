@@ -29,7 +29,7 @@
 
 #define YYSTYPE QVariant
 
-#include "json_driver_p.h"
+#include "parser_p.h"
 
 namespace yy {
   class location;

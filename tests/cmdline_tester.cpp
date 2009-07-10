@@ -24,7 +24,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 
-#include <json_driver.h>
+#include "parser.h"
 
 using namespace QJSon;
 

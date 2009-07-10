@@ -19,10 +19,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef _JSON_DRIVER_P
-#define _JSON_DRIVER_P
+#ifndef QJSON_PARSER_P_H
+#define QJSON_PARSER_P_H
 
-#include "json_driver.h"
+#include "parser.h"
 
 #include <QtCore/QString>
 #include <QtCore/QVariant>
@@ -52,4 +52,4 @@ namespace QJSon {
   };
 }
 
-#endif
+#endif // QJSON_PARSER_H

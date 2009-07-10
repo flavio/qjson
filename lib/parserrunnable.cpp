@@ -20,7 +20,7 @@
 
 #include "parserrunnable.h"
 
-#include "json_driver.h"
+#include "parser.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QVariant>
@@ -63,4 +63,3 @@ void ParserRunnable::run()
     emit parsingFinished(QVariant(), false, errorText);
   }
 }
-
