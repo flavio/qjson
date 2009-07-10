@@ -102,7 +102,7 @@ QVariant Parser::parse(const QByteArray& jsonString, bool* ok) {
   return parse (&buffer, ok);
 }
 
-QString Parser::error() const
+QString Parser::errorString() const
 {
   return d->m_errorMsg;
 }

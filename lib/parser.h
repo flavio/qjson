@@ -60,7 +60,7 @@ namespace QJSon {
       * This method returns the error message
       * @returns a QString object containing the error message of the last parse operation
       */
-      QString error() const;
+      QString errorString() const;
 
       /**
       * This method returns line number where the error occurred
