@@ -26,6 +26,7 @@
 
 #include <json_driver.h>
 
+using namespace QJSon;
 
 int main(int argc, char *argv[]) {
   QCoreApplication app (argc, argv);
@@ -41,7 +42,7 @@ int main(int argc, char *argv[]) {
     exit (1);
   }
   
-  JSonDriver driver;
+  Parser driver;
   bool status;
 
   QFile file (filename);

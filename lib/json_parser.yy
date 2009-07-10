@@ -34,15 +34,17 @@
   #include "json_scanner.h"
   #include "qjson_debug.h"
 
-  class JSonDriver;
   class JSonScanner;
 
+  namespace QJson {
+    class Parser;
+  }
 
   #define YYERROR_VERBOSE 1
 %}
 
-%parse-param { JSonDriverPrivate* driver }
-%lex-param { JSonDriverPrivate* driver }
+%parse-param { QJSon::ParserPrivate* driver }
+%lex-param { QJSon::ParserPrivate* driver }
 
 %locations
 
@@ -178,7 +180,7 @@ string_arg: /*empty */ { $$ = QVariant (QByteArray("")); }
 
 %%
 
-int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, JSonDriverPrivate* driver)
+int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, QJSon::ParserPrivate* driver)
 {
   JSonScanner* scanner = driver->m_scanner;
   yylval->clear();

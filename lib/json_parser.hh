@@ -61,15 +61,17 @@ namespace yy
   #include "json_scanner.h"
   #include "qjson_debug.h"
 
-  class JSonDriver;
   class JSonScanner;
 
+  namespace QJson {
+    class Parser;
+  }
 
   #define YYERROR_VERBOSE 1
 
 
 /* Line 35 of lalr1.cc.  */
-#line 73 "json_parser.hh"
+#line 75 "json_parser.hh"
 
 #include "location.hh"
 
@@ -154,7 +156,7 @@ namespace yy
     typedef token::yytokentype token_type;
 
     /// Build a parser object.
-    json_parser (JSonDriverPrivate* driver_yyarg);
+    json_parser (QJSon::ParserPrivate* driver_yyarg);
     virtual ~json_parser ();
 
     /// Parse.
@@ -313,7 +315,7 @@ namespace yy
 
 
     /* User arguments.  */
-    JSonDriverPrivate* driver;
+    QJSon::ParserPrivate* driver;
   };
 }
 

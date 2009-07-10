@@ -23,53 +23,55 @@
 
 #include "qjson_export.h"
 
-#include <QtCore/QIODevice>
-#include <QtCore/QVariant>
+class QIODevice;
+class QVariant;
 
-class JSonDriverPrivate;
+namespace QJSon {
 
-/**
-* @brief Main class used for converting JSON data to QVariant objects
-*/
-class QJSON_EXPORT JSonDriver
-{
-  public:
-    JSonDriver();
-    virtual ~JSonDriver();
+  class ParserPrivate;
 
-    /**
-    * Read JSON string from the I/O Device and converts it to a QVariant object
-    * @param io Input output device
-    * @param ok if a conversion error occurs, *ok is set to false; otherwise *ok is set to true.
-    * @returns a QVariant object generated from the JSON string
-    */
-    QVariant parse(QIODevice* io, bool* ok = 0);
+  /**
+  * @brief Main class used for converting JSON data to QVariant objects
+  */
+  class QJSON_EXPORT Parser
+  {
+    public:
+      Parser();
+      ~Parser();
 
-    /**
-    * This is a method provided for convenience.
-    * @param jsonData data containing the JSON object representation
-    * @param ok if a conversion error occurs, *ok is set to false; otherwise *ok is set to true.
-    * @returns a QVariant object generated from the JSON string
-    * /sa error
-    */
-    QVariant parse(const QByteArray& jsonData, bool* ok = 0);
+      /**
+      * Read JSON string from the I/O Device and converts it to a QVariant object
+      * @param io Input output device
+      * @param ok if a conversion error occurs, *ok is set to false; otherwise *ok is set to true.
+      * @returns a QVariant object generated from the JSON string
+      */
+      QVariant parse(QIODevice* io, bool* ok = 0);
 
-    /**
-    * This method returns the error message
-    * @returns a QString object containing the error message of the last parse operation
-    */
-    QString error() const;
+      /**
+      * This is a method provided for convenience.
+      * @param jsonData data containing the JSON object representation
+      * @param ok if a conversion error occurs, *ok is set to false; otherwise *ok is set to true.
+      * @returns a QVariant object generated from the JSON string
+      * /sa error
+      */
+      QVariant parse(const QByteArray& jsonData, bool* ok = 0);
 
-    /**
-    * This method returns line number where the error occurred
-    * @returns the line number where the error occurred
-    */
-    int errorLine() const;
-    
-  private:
-    Q_DISABLE_COPY(JSonDriver)
+      /**
+      * This method returns the error message
+      * @returns a QString object containing the error message of the last parse operation
+      */
+      QString error() const;
 
-    JSonDriverPrivate *d;
-};
+      /**
+      * This method returns line number where the error occurred
+      * @returns the line number where the error occurred
+      */
+      int errorLine() const;
+
+    private:
+      Q_DISABLE_COPY(Parser)
+      ParserPrivate* const d;
+  };
+}
 
 #endif

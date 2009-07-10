@@ -25,38 +25,41 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QRunnable>
-#include <QtCore/QVariant>
 
-/**
-* @brief Convenience class for converting JSON data to QVariant objects using a dedicated thread
-*/
-class QJSON_EXPORT ParserRunnable  : public QObject, public QRunnable
-{
-  Q_OBJECT
-  public:
-    /**
-    * This signal is emitted when the conversion process has been completed
-    * @param data contains the JSON data that has to be converted
-    * @param parent parent of the object
-    **/
-    explicit ParserRunnable(const QByteArray& data, QObject* parent = 0);
-    ~ParserRunnable();
+class QVariant;
 
-    void run();
+namespace QJSon {
+  /**
+  * @brief Convenience class for converting JSON data to QVariant objects using a dedicated thread
+  */
+  class QJSON_EXPORT ParserRunnable  : public QObject, public QRunnable
+  {
+    Q_OBJECT
+    public:
+      /**
+      * This signal is emitted when the conversion process has been completed
+      * @param data contains the JSON data that has to be converted
+      * @param parent parent of the object
+      **/
+      explicit ParserRunnable(const QByteArray& data, QObject* parent = 0);
+      ~ParserRunnable();
 
-  Q_SIGNALS:
-    /**
-    * This signal is emitted when the parsing process has been completed
-    * @param json contains the result of the parsing
-    * @param ok if a parsing error occurs ok is set to false, otherwise it's set to true.
-    * @param error_msg contains a string explaining the failure reason
-    **/
-    void parsingFinished(const QVariant& json, bool ok, const QString& error_msg);
+      void run();
 
-  private:
-    Q_DISABLE_COPY(ParserRunnable)
-    class Private;
-    Private* const d;
-};
+    Q_SIGNALS:
+      /**
+      * This signal is emitted when the parsing process has been completed
+      * @param json contains the result of the parsing
+      * @param ok if a parsing error occurs ok is set to false, otherwise it's set to true.
+      * @param error_msg contains a string explaining the failure reason
+      **/
+      void parsingFinished(const QVariant& json, bool ok, const QString& error_msg);
+
+    private:
+      Q_DISABLE_COPY(ParserRunnable)
+      class Private;
+      Private* const d;
+  };
+}
 
 #endif // PARSERRUNNABLE_H
