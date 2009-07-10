@@ -25,8 +25,6 @@
 
 #include <QtCore/QVariant>
 
-using namespace QJSon;
-
 class TestJSonDriver: public QObject
 {
   Q_OBJECT
@@ -52,10 +50,12 @@ class TestJSonDriver: public QObject
 
 Q_DECLARE_METATYPE(QVariant)
 
+using namespace QJSon;
+
 void TestJSonDriver::parseSimpleObject() {
-  QString json = "{\"foo\":\"bar\"}";
+  QByteArray json = "{\"foo\":\"bar\"}";
   QVariantMap map;
-  map.insert ("foo", "bar");
+  map.insert (QLatin1String("foo"), QLatin1String("bar"));
   QVariant expected(map);
 
   JSonDriver driver;
@@ -66,7 +66,7 @@ void TestJSonDriver::parseSimpleObject() {
 }
 
 void TestJSonDriver::parseEmptyObject() {
-  QString json = "{}";
+  QByteArray json = "{}";
   QVariantMap map;
   QVariant expected (map);
 
@@ -78,7 +78,7 @@ void TestJSonDriver::parseEmptyObject() {
 }
 
 void TestJSonDriver::parseInvalidObject() {
-  QString json = "{\"foo\":\"bar\"";
+  QByteArray json = "{\"foo\":\"bar\"";
 
   JSonDriver driver;
   bool ok;
@@ -87,15 +87,15 @@ void TestJSonDriver::parseInvalidObject() {
 }
 
 void TestJSonDriver::parseNonAsciiString() {
-  QString json = "{\"artist\":\"Queensr\\u00ffche\"}";
+  QByteArray json = "{\"artist\":\"Queensr\\u00ffche\"}";
   QVariantMap map;
 
   QChar unicode_char (0x00ff);
   QString unicode_string;
   unicode_string.setUnicode(&unicode_char, 1);
-  unicode_string = "Queensr" + unicode_string + "che";
+  unicode_string = QLatin1String("Queensr") + unicode_string + QLatin1String("che");
   
-  map.insert ("artist", unicode_string);
+  map.insert (QLatin1String("artist"), unicode_string);
   QVariant expected (map);
 
   JSonDriver driver;
@@ -107,14 +107,14 @@ void TestJSonDriver::parseNonAsciiString() {
 
 void TestJSonDriver::parseMultipleObject() {
   //put also some extra spaces inside the json string
-  QString json = "{ \"foo\":\"bar\",\n\"number\" : 51.3 , \"array\":[\"item1\", 123]}";
+  QByteArray json = "{ \"foo\":\"bar\",\n\"number\" : 51.3 , \"array\":[\"item1\", 123]}";
   QVariantMap map;
-  map.insert ("foo", "bar");
-  map.insert ("number", 51.3);
+  map.insert (QLatin1String("foo"), QLatin1String("bar"));
+  map.insert (QLatin1String("number"), 51.3);
   QVariantList list;
-  list.append (QString("item1"));
-  list.append (QString("123"));
-  map.insert ("array", list);
+  list.append (QLatin1String("item1"));
+  list.append (QLatin1String("123"));
+  map.insert (QLatin1String("array"), list);
   QVariant expected (map);
 
   JSonDriver driver;
@@ -122,15 +122,15 @@ void TestJSonDriver::parseMultipleObject() {
   QVariant result = driver.parse (json, &ok);
   QVERIFY (ok);
   QCOMPARE(result, expected);
-  QVERIFY (result.toMap()["number"].canConvert<float>());
-  QVERIFY (result.toMap()["array"].canConvert<QVariantList>());
+  QVERIFY (result.toMap().value(QLatin1String("number")).canConvert<float>());
+  QVERIFY (result.toMap().value(QLatin1String("array")).canConvert<QVariantList>());
 }
 
 void TestJSonDriver::parseUrl(){
   //"http:\/\/www.last.fm\/venue\/8926427"
-  QString json = "[\"http:\\/\\/www.last.fm\\/venue\\/8926427\"]";
+  QByteArray json = "[\"http:\\/\\/www.last.fm\\/venue\\/8926427\"]";
   QVariantList list;
-  list.append (QVariant(QString("http://www.last.fm/venue/8926427")));
+  list.append (QVariant(QLatin1String("http://www.last.fm/venue/8926427")));
   QVariant expected (list);
 
   JSonDriver driver;
@@ -141,10 +141,10 @@ void TestJSonDriver::parseUrl(){
 }
 
  void TestJSonDriver::parseSimpleArray() {
-  QString json = "[\"foo\",\"bar\"]";
+  QByteArray json = "[\"foo\",\"bar\"]";
   QVariantList list;
-  list.append (QVariant(QString("foo")));
-  list.append (QVariant(QString("bar")));
+  list.append (QLatin1String("foo"));
+  list.append (QLatin1String("bar"));
   QVariant expected (list);
 
   JSonDriver driver;
@@ -156,18 +156,18 @@ void TestJSonDriver::parseUrl(){
 
 void TestJSonDriver::parseMultipleArray() {
   //put also some extra spaces inside the json string
-  QString json = "[ {\"foo\":\"bar\"},\n\"number\",51.3 , [\"item1\", 123]]";
+  QByteArray json = "[ {\"foo\":\"bar\"},\n\"number\",51.3 , [\"item1\", 123]]";
   QVariantMap map;
-  map.insert ("foo", "bar");
+  map.insert (QLatin1String("foo"), QLatin1String("bar"));
 
   QVariantList array;
-  array.append (QString("item1"));
+  array.append (QLatin1String("item1"));
   array.append (123);
   
   QVariantList list;
   list.append (map);
-  list.append (QString("number"));
-  list.append (QString("51.3"));
+  list.append (QLatin1String("number"));
+  list.append (QLatin1String("51.3"));
   list.append ((QVariant) array);
 
   QVariant expected (list);
@@ -180,13 +180,13 @@ void TestJSonDriver::parseMultipleArray() {
 }
 
 void TestJSonDriver::testTrueFalseNullValues() {
-  QString json = "[true,false, null, {\"foo\" : true}]";
+  QByteArray json = "[true,false, null, {\"foo\" : true}]";
   QVariantList list;
   list.append (QVariant(true));
   list.append (QVariant(false));
   list.append (QVariant());
   QVariantMap map;
-  map.insert ("foo", true);
+  map.insert (QLatin1String("foo"), true);
   list.append (map);
   QVariant expected (list);
 
@@ -201,12 +201,12 @@ void TestJSonDriver::testTrueFalseNullValues() {
 }
 
 void TestJSonDriver::testEscapeChars() {
-  QString json = "[\"\\b \\f \\n \\r \\t \", \" \\\\ \\/ \\\" \", \"http://foo.com\"]";
+  QByteArray json = "[\"\\b \\f \\n \\r \\t \", \" \\\\ \\/ \\\" \", \"http://foo.com\"]";
 
   QVariantList list;
-  list.append (QVariant("\b \f \n \r \t "));
-  list.append (QVariant(" \\\\ / \\\" "));
-  list.append (QVariant("http://foo.com"));
+  list.append (QLatin1String("\b \f \n \r \t "));
+  list.append (QLatin1String(" \\ / \" "));
+  list.append (QLatin1String("http://foo.com"));
 
   QVariant expected (list);
 
@@ -214,11 +214,12 @@ void TestJSonDriver::testEscapeChars() {
   bool ok;
   QVariant result = driver.parse (json, &ok);
   QVERIFY (ok);
+  QCOMPARE(result.toList().size(), expected.toList().size() );
   QCOMPARE(result, expected);
 }
 
 void TestJSonDriver::testNumbers() {
-  QString json = "[1,2.4, -100, -3.4, 1.00004, 01.01, -5e+, 2e,3e+,4.3E,5.4E-]";
+  QByteArray json = "[1,2.4, -100, -3.4, 1.00004, 01.01, -5e+, 2e,3e+,4.3E,5.4E-]";
   QVariantList list;
   list.append (QVariant(1));
   list.append (QVariant(2.4));
@@ -226,11 +227,11 @@ void TestJSonDriver::testNumbers() {
   list.append (QVariant(-3.4));
   list.append (QVariant(1.00004));
   list.append (QVariant(1.01));
-  list.append (QVariant("-5e+"));
-  list.append (QVariant("2e"));
-  list.append (QVariant("3e+"));
-  list.append (QVariant("4.3E"));
-  list.append (QVariant("5.4E-"));
+  list.append (QLatin1String("-5e+"));
+  list.append (QLatin1String("2e"));
+  list.append (QLatin1String("3e+"));
+  list.append (QLatin1String("4.3E"));
+  list.append (QLatin1String("5.4E-"));
   QVariant expected (list);
 
   JSonDriver driver;
@@ -248,26 +249,26 @@ void TestJSonDriver::testNumbers() {
 
 void TestJSonDriver::testReadWriteEmptyDocument()
 {
-  QString json = QString("");
+  QByteArray json = "";
   JSonDriver driver;
   bool ok;
   QVariant result = driver.parse( json, &ok );
   QVERIFY(ok);
   Serializer serializer;
-  const QString serialized = serializer.serialize( result );
+  const QByteArray serialized = serializer.serialize( result );
   QVERIFY( !serialized.isNull() );
   QVERIFY( serialized.isEmpty() );
 }
 
 void TestJSonDriver::testReadWrite()
 {
-  QFETCH( QString, json );
+  QFETCH( QByteArray, json );
   JSonDriver driver;
   bool ok;
   QVariant result = driver.parse( json, &ok );
   QVERIFY(ok);
   Serializer serializer;
-  const QString serialized = serializer.serialize( result );
+  const QByteArray serialized = serializer.serialize( result );
 //  qWarning() << serialized;
   QVariant writtenThenRead = driver.parse( serialized, &ok );
   QCOMPARE( result, writtenThenRead );
@@ -275,25 +276,25 @@ void TestJSonDriver::testReadWrite()
 
 void TestJSonDriver::testReadWrite_data()
 {
-    QTest::addColumn<QString>( "json" );
+    QTest::addColumn<QByteArray>( "json" );
 
     // array tests
-    QTest::newRow( "empty array" ) << "[]";
-    QTest::newRow( "basic array" ) << "[\"foo\",\"bar\"]";
-    QTest::newRow( "single int array" ) << "[6]";
-    QTest::newRow( "int array" ) << "[6,5,6,7]";
-    const QString json = "[1,2.4, -100, -3.4, -5e+, 2e,3e+,4.3E,5.4E-]";
-    QTest::newRow( "array of various numbers" ) << json;
+    QTest::newRow( "empty array" ) << QByteArray("[]");
+    QTest::newRow( "basic array" ) << QByteArray("[\"foo\",\"bar\"]");
+    QTest::newRow( "single int array" ) << QByteArray("[6]");
+    QTest::newRow( "int array" ) << QByteArray("[6,5,6,7]");
+    const QByteArray json = "[1,2.4, -100, -3.4, -5e+, 2e,3e+,4.3E,5.4E-]";
+    QTest::newRow( QByteArray("array of various numbers") ) << json;
 
     // document tests
-    QTest::newRow( "empty object" ) << "{}";
-    QTest::newRow( "basic document" ) << "{\"foo\":\"bar\"}";
-    QTest::newRow( "object with ints" ) << "{\"foo\":6}";
-    QString json2 = "{ \"foo\":\"bar\",\n\"number\" : 51.3 , \"array\":[\"item1\", 123]}";
+    QTest::newRow( "empty object" ) << QByteArray("{}");
+    QTest::newRow( "basic document" ) << QByteArray("{\"foo\":\"bar\"}");
+    QTest::newRow( "object with ints" ) << QByteArray("{\"foo\":6}");
+    const QByteArray json2 = "{ \"foo\":\"bar\",\n\"number\" : 51.3 , \"array\":[\"item1\", 123]}";
     QTest::newRow( "complicated document" ) << json2;
 
     // more complex cases
-    const QString json3 = "[ {\"foo\":\"bar\"},\n\"number\",51.3 , [\"item1\", 123]]";
+    const QByteArray json3 = "[ {\"foo\":\"bar\"},\n\"number\",51.3 , [\"item1\", 123]]";
     QTest::newRow( "complicated array" ) << json3;
 }
 

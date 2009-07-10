@@ -50,6 +50,7 @@ namespace yy
 /* First part of user declarations.  */
 #line 25 "json_parser.yy"
 
+  #include <QtCore/QByteArray>
   #include <QtCore/QDebug>
   #include <QtCore/QMap>
   #include <QtCore/QString>
@@ -68,7 +69,7 @@ namespace yy
 
 
 /* Line 35 of lalr1.cc.  */
-#line 72 "json_parser.hh"
+#line 73 "json_parser.hh"
 
 #include "location.hh"
 
@@ -145,7 +146,7 @@ namespace yy
      NULL_VAL = 13,
      QUOTMARKOPEN = 14,
      QUOTMARKCLOSE = 15,
-     WORD = 16
+     STRING = 16
    };
 
     };
@@ -240,7 +241,7 @@ namespace yy
     static const unsigned char yytable_[];
     static const signed char yytable_ninf_;
 
-    static const signed char yycheck_[];
+    static const unsigned char yycheck_[];
 
     /// For a state, its accessing symbol.
     static const unsigned char yystos_[];

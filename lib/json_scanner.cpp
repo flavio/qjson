@@ -27,8 +27,10 @@
 #include <QtCore/QDebug>
 #include <QtCore/QRegExp>
 
+#include <cassert>
+
 bool ishexnstring(const QString& string) {
-  for (unsigned int i = 0; i < string.length(); i++) {
+  for (int i = 0; i < string.length(); i++) {
     if (isxdigit(string[i] == 0))
       return false;
   }
@@ -40,6 +42,84 @@ JSonScanner::JSonScanner(QIODevice* io)
 {
   m_quotmarkClosed = true;
   m_quotmarkCount = 0;
+}
+
+static QString unescape( const QByteArray& ba, bool* ok ) {
+  assert( ok );
+  *ok = false;
+  QString res;
+  QByteArray seg;
+  bool bs = false;
+  for ( int i = 0, size = ba.size(); i < size; ++i ) {
+    const char ch = ba[i];
+    if ( !bs ) {
+      if ( ch == '\\' )
+        bs = true;
+      else
+        seg += ch;
+    } else {
+      bs = false;
+      switch ( ch ) {
+        case 'b':
+          seg += '\b';
+          break;
+        case 'f':
+          seg += '\f';
+          break;
+        case 'n':
+          seg += '\n';
+          break;
+        case 'r':
+          seg += '\r';
+          break;
+        case 't':
+          seg += '\t';
+          break;
+        case 'u':
+        {
+          res += QString::fromUtf8( seg );
+          seg.clear();
+
+          if ( i > size - 5 ) {
+            //error
+            return QString();
+          }
+
+          const QString hex_digit1 = QString::fromUtf8( ba.mid( i + 1, 2 ) );
+          const QString hex_digit2 = QString::fromUtf8( ba.mid( i + 3, 2 ) );
+          i += 4;
+
+          if ( !ishexnstring( hex_digit1 ) || !ishexnstring( hex_digit2 ) ) {
+            qCritical() << "Not an hex string:" << hex_digit1 << hex_digit2;
+            return QString();
+          }
+          bool hexOk;
+          const ushort hex_code1 = hex_digit1.toShort( &hexOk, 16 );
+          if (!hexOk) {
+            qCritical() << "error converting hex value to short:" << hex_digit1;
+            return QString();
+          }
+          const ushort hex_code2 = hex_digit2.toShort( &hexOk, 16 );
+          if (!hexOk) {
+            qCritical() << "error converting hex value to short:" << hex_digit2;
+            return QString();
+          }
+
+          res += QChar(hex_code2, hex_code1);
+          break;
+        }
+        case '\\':
+          seg  += '\\';
+          break;
+        default:
+          seg += ch;
+          break;
+      }
+    }
+  }
+  res += QString::fromUtf8( seg );
+  *ok = true;
+  return res;
 }
 
 int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
@@ -79,16 +159,16 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
   if (m_quotmarkClosed && ((ch == 't') || (ch == 'T')
       || (ch == 'n') || (ch == 'N'))) {
     // check true & null value
-    QString buf = m_io->peek(3);
-  
+    const QByteArray buf = m_io->peek(3).toLower();
+
     if (buf.length() == 3) {
-      if (QString::compare ("rue", buf, Qt::CaseInsensitive) == 0) {
+      if (buf == "rue") {
         m_io->read (3);
         yylloc->columns(3);
         qjsonDebug() << "JSonScanner::yylex - TRUE_VAL";
         return yy::json_parser::token::TRUE_VAL;
       }
-      else if (QString::compare ("ull", buf, Qt::CaseInsensitive) == 0) {
+      else if (buf == "ull") {
         m_io->read (3);
         yylloc->columns(3);
         qjsonDebug() << "JSonScanner::yylex - NULL_VAL";
@@ -98,9 +178,9 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
   }
   else if (m_quotmarkClosed && ((ch == 'f') || (ch == 'F'))) {
     // check false value
-    QString buf = m_io->peek(4);
+    const QByteArray buf = m_io->peek(4).toLower();
     if (buf.length() == 4) {
-      if (QString::compare ("alse", buf, Qt::CaseInsensitive) == 0) {
+      if (buf == "alse") {
         m_io->read (4);
         yylloc->columns(4);
         qjsonDebug() << "JSonScanner::yylex - FALSE_VAL";
@@ -109,111 +189,76 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
     }
   }
   else if (m_quotmarkClosed && ((ch == 'e') || (ch == 'E'))) {
-    QString ret (ch);
-    QString buf = m_io->peek(1);
+    QByteArray ret(1, ch);
+    const QByteArray buf = m_io->peek(1);
     if (!buf.isEmpty()) {
       if ((buf[0] == '+' ) || (buf[0] == '-' )) {
         ret += m_io->read (1);  
         yylloc->columns();
       }
     }
-    *yylval = QVariant(QString(ret));
+    *yylval = QVariant(QString::fromUtf8(ret));
     return yy::json_parser::token::E;
   }
   
-  if ((ch != '"') && (!m_quotmarkClosed)) {
+  if (ch != '"' && !m_quotmarkClosed) {
     // we're inside a " " block
-    if (ch == '\\') {
-      char buf;
-      if (m_io->getChar (&buf))
-      {
-        yylloc->columns();
-        if (((buf != '"') && (buf != '\\') && (buf != '/') && 
-            (buf != 'b') && (buf != 'f') && (buf != 'n') &&
-            (buf != 'r') && (buf != 't') && (buf != 'u'))) {
-              qjsonDebug() << "Just read" << buf;
-              qjsonDebug() << "JSonScanner::yylex - error decoding escaped sequence";
-              return -1;
-        }
-      } else {
-        qCritical() << "JSonScanner::yylex - error decoding escaped sequence : io error";
-        return -1;
-      }
-    
-      QString sequence ("\\");
-      switch (buf) {
-        case 'b':
-          sequence = '\b';
-          break;
-        case 'f':
-          sequence = '\f';
-          break;
-        case 'n':
-          sequence = '\n';
-          break;
-        case 'r':
-          sequence = '\r';
-          break;            
-        case 't':
-          sequence = '\t';
-          break;
-        case 'u':
-        {
-          QString hex_digits;
-          hex_digits = m_io->read (4);
-          if ( !hex_digits.isEmpty())
-          {
-            yylloc->columns(4);
-            if (ishexnstring(hex_digits)) {
-              bool ok;
-              ushort hex_code = hex_digits.toShort ( &ok, 16);
-              if (!ok) {
-                qCritical() << "error converting hex value to short:" << hex_digits;
-                return -1;
-              } else {
-                QChar unicode_char (hex_code);
-                sequence.setUnicode(&unicode_char, 1);                
-              }
-            } else {
-              qCritical() << "Not an hex string:" << hex_digits;
-              return -1;
-            }
-          } else {
-            qCritical() << "JSonScanner::yylex - error decoding escaped sequence : io error";
-            return -1;
-          }
-          break;
-        }          
-        case '/':
-          sequence = '/';
-          break;
-        default:
-          sequence += buf;
-          break;
-      }
 
-      *yylval = QVariant(QString(sequence));
-      qjsonDebug() << "JSonScanner::yylex - yy::json_parser::token::WORD ("
-               << yylval->toString() << ")";
-      return yy::json_parser::token::WORD;
-    }
-    else {
-      *yylval = QVariant(QString(ch));
-      qjsonDebug() << "JSonScanner::yylex - yy::json_parser::token::WORD ("
-             << yylval->toString() << ")";
-      return yy::json_parser::token::WORD;
+    QByteArray raw;
+    raw += ch;
+    char prevCh = ch;
+    while ( true ) {
+      char nextCh;
+      m_io->peek(&nextCh, 1);
+
+      if ( prevCh != '\\' && nextCh == '\"' ) {
+        bool ok;
+        const QString str = unescape( raw, &ok );
+        *yylval = ok ? str : QString();
+        return ok ? yy::json_parser::token::STRING : -1;
+      }
+#if 0
+      if ( prevCh == '\\' && nextCh != '"' && nextCh != '\\' && nextCh != '/' &&
+           nextCh != 'b' && nextCh != 'f' && nextCh != 'n' &&
+           nextCh != 'r' && nextCh != 't' && nextCh != 'u') {
+        qjsonDebug() << "Just read" << nextCh;
+        qjsonDebug() << "JSonScanner::yylex - error decoding escaped sequence";
+        return -1;
+       }
+#endif
+      m_io->read(1); // consume
+      raw += nextCh;
+      prevCh = nextCh;
+#if 0
+      if (nextCh == '\\') {
+        char buf;
+        if (m_io->getChar (&buf)) {
+          yylloc->columns();
+          if (((buf != '"') && (buf != '\\') && (buf != '/') &&
+              (buf != 'b') && (buf != 'f') && (buf != 'n') &&
+              (buf != 'r') && (buf != 't') && (buf != 'u'))) {
+                qjsonDebug() << "Just read" << buf;
+                qjsonDebug() << "JSonScanner::yylex - error decoding escaped sequence";
+                return -1;
+          }
+        } else {
+          qCritical() << "JSonScanner::yylex - error decoding escaped sequence : io error";
+          return -1;
+        }
+      }
+#endif
     }
   }
-  else if ((isdigit(ch) != 0) && (m_quotmarkClosed)) {
-    *yylval = QVariant(QString(ch));
+  else if (isdigit(ch) != 0 && m_quotmarkClosed) {
+    *yylval = QVariant(QString::fromLatin1(QByteArray(&ch,1)));
     qjsonDebug() << "JSonScanner::yylex - yy::json_parser::token::DIGIT";
     return yy::json_parser::token::DIGIT;
   }
   else if (isalnum(ch) != 0) {
-    *yylval = QVariant(QString(ch));
+    *yylval = QVariant(QString(QChar::fromLatin1(ch)));
     qjsonDebug() << "JSonScanner::yylex - yy::json_parser::token::WORD ("
              << ch << ")";
-    return yy::json_parser::token::WORD;
+    return yy::json_parser::token::STRING;
   }
   else if (ch == ':') {
     // set yylval

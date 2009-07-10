@@ -45,12 +45,12 @@ void ParserRunnable::run()
 
   bool ok;
   JSonDriver driver;
-  QVariant result = driver.parse (d->m_data, &ok);
+  QVariant result = driver.parse (d->m_data.toUtf8(), &ok);
   if (ok) {
     qDebug() << "successfully converted json item to QVariant object";
     emit parsingFinished(result, true, QString());
   } else {
-    QString errorText = QString("An error occured while parsing json: %1").arg(driver.error());
+    QString errorText = tr("An error occured while parsing json: %1").arg(driver.error());
     qCritical() << errorText;
     emit parsingFinished(QVariant(), false, errorText);
   }
