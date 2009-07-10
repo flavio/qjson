@@ -21,16 +21,16 @@
 #ifndef PARSERRUNNABLE_H
 #define PARSERRUNNABLE_H
 
+#include "qjson_export.h"
+
 #include <QtCore/QObject>
 #include <QtCore/QRunnable>
 #include <QtCore/QVariant>
 
-class ParserRunnablePrivate;
-
 /**
 * @brief Convenience class for converting JSON data to QVariant objects using a dedicated thread
 */
-class ParserRunnable  : public QObject, public QRunnable
+class QJSON_EXPORT ParserRunnable  : public QObject, public QRunnable
 {
   Q_OBJECT
   public:
@@ -39,7 +39,8 @@ class ParserRunnable  : public QObject, public QRunnable
     * @param data contains the JSON data that has to be converted
     * @param parent parent of the object
     **/
-    explicit ParserRunnable(QString& data, QObject* parent = 0);
+    explicit ParserRunnable(const QByteArray& data, QObject* parent = 0);
+    ~ParserRunnable();
 
     void run();
 
@@ -54,8 +55,8 @@ class ParserRunnable  : public QObject, public QRunnable
 
   private:
     Q_DISABLE_COPY(ParserRunnable)
-
-    ParserRunnablePrivate *d;
+    class Private;
+    Private* const d;
 };
 
 #endif // PARSERRUNNABLE_H

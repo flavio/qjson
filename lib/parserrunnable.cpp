@@ -24,19 +24,24 @@
 
 #include <QtCore/QDebug>
 
-class ParserRunnablePrivate
+class ParserRunnable::Private
 {
   public:
-    QString m_data;
+    QByteArray m_data;
 };
 
-ParserRunnable::ParserRunnable(QString& data, QObject* parent)
+ParserRunnable::ParserRunnable(const QByteArray& data, QObject* parent)
     : QObject(parent),
       QRunnable(),
-      d(new ParserRunnablePrivate)
+      d(new Private)
 {
   d->m_data = data;
   qRegisterMetaType<QVariant>("QVariant");
+}
+
+ParserRunnable::~ParserRunnable()
+{
+  delete d;
 }
 
 void ParserRunnable::run()
@@ -45,7 +50,7 @@ void ParserRunnable::run()
 
   bool ok;
   JSonDriver driver;
-  QVariant result = driver.parse (d->m_data.toUtf8(), &ok);
+  QVariant result = driver.parse (d->m_data, &ok);
   if (ok) {
     qDebug() << "successfully converted json item to QVariant object";
     emit parsingFinished(result, true, QString());
