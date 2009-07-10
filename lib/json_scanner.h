@@ -29,18 +29,17 @@
 
 #define YYSTYPE QVariant
 
-class JSonDriverPrivate;
+#include "json_driver_p.h"
 
 namespace yy {
   class location;
-  int yylex(YYSTYPE *yylval, yy::location *yylloc, JSonDriverPrivate* driver);
+  int yylex(YYSTYPE *yylval, yy::location *yylloc, QJSon::ParserPrivate* driver);
 }
 
 class JSonScanner
 {
     public:
-        JSonScanner(QIODevice* io);
-        virtual ~JSonScanner() {};
+        explicit JSonScanner(QIODevice* io);
         int yylex(YYSTYPE* yylval, yy::location *yylloc);
         
     protected:

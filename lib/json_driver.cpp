@@ -27,35 +27,37 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QDebug>
 
-JSonDriverPrivate::JSonDriverPrivate() :
+using namespace QJSon;
+
+ParserPrivate::ParserPrivate() :
     m_scanner(0)
   , m_negate(false)
   , m_error(false)
 {
 }
 
-JSonDriverPrivate::~JSonDriverPrivate()
+ParserPrivate::~ParserPrivate()
 {
   delete m_scanner;
 }
 
-void JSonDriverPrivate::setError(QString errorMsg, int errorLine) {
+void ParserPrivate::setError(QString errorMsg, int errorLine) {
   m_error = true;
   m_errorMsg = errorMsg;
   m_errorLine = errorLine;
 }
 
-JSonDriver::JSonDriver() :
-    d(new JSonDriverPrivate)
+Parser::Parser() :
+    d(new ParserPrivate)
 {
 }
 
-JSonDriver::~JSonDriver()
+Parser::~Parser()
 {
   delete d;
 }
 
-QVariant JSonDriver::parse (QIODevice* io, bool* ok)
+QVariant Parser::parse (QIODevice* io, bool* ok)
 {
   d->m_errorMsg.clear();
   delete d->m_scanner;
@@ -92,7 +94,7 @@ QVariant JSonDriver::parse (QIODevice* io, bool* ok)
   return d->m_result;
 }
 
-QVariant JSonDriver::parse(const QByteArray& jsonString, bool* ok) {
+QVariant Parser::parse(const QByteArray& jsonString, bool* ok) {
   QBuffer buffer;
   buffer.open(QBuffer::ReadWrite);
   buffer.write(jsonString);
@@ -100,12 +102,12 @@ QVariant JSonDriver::parse(const QByteArray& jsonString, bool* ok) {
   return parse (&buffer, ok);
 }
 
-QString JSonDriver::error() const
+QString Parser::error() const
 {
   return d->m_errorMsg;
 }
 
-int JSonDriver::errorLine() const
+int Parser::errorLine() const
 {
   return d->m_errorLine;
 }

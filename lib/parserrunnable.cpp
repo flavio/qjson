@@ -23,8 +23,11 @@
 #include "json_driver.h"
 
 #include <QtCore/QDebug>
+#include <QtCore/QVariant>
 
-class ParserRunnable::Private
+using namespace QJSon;
+
+class QJSon::ParserRunnable::Private
 {
   public:
     QByteArray m_data;
@@ -49,13 +52,13 @@ void ParserRunnable::run()
   qDebug() << Q_FUNC_INFO;
 
   bool ok;
-  JSonDriver driver;
-  QVariant result = driver.parse (d->m_data, &ok);
+  Parser parser;
+  QVariant result = parser.parse (d->m_data, &ok);
   if (ok) {
     qDebug() << "successfully converted json item to QVariant object";
     emit parsingFinished(result, true, QString());
   } else {
-    QString errorText = tr("An error occured while parsing json: %1").arg(driver.error());
+    const QString errorText = tr("An error occured while parsing json: %1").arg(parser.error());
     qCritical() << errorText;
     emit parsingFinished(QVariant(), false, errorText);
   }

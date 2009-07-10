@@ -22,25 +22,34 @@
 #ifndef _JSON_DRIVER_P
 #define _JSON_DRIVER_P
 
+#include "json_driver.h"
+
 #include <QtCore/QString>
 #include <QtCore/QVariant>
 
 class JSonScanner;
 
-class JSonDriverPrivate
-{
-  public:
-    JSonDriverPrivate();
-    ~JSonDriverPrivate();
-      
-    void setError(QString errorMsg, int line);
+namespace yy {
+  class json_parser;
+}
 
-    JSonScanner* m_scanner;
-    bool m_negate;
-    bool m_error;
-    int m_errorLine;
-    QString m_errorMsg;
-    QVariant m_result;
-};
+namespace QJSon {
+
+  class ParserPrivate
+  {
+    public:
+      ParserPrivate();
+      ~ParserPrivate();
+
+      void setError(QString errorMsg, int line);
+
+      JSonScanner* m_scanner;
+      bool m_negate;
+      bool m_error;
+      int m_errorLine;
+      QString m_errorMsg;
+      QVariant m_result;
+  };
+}
 
 #endif
