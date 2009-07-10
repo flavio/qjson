@@ -1,7 +1,27 @@
+/* This file is part of qjson
+  *
+  * Copyright (C) 2009 Till Adam <adam@kde.org>
+  *
+  * This library is free software; you can redistribute it and/or
+  * modify it under the terms of the GNU Library General Public
+  * License as published by the Free Software Foundation; either
+  * version 2 of the License, or (at your option) any later version.
+  *
+  * This library is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  * Library General Public License for more details.
+  *
+  * You should have received a copy of the GNU Library General Public License
+  * along with this library; see the file COPYING.LIB.  If not, write to
+  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+  * Boston, MA 02110-1301, USA.
+  */
+
 #include "serializer.h"
 
+#include <QDataStream>
 #include <QStringList>
-#include <QTextStream>
 #include <QVariant>
 
 using namespace QJSon;
@@ -37,9 +57,9 @@ void Serializer::serialize( const QVariant& v, QIODevice* io, bool* ok )
     return;
   }
 
-  const QString str = serialize( v );
+  const QByteArray str = serialize( v );
   if ( !str.isNull() ) {
-    QTextStream stream( io );
+    QDataStream stream( io );
     stream << str;
   } else {
     if ( ok )
@@ -53,43 +73,52 @@ static QString sanitizeString( const QString& s )
   return str;
 }
 
-QString Serializer::serialize( const QVariant &v )
+static QByteArray join( const QList<QByteArray>& list, const QByteArray& sep ) {
+  QByteArray res;
+  Q_FOREACH( const QByteArray& i, list ) {
+    if ( !res.isEmpty() )
+      res += sep;
+    res += i;
+  }
+  return res;
+}
+
+QByteArray Serializer::serialize( const QVariant &v )
 {
   if ( !v.isValid() )
-    return QString(""); // no parse error
-  QString str;
+    return ""; // no parse error
+  QByteArray str;
   bool error = false;
 
   // two major cases, either it's an array or ... not
   if ( v.canConvert<QVariantList>() ) {
     const QVariantList list = v.toList();
-    QStringList values;
-    Q_FOREACH( const QVariant& v, list ) {
+    QList<QByteArray> values;
+    Q_FOREACH( const QVariant& v, list )
       values << serialize( v );
-    }
-    str = QLatin1String("[ ") + values.join(", ") + QLatin1String(" ]");
+    str = "[ " + join( values, ", " ) + " ]";
   } else {
     // not a list, so it must be an object
     if ( !v.canConvert<QVariantMap>() ) {
       // not a map, so it must be a value
       if ( v.type() == QVariant::String )
-        str = sanitizeString( v.toString() );
+        str = sanitizeString( v.toString() ).toUtf8();
       else
-        str = v.toString();
+        str = v.toByteArray();
     } else {
       const QVariantMap vmap = v.toMap();
       QMapIterator<QString, QVariant> it( vmap );
-      str = QLatin1String("{ ");
+      str = "{ ";
       while ( it.hasNext() ) {
         it.next();
-        str += sanitizeString(it.key()) + QLatin1String(" : ") + serialize(it.value());
+        str += sanitizeString(it.key()).toUtf8() + " : " + serialize(it.value());
       }
-      str += QLatin1String(" }");
+      str += " }";
     }
   }
   if ( !error )
     return str;
   else
-    return QString();
+    return QByteArray();
 }
 

@@ -47,12 +47,12 @@ class QJSON_EXPORT JSonDriver
 
     /**
     * This is a method provided for convenience.
-    * @param jsonString string containing the JSON object representation
+    * @param jsonData data containing the JSON object representation
     * @param ok if a conversion error occurs, *ok is set to false; otherwise *ok is set to true.
     * @returns a QVariant object generated from the JSON string
     * /sa error
     */
-    QVariant parse(const QString& jsonString, bool* ok = 0);
+    QVariant parse(const QByteArray& jsonData, bool* ok = 0);
 
     /**
     * This method returns the error message

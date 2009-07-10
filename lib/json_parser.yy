@@ -23,6 +23,7 @@
 %define "parser_class_name" "json_parser"
 
 %{
+  #include <QtCore/QByteArray>
   #include <QtCore/QDebug>
   #include <QtCore/QMap>
   #include <QtCore/QString>
@@ -67,7 +68,7 @@
 %token QUOTMARKOPEN 14 "open quotation mark"
 %token QUOTMARKCLOSE 15 "close quotation mark"
 
-%token WORD 16 "character"
+%token STRING 16 "string"
 
 // define the initial token
 %start start
@@ -86,7 +87,7 @@ data: object {$$ = $1; }
       | error
           {
             qCritical()<< "json_parser - syntax error found, "
-                    << "forcing exit";
+                    << "forcing abort";
             YYABORT;
           }
       | END;
@@ -144,43 +145,35 @@ number: int {
             $$.setValue($1.toInt());
           }
         | int fract {
-            QString value = ($1.toString().append($2.toString()));
+            const QByteArray value = $1.toByteArray() + $2.toByteArray();
             $$ = QVariant(QVariant::Double);
             $$.setValue(value.toDouble());
           }
-        | int exp {  $$ = QVariant ($1.toString().append($2.toString())); }
+        | int exp {  $$ = QVariant ($1.toByteArray() + $2.toByteArray()); }
         | int fract exp {
-            QString value = $1.toString();
-            value += $2.toString();
-            value += $3.toString();
+            const QByteArray value = $1.toByteArray() + $2.toByteArray() + $3.toByteArray();
             $$ = QVariant (value);
           };
 
-int:  DIGIT digits { $$ = QVariant ($1.toString().append($2.toString())); }
-      | MINUS DIGIT digits { $$ = QVariant ($3.toString().prepend($2.toString().prepend("-"))); };
+int:  DIGIT digits { $$ = QVariant ($1.toByteArray() + $2.toByteArray()); }
+      | MINUS DIGIT digits { $$ = QVariant (QByteArray("-") + $2.toByteArray() + $3.toByteArray()); };
 
-digits: /* empty */ { $$ = QVariant (""); }
+digits: /* empty */ { $$ = QVariant (QByteArray("")); }
         | DIGIT digits {
-          QString digits = $2.toString();
-          digits.prepend ($1.toString());
-          $$ = QVariant(digits);
+          $$ = QVariant($1.toByteArray() + $2.toByteArray());
         };
 
 fract: DOT digits {
-          QString digits = $2.toString();
-          digits.prepend (".");
-          $$ = QVariant(digits);
+          $$ = QVariant(QByteArray(".") + $2.toByteArray());
         };
 
-exp: E digits { $$ = QVariant($1.toString().append($2.toString())); };
+exp: E digits { $$ = QVariant($1.toByteArray() + $2.toByteArray()); };
 
 string: QUOTMARKOPEN string_arg QUOTMARKCLOSE { $$ = $2 };
 
-string_arg: /*empty */ { $$ = QVariant (""); }
-            | string_arg WORD {
-                QString string = $1.toString();
-                string += $2.toString();
-                $$ = QVariant(string);
+string_arg: /*empty */ { $$ = QVariant (QByteArray("")); }
+            | STRING {
+                $$ = $1;
               };
 
 %%
@@ -195,7 +188,7 @@ int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, JSonDriverPrivate* driver)
   snprintf (buff, 50 * sizeof (char), "%i", ret);
 
   qjsonDebug() << "json_parser::yylex - calling scanner yylval==|"
-           << yylval->toString() << "|, ret==|" << buff << "|";
+           << yylval->toByteArray() << "|, ret==|" << buff << "|";
   
   return ret;
 }
@@ -208,5 +201,5 @@ void yy::json_parser::error (const yy::location& yyloc,
   qjsonDebug() << yyloc.end.line;
   qjsonDebug() << yyloc.end.column;*/
   qjsonDebug() << "json_parser::error [line" << yyloc.end.line << "] -" << error.c_str() ;
-  driver->setError(error.c_str(), yyloc.end.line);  
+  driver->setError(QString::fromLatin1(error.c_str()), yyloc.end.line);
 }

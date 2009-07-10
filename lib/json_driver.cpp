@@ -92,10 +92,10 @@ QVariant JSonDriver::parse (QIODevice* io, bool* ok)
   return d->m_result;
 }
 
-QVariant JSonDriver::parse(const QString& jsonString, bool* ok) {
+QVariant JSonDriver::parse(const QByteArray& jsonString, bool* ok) {
   QBuffer buffer;
   buffer.open(QBuffer::ReadWrite);
-  buffer.write(jsonString.toAscii());
+  buffer.write(jsonString);
   buffer.seek(0);
   return parse (&buffer, ok);
 }
