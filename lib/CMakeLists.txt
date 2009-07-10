@@ -11,6 +11,7 @@ install(FILES
         json_driver.h
         parserrunnable.h
         serializer.h
+        serializerrunnable.h
         qjson_export.h
         DESTINATION ${INCLUDE_INSTALL_DIR}/qjson
 )
