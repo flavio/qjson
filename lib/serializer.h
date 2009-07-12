@@ -28,7 +28,7 @@ class QString;
 class QVariant;
 
 namespace QJSon {
-  class Serializer {
+  class QJSON_EXPORT Serializer {
   public:
     Serializer();
     ~Serializer();
