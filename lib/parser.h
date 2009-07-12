@@ -52,19 +52,22 @@ namespace QJSon {
       * @param jsonData data containing the JSON object representation
       * @param ok if a conversion error occurs, *ok is set to false; otherwise *ok is set to true.
       * @returns a QVariant object generated from the JSON string
-      * /sa error
+      * @sa errorString
+      * @sa errorLine
       */
       QVariant parse(const QByteArray& jsonData, bool* ok = 0);
 
       /**
       * This method returns the error message
       * @returns a QString object containing the error message of the last parse operation
+      * @sa errorLine
       */
       QString errorString() const;
 
       /**
       * This method returns line number where the error occurred
       * @returns the line number where the error occurred
+      * @sa errorString
       */
       int errorLine() const;
 
