@@ -50,6 +50,15 @@ set(QJSON_LIB_VERSION_STRING "${QJSON_LIB_MAJOR_VERSION}.${QJSON_LIB_MINOR_VERSI
 
 set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib${LIB_SUFFIX}" )
 
+# pkg-config
+IF (NOT WIN32)
+  CONFIGURE_FILE (${CMAKE_SOURCE_DIR}/QJson.pc.in
+                  ${CMAKE_CURRENT_BINARY_DIR}/QJson.pc
+                  @ONLY)
+  INSTALL (FILES ${CMAKE_CURRENT_BINARY_DIR}/QJson.pc
+           DESTINATION lib${LIB_SUFFIX}/pkgconfig)
+ENDIF (NOT WIN32)
+
 # Include the cmake file needed to use qt4
 INCLUDE( ${QT_USE_FILE} )
 
