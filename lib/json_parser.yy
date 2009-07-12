@@ -185,11 +185,8 @@ int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, QJSon::ParserPrivate* drive
   yylval->clear();
   int ret = scanner->yylex(yylval, yylloc);
 
-  char buff [50];
-  snprintf (buff, 50 * sizeof (char), "%i", ret);
-
   qjsonDebug() << "json_parser::yylex - calling scanner yylval==|"
-           << yylval->toByteArray() << "|, ret==|" << buff << "|";
+           << yylval->toByteArray() << "|, ret==|" << QString::number(ret) << "|";
   
   return ret;
 }
