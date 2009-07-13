@@ -142,7 +142,7 @@ namespace yy
 #endif
 
   /// Build a parser object.
-  json_parser::json_parser (QJSon::ParserPrivate* driver_yyarg)
+  json_parser::json_parser (QJson::ParserPrivate* driver_yyarg)
     : yydebug_ (false),
       yycdebug_ (&std::cerr),
       driver (driver_yyarg)
@@ -1062,7 +1062,7 @@ namespace yy
 #line 180 "json_parser.yy"
 
 
-int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, QJSon::ParserPrivate* driver)
+int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, QJson::ParserPrivate* driver)
 {
   JSonScanner* scanner = driver->m_scanner;
   yylval->clear();

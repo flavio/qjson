@@ -42,8 +42,8 @@
   #define YYERROR_VERBOSE 1
 %}
 
-%parse-param { QJSon::ParserPrivate* driver }
-%lex-param { QJSon::ParserPrivate* driver }
+%parse-param { QJson::ParserPrivate* driver }
+%lex-param { QJson::ParserPrivate* driver }
 
 %locations
 
@@ -179,7 +179,7 @@ string_arg: /*empty */ { $$ = QVariant (QByteArray("")); }
 
 %%
 
-int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, QJSon::ParserPrivate* driver)
+int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, QJson::ParserPrivate* driver)
 {
   JSonScanner* scanner = driver->m_scanner;
   yylval->clear();

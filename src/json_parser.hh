@@ -155,7 +155,7 @@ namespace yy
     typedef token::yytokentype token_type;
 
     /// Build a parser object.
-    json_parser (QJSon::ParserPrivate* driver_yyarg);
+    json_parser (QJson::ParserPrivate* driver_yyarg);
     virtual ~json_parser ();
 
     /// Parse.
@@ -314,7 +314,7 @@ namespace yy
 
 
     /* User arguments.  */
-    QJSon::ParserPrivate* driver;
+    QJson::ParserPrivate* driver;
   };
 }
 

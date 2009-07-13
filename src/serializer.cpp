@@ -24,7 +24,7 @@
 #include <QStringList>
 #include <QVariant>
 
-using namespace QJSon;
+using namespace QJson;
 
 class Serializer::SerializerPrivate {
 

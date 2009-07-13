@@ -50,7 +50,7 @@ class TestParser: public QObject
 
 Q_DECLARE_METATYPE(QVariant)
 
-using namespace QJSon;
+using namespace QJson;
 
 void TestParser::parseSimpleObject() {
   QByteArray json = "{\"foo\":\"bar\"}";

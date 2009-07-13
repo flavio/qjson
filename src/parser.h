@@ -26,7 +26,7 @@
 class QIODevice;
 class QVariant;
 
-namespace QJSon {
+namespace QJson {
 
   class ParserPrivate;
 

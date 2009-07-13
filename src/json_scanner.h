@@ -33,7 +33,7 @@
 
 namespace yy {
   class location;
-  int yylex(YYSTYPE *yylval, yy::location *yylloc, QJSon::ParserPrivate* driver);
+  int yylex(YYSTYPE *yylval, yy::location *yylloc, QJson::ParserPrivate* driver);
 }
 
 class JSonScanner
