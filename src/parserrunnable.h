@@ -28,7 +28,7 @@
 
 class QVariant;
 
-namespace QJSon {
+namespace QJson {
   /**
   * @brief Convenience class for converting JSON data to QVariant objects using a dedicated thread
   */

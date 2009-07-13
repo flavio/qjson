@@ -33,7 +33,7 @@ namespace yy {
   class json_parser;
 }
 
-namespace QJSon {
+namespace QJson {
 
   class ParserPrivate
   {

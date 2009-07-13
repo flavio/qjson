@@ -25,9 +25,9 @@
 #include <QtCore/QDebug>
 #include <QtCore/QVariant>
 
-using namespace QJSon;
+using namespace QJson;
 
-class QJSon::ParserRunnable::Private
+class QJson::ParserRunnable::Private
 {
   public:
     QByteArray m_data;

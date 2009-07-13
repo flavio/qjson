@@ -27,7 +27,7 @@ class QIODevice;
 class QString;
 class QVariant;
 
-namespace QJSon {
+namespace QJson {
   class QJSON_EXPORT Serializer {
   public:
     Serializer();

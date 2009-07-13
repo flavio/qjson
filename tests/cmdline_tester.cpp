@@ -26,7 +26,7 @@
 
 #include "parser.h"
 
-using namespace QJSon;
+using namespace QJson;
 
 int main(int argc, char *argv[]) {
   QCoreApplication app (argc, argv);

@@ -27,7 +27,7 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QDebug>
 
-using namespace QJSon;
+using namespace QJson;
 
 ParserPrivate::ParserPrivate() :
     m_scanner(0)
