@@ -9,7 +9,7 @@ IF(COMMAND cmake_policy)
 ENDIF(COMMAND cmake_policy)
 
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 set(CMAKE_INSTALL_NAME_DIR ${LIB_INSTALL_DIR})
 
@@ -52,7 +52,7 @@ set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib${LIB_SUFFIX}" )
 
 # pkg-config
 IF (NOT WIN32)
-  CONFIGURE_FILE (${CMAKE_SOURCE_DIR}/QJson.pc.in
+  CONFIGURE_FILE (${CMAKE_CURRENT_SOURCE_DIR}/QJson.pc.in
                   ${CMAKE_CURRENT_BINARY_DIR}/QJson.pc
                   @ONLY)
   INSTALL (FILES ${CMAKE_CURRENT_BINARY_DIR}/QJson.pc
