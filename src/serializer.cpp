@@ -109,10 +109,12 @@ QByteArray Serializer::serialize( const QVariant &v )
       const QVariantMap vmap = v.toMap();
       QMapIterator<QString, QVariant> it( vmap );
       str = "{ ";
+      QList<QByteArray> pairs;
       while ( it.hasNext() ) {
         it.next();
-        str += sanitizeString(it.key()).toUtf8() + " : " + serialize(it.value());
+        pairs << sanitizeString(it.key()).toUtf8() + " : " + serialize(it.value() );
       }
+      str += join( pairs, ", " );
       str += " }";
     }
   }
