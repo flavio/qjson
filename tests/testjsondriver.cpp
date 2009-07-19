@@ -271,6 +271,7 @@ void TestParser::testReadWrite()
   const QByteArray serialized = serializer.serialize( result );
 //  qWarning() << serialized;
   QVariant writtenThenRead = driver.parse( serialized, &ok );
+  QVERIFY(ok);
   QCOMPARE( result, writtenThenRead );
 }
 
