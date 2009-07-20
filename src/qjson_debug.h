@@ -28,7 +28,6 @@
   inline QDebug qjsonDebug() { return QDebug(QtDebugMsg); }
 #else
   inline QNoDebug qjsonDebug() { return QNoDebug(); }
- // #define qjsonDebug QT_NO_QDEBUG_MACRO
 #endif
 
 #endif
