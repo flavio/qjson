@@ -43,11 +43,11 @@ int main(int argc, char *argv[]) {
   }
   
   Parser driver;
-  bool status;
+  bool ok;
 
   QFile file (filename);
-  QVariant data = driver.parse (&file, &status);
-  if (status) {
+  QVariant data = driver.parse (&file, &ok);
+  if (!ok) {
     qCritical("%s:%i - Error: %s", filename.toLatin1().data(), driver.errorLine(), qPrintable(driver.errorString()));
     exit (1);
   }
