@@ -32,6 +32,7 @@ class TestParser: public QObject
     void parseNonAsciiString();
     void parseSimpleObject();
     void parseEmptyObject();
+    void parseEmptyValue();
     void parseUrl();
     void parseMultipleObject();
 
@@ -75,6 +76,24 @@ void TestParser::parseEmptyObject() {
   QVariant result = driver.parse (json, &ok);
   QVERIFY (ok);
   QCOMPARE(result, expected);
+}
+
+void TestParser::parseEmptyValue() {
+  QByteArray json = "{\"value\": \"\"}";
+
+  QVariantMap map;
+  map.insert (QLatin1String("value"), QLatin1String(""));
+  QVariant expected (map);
+
+  Parser driver;
+  bool ok;
+  QVariant result = driver.parse (json, &ok);
+  QVERIFY (ok);
+  QCOMPARE(result, expected);
+  QVERIFY (result.toMap().value(QLatin1String("value")).canConvert<QString>());
+
+  QString value = result.toMap().value(QLatin1String("value")).toString();
+  QVERIFY (value.isEmpty());
 }
 
 void TestParser::parseInvalidObject() {
