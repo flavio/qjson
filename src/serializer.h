@@ -28,6 +28,12 @@ class QString;
 class QVariant;
 
 namespace QJson {
+  /**
+  * @brief Main class used for converting QVariant objects to JSON data.
+  *
+  * QVariant objects are converted to a string containing the JSON data.
+  * If QVariant object is empty or not valid a <em>null</em> json object is returned.
+  */
   class QJSON_EXPORT Serializer {
   public:
     Serializer();
