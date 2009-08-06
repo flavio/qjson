@@ -28,6 +28,7 @@ TARGET_LINK_LIBRARIES(
 
 SET( UNIT_TESTS
 	testparser
+  testserializer
 )
 
 # Build the tests
