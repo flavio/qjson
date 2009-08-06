@@ -67,10 +67,18 @@ void Serializer::serialize( const QVariant& v, QIODevice* io, bool* ok )
   }
 }
 
-static QString sanitizeString( const QString& s )
+namespace {
+QString sanitizeString( QString str )
 {
-  const QString str = QLatin1String("\"") + s + QLatin1String("\"");
-  return str;
+  str.replace( QLatin1String( "\\" ), QLatin1String( "\\\\" ) );
+  str.replace( QLatin1String( "\"" ), QLatin1String( "\\\"" ) );
+  str.replace( QLatin1String( "\b" ), QLatin1String( "\\b" ) );
+  str.replace( QLatin1String( "\f" ), QLatin1String( "\\f" ) );
+  str.replace( QLatin1String( "\n" ), QLatin1String( "\\n" ) );
+  str.replace( QLatin1String( "\r" ), QLatin1String( "\\r" ) );
+  str.replace( QLatin1String( "\t" ), QLatin1String( "\\t" ) );
+  return QString( QLatin1String( "\"%1\"" ) ).arg( str );
+}
 }
 
 static QByteArray join( const QList<QByteArray>& list, const QByteArray& sep ) {
@@ -85,38 +93,55 @@ static QByteArray join( const QList<QByteArray>& list, const QByteArray& sep ) {
 
 QByteArray Serializer::serialize( const QVariant &v )
 {
-  if ( !v.isValid() )
-    return ""; // no parse error
   QByteArray str;
   bool error = false;
 
-  // two major cases, either it's an array or ... not
-  if ( v.canConvert<QVariantList>() ) {
+  if ( v.isNull() || ! v.isValid() ) { // invalid or null?
+    str = "null";
+  } else if ( v.type() == QVariant::List ) { // variant is a list?
     const QVariantList list = v.toList();
     QList<QByteArray> values;
     Q_FOREACH( const QVariant& v, list )
-      values << serialize( v );
-    str = "[ " + join( values, ", " ) + " ]";
-  } else {
-    // not a list, so it must be an object
-    if ( !v.canConvert<QVariantMap>() ) {
-      // not a map, so it must be a value
-      if ( v.type() == QVariant::String )
-        str = sanitizeString( v.toString() ).toUtf8();
-      else
-        str = v.toByteArray();
-    } else {
-      const QVariantMap vmap = v.toMap();
-      QMapIterator<QString, QVariant> it( vmap );
-      str = "{ ";
-      QList<QByteArray> pairs;
-      while ( it.hasNext() ) {
-        it.next();
-        pairs << sanitizeString(it.key()).toUtf8() + " : " + serialize(it.value() );
+    {
+      QByteArray serializedValue = serialize( v );
+      if ( serializedValue.isNull() ) {
+        error = true;
+        break;
       }
-      str += join( pairs, ", " );
-      str += " }";
+      values << serializedValue;
     }
+    str = "[ " + join( values, ", " ) + " ]";
+  } else if ( v.type() == QVariant::Map ) { // variant is a map?
+    const QVariantMap vmap = v.toMap();
+    QMapIterator<QString, QVariant> it( vmap );
+    str = "{ ";
+    QList<QByteArray> pairs;
+    while ( it.hasNext() ) {
+      it.next();
+      QByteArray serializedValue = serialize( it.value() );
+      if ( serializedValue.isNull() ) {
+        error = true;
+        break;
+      }
+      pairs << sanitizeString( it.key() ).toUtf8() + " : " + serializedValue;
+    }
+    str += join( pairs, ", " );
+    str += " }";
+  } else if (( v.type() == QVariant::String ) ||  ( v.type() == QVariant::ByteArray )) { // a string or a byte array?
+    str = sanitizeString( v.toString() ).toUtf8();
+  } else if ( v.type() == QVariant::Double ) { // a double?
+    str = QByteArray::number( v.toDouble() );
+    if( ! str.contains( "." ) && ! str.contains( "e" ) ) {
+      str += ".0";
+    }
+  } else if ( v.type() == QVariant::Bool ) { // boolean value?
+    str = ( v.toBool() ? "true" : "false" );
+  } else if ( v.canConvert<qlonglong>() ) { // any signed number?
+    str = QByteArray::number( v.value<qlonglong>() );
+  } else if ( v.canConvert<qulonglong>() ) { // large unsigned number?
+    str = QByteArray::number( v.value<qulonglong>() );
+  } else {
+    error = true;
   }
   if ( !error )
     return str;
