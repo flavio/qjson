@@ -59,9 +59,9 @@ void TestParser::parseSimpleObject() {
   map.insert (QLatin1String("foo"), QLatin1String("bar"));
   QVariant expected(map);
 
-  Parser driver;
+  Parser parser;
   bool ok;
-  QVariant result = driver.parse (json, &ok);
+  QVariant result = parser.parse (json, &ok);
   QVERIFY (ok);
   QCOMPARE(result, expected);
 }
@@ -71,9 +71,9 @@ void TestParser::parseEmptyObject() {
   QVariantMap map;
   QVariant expected (map);
 
-  Parser driver;
+  Parser parser;
   bool ok;
-  QVariant result = driver.parse (json, &ok);
+  QVariant result = parser.parse (json, &ok);
   QVERIFY (ok);
   QCOMPARE(result, expected);
 }
@@ -85,9 +85,9 @@ void TestParser::parseEmptyValue() {
   map.insert (QLatin1String("value"), QLatin1String(""));
   QVariant expected (map);
 
-  Parser driver;
+  Parser parser;
   bool ok;
-  QVariant result = driver.parse (json, &ok);
+  QVariant result = parser.parse (json, &ok);
   QVERIFY (ok);
   QCOMPARE(result, expected);
   QVERIFY (result.toMap().value(QLatin1String("value")).canConvert<QString>());
@@ -99,9 +99,9 @@ void TestParser::parseEmptyValue() {
 void TestParser::parseInvalidObject() {
   QByteArray json = "{\"foo\":\"bar\"";
 
-  Parser driver;
+  Parser parser;
   bool ok;
-  QVariant result = driver.parse (json, &ok);
+  QVariant result = parser.parse (json, &ok);
   QVERIFY (!ok);
 }
 
@@ -117,9 +117,9 @@ void TestParser::parseNonAsciiString() {
   map.insert (QLatin1String("artist"), unicode_string);
   QVariant expected (map);
 
-  Parser driver;
+  Parser parser;
   bool ok;
-  QVariant result = driver.parse (json, &ok);
+  QVariant result = parser.parse (json, &ok);
   QVERIFY (ok);
   QCOMPARE(result, expected);
 }
@@ -136,9 +136,9 @@ void TestParser::parseMultipleObject() {
   map.insert (QLatin1String("array"), list);
   QVariant expected (map);
 
-  Parser driver;
+  Parser parser;
   bool ok;
-  QVariant result = driver.parse (json, &ok);
+  QVariant result = parser.parse (json, &ok);
   QVERIFY (ok);
   QCOMPARE(result, expected);
   QVERIFY (result.toMap().value(QLatin1String("number")).canConvert<float>());
@@ -152,9 +152,9 @@ void TestParser::parseUrl(){
   list.append (QVariant(QLatin1String("http://www.last.fm/venue/8926427")));
   QVariant expected (list);
 
-  Parser driver;
+  Parser parser;
   bool ok;
-  QVariant result = driver.parse (json, &ok);
+  QVariant result = parser.parse (json, &ok);
   QVERIFY (ok);
   QCOMPARE(result, expected);
 }
@@ -166,9 +166,9 @@ void TestParser::parseUrl(){
   list.append (QLatin1String("bar"));
   QVariant expected (list);
 
-  Parser driver;
+  Parser parser;
   bool ok;
-  QVariant result = driver.parse (json, &ok);
+  QVariant result = parser.parse (json, &ok);
   QVERIFY (ok);
   QCOMPARE(result, expected);
 }
@@ -191,9 +191,9 @@ void TestParser::parseMultipleArray() {
 
   QVariant expected (list);
 
-  Parser driver;
+  Parser parser;
   bool ok;
-  QVariant result = driver.parse (json, &ok);
+  QVariant result = parser.parse (json, &ok);
   QVERIFY (ok);
   QCOMPARE(result, expected);
 }
@@ -209,9 +209,9 @@ void TestParser::testTrueFalseNullValues() {
   list.append (map);
   QVariant expected (list);
 
-  Parser driver;
+  Parser parser;
   bool ok;
-  QVariant result = driver.parse (json, &ok);
+  QVariant result = parser.parse (json, &ok);
   QVERIFY (ok);
   QCOMPARE(result, expected);
   QCOMPARE (result.toList().at(0).toBool(), true);
@@ -229,9 +229,9 @@ void TestParser::testEscapeChars() {
 
   QVariant expected (list);
 
-  Parser driver;
+  Parser parser;
   bool ok;
-  QVariant result = driver.parse (json, &ok);
+  QVariant result = parser.parse (json, &ok);
   QVERIFY (ok);
   QCOMPARE(result.toList().size(), expected.toList().size() );
   QCOMPARE(result, expected);
@@ -253,9 +253,9 @@ void TestParser::testNumbers() {
   list.append (QLatin1String("5.4E-"));
   QVariant expected (list);
 
-  Parser driver;
+  Parser parser;
   bool ok;
-  QVariant result = driver.parse (json, &ok);
+  QVariant result = parser.parse (json, &ok);
   QVERIFY (ok);
   QCOMPARE(result, expected);
 
@@ -269,9 +269,9 @@ void TestParser::testNumbers() {
 void TestParser::testReadWriteEmptyDocument()
 {
   QByteArray json = "";
-  Parser driver;
+  Parser parser;
   bool ok;
-  QVariant result = driver.parse( json, &ok );
+  QVariant result = parser.parse( json, &ok );
   QVERIFY(ok);
   Serializer serializer;
   const QByteArray serialized = serializer.serialize( result );
@@ -282,14 +282,14 @@ void TestParser::testReadWriteEmptyDocument()
 void TestParser::testReadWrite()
 {
   QFETCH( QByteArray, json );
-  Parser driver;
+  Parser parser;
   bool ok;
-  QVariant result = driver.parse( json, &ok );
+  QVariant result = parser.parse( json, &ok );
   QVERIFY(ok);
   Serializer serializer;
   const QByteArray serialized = serializer.serialize( result );
 //  qWarning() << serialized;
-  QVariant writtenThenRead = driver.parse( serialized, &ok );
+  QVariant writtenThenRead = parser.parse( serialized, &ok );
   QVERIFY(ok);
   QCOMPARE( result, writtenThenRead );
 }
@@ -319,4 +319,4 @@ void TestParser::testReadWrite_data()
 }
 
 QTEST_MAIN(TestParser)
-#include "moc_testjsondriver.cxx"
+#include "moc_testparser.cxx"
