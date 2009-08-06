@@ -21,7 +21,6 @@
 #include <QtTest/QtTest>
 
 #include "parser.h"
-#include "serializer.h"
 
 #include <QtCore/QVariant>
 
@@ -43,10 +42,6 @@ class TestParser: public QObject
     void testTrueFalseNullValues();
     void testEscapeChars();
     void testNumbers();
-
-    void testReadWriteEmptyDocument();
-    void testReadWrite();
-    void testReadWrite_data();
 };
 
 Q_DECLARE_METATYPE(QVariant)
@@ -264,58 +259,6 @@ void TestParser::testNumbers() {
   QCOMPARE( numbers[1].type(), QVariant::Double );
   QCOMPARE( numbers[2].type(), QVariant::Int );
   QCOMPARE( numbers[3].type(), QVariant::Double );
-}
-
-void TestParser::testReadWriteEmptyDocument()
-{
-  QByteArray json = "";
-  Parser parser;
-  bool ok;
-  QVariant result = parser.parse( json, &ok );
-  QVERIFY(ok);
-  Serializer serializer;
-  const QByteArray serialized = serializer.serialize( result );
-  QVERIFY( !serialized.isNull() );
-  QVERIFY( serialized.isEmpty() );
-}
-
-void TestParser::testReadWrite()
-{
-  QFETCH( QByteArray, json );
-  Parser parser;
-  bool ok;
-  QVariant result = parser.parse( json, &ok );
-  QVERIFY(ok);
-  Serializer serializer;
-  const QByteArray serialized = serializer.serialize( result );
-//  qWarning() << serialized;
-  QVariant writtenThenRead = parser.parse( serialized, &ok );
-  QVERIFY(ok);
-  QCOMPARE( result, writtenThenRead );
-}
-
-void TestParser::testReadWrite_data()
-{
-    QTest::addColumn<QByteArray>( "json" );
-
-    // array tests
-    QTest::newRow( "empty array" ) << QByteArray("[]");
-    QTest::newRow( "basic array" ) << QByteArray("[\"foo\",\"bar\"]");
-    QTest::newRow( "single int array" ) << QByteArray("[6]");
-    QTest::newRow( "int array" ) << QByteArray("[6,5,6,7]");
-    const QByteArray json = "[1,2.4, -100, -3.4, -5e+, 2e,3e+,4.3E,5.4E-]";
-    QTest::newRow( QByteArray("array of various numbers") ) << json;
-
-    // document tests
-    QTest::newRow( "empty object" ) << QByteArray("{}");
-    QTest::newRow( "basic document" ) << QByteArray("{\"foo\":\"bar\"}");
-    QTest::newRow( "object with ints" ) << QByteArray("{\"foo\":6}");
-    const QByteArray json2 = "{ \"foo\":\"bar\",\n\"number\" : 51.3 , \"array\":[\"item1\", 123]}";
-    QTest::newRow( "complicated document" ) << json2;
-
-    // more complex cases
-    const QByteArray json3 = "[ {\"foo\":\"bar\"},\n\"number\",51.3 , [\"item1\", 123]]";
-    QTest::newRow( "complicated array" ) << json3;
 }
 
 QTEST_MAIN(TestParser)
