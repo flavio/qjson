@@ -27,7 +27,7 @@ TARGET_LINK_LIBRARIES(
 )
 
 SET( UNIT_TESTS
-	testjsondriver
+	testparser
 )
 
 # Build the tests
