@@ -67,8 +67,7 @@ void Serializer::serialize( const QVariant& v, QIODevice* io, bool* ok )
   }
 }
 
-namespace {
-QString sanitizeString( QString str )
+static QString sanitizeString( QString str )
 {
   str.replace( QLatin1String( "\\" ), QLatin1String( "\\\\" ) );
   str.replace( QLatin1String( "\"" ), QLatin1String( "\\\"" ) );
@@ -78,7 +77,6 @@ QString sanitizeString( QString str )
   str.replace( QLatin1String( "\r" ), QLatin1String( "\\r" ) );
   str.replace( QLatin1String( "\t" ), QLatin1String( "\\t" ) );
   return QString( QLatin1String( "\"%1\"" ) ).arg( str );
-}
 }
 
 static QByteArray join( const QList<QByteArray>& list, const QByteArray& sep ) {
