@@ -77,7 +77,7 @@ void TestParser::parseEmptyValue() {
   QByteArray json = "{\"value\": \"\"}";
 
   QVariantMap map;
-  map.insert (QLatin1String("value"), QLatin1String(""));
+  map.insert (QLatin1String("value"), QString(QLatin1String("")));
   QVariant expected (map);
 
   Parser parser;
@@ -85,7 +85,7 @@ void TestParser::parseEmptyValue() {
   QVariant result = parser.parse (json, &ok);
   QVERIFY (ok);
   QCOMPARE(result, expected);
-  QVERIFY (result.toMap().value(QLatin1String("value")).canConvert<QString>());
+  QVERIFY (result.toMap().value(QLatin1String("value")).type() == QVariant::String);
 
   QString value = result.toMap().value(QLatin1String("value")).toString();
   QVERIFY (value.isEmpty());

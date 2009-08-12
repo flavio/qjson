@@ -172,7 +172,7 @@ exp: E digits { $$ = QVariant($1.toByteArray() + $2.toByteArray()); };
 
 string: QUOTMARKOPEN string_arg QUOTMARKCLOSE { $$ = $2 };
 
-string_arg: /*empty */ { $$ = QVariant (QByteArray("")); }
+string_arg: /*empty */ { $$ = QVariant (QString(QLatin1String(""))); }
             | STRING {
                 $$ = $1;
               };

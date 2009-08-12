@@ -593,7 +593,7 @@ namespace yy
 
   case 36:
 #line 175 "json_parser.yy"
-    { (yyval) = QVariant (QByteArray("")); ;}
+    { (yyval) = QVariant (QString(QLatin1String(""))); ;}
     break;
 
   case 37:
