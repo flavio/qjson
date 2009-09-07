@@ -140,6 +140,7 @@ void TestSerializer::testValueString_data()
   QTest::addColumn<QVariant>( "value" );
   QTest::addColumn<QString>( "expected" );
   
+  QTest::newRow( "null string" ) << QVariant( QString() ) << QString( QLatin1String( "\\s*\"\"\\s*" ) );
   QTest::newRow( "empty string" ) << QVariant( QString( QLatin1String( "" ) ) ) << QString( QLatin1String( "\\s*\"\"\\s*" ) );
   QTest::newRow( "Simple String" ) << QVariant( QString( QLatin1String( "simpleString" ) ) ) << QString( QLatin1String( "\\s*\"simpleString\"\\s*" ) );
   QTest::newRow( "string with tab" ) << QVariant( QString( QLatin1String( "string\tstring" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\tstring\"\\s*" ) );
