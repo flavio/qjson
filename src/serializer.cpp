@@ -94,7 +94,7 @@ QByteArray Serializer::serialize( const QVariant &v )
   QByteArray str;
   bool error = false;
 
-  if ( v.isNull() || ! v.isValid() ) { // invalid or null?
+  if ( ! v.isValid() ) { // invalid or null?
     str = "null";
   } else if ( v.type() == QVariant::List ) { // variant is a list?
     const QVariantList list = v.toList();
