@@ -210,8 +210,13 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
 
     while ( true ) {
       char nextCh;
-      m_io->peek(&nextCh, 1);
-      if ( !escape_on && nextCh == '\"' ) {
+      qint64 ret = m_io->peek(&nextCh, 1);
+      if (ret != 1) {
+        if (m_io->atEnd())
+          return yy::json_parser::token::END;
+        else
+          return -1;
+      } else if ( !escape_on && nextCh == '\"' ) {
         bool ok;
         const QString str = unescape( raw, &ok );
         *yylval = ok ? str : QString();
