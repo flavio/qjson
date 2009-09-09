@@ -203,15 +203,15 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
   
   if (ch != '"' && !m_quotmarkClosed) {
     // we're inside a " " block
-
     QByteArray raw;
     raw += ch;
     char prevCh = ch;
+    bool escape_on = (ch == '\\') ? true : false;
+
     while ( true ) {
       char nextCh;
       m_io->peek(&nextCh, 1);
-
-      if ( prevCh != '\\' && nextCh == '\"' ) {
+      if ( !escape_on && nextCh == '\"' ) {
         bool ok;
         const QString str = unescape( raw, &ok );
         *yylval = ok ? str : QString();
@@ -229,6 +229,10 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
       m_io->read(1); // consume
       raw += nextCh;
       prevCh = nextCh;
+      if (escape_on)
+        escape_on = false;
+      else
+        escape_on = (prevCh == '\\') ? true : false;
 #if 0
       if (nextCh == '\\') {
         char buf;
