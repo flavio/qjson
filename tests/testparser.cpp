@@ -229,8 +229,6 @@ void TestParser::testEscapeChars() {
   QVariant result = parser.parse (json, &ok);
   QVERIFY (ok);
   QCOMPARE(result.toList().size(), expected.toList().size() );
-  qDebug() << "result" << result;
-  qDebug() << "expected" << expected;
   QCOMPARE(result, expected);
 }
 
