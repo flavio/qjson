@@ -215,11 +215,11 @@ void TestParser::testTrueFalseNullValues() {
 }
 
 void TestParser::testEscapeChars() {
-  QByteArray json = "[\"\\b \\f \\n \\r \\t \", \" \\\\ \\/ \\\" \", \"http://foo.com\"]";
+  QByteArray json = "[\"\\b \\f \\n \\r \\t \", \" \\\\ \\/ \\\\\", \"http:\\/\\/foo.com\"]";
 
   QVariantList list;
   list.append (QLatin1String("\b \f \n \r \t "));
-  list.append (QLatin1String(" \\ / \" "));
+  list.append (QLatin1String(" \\ / \\"));
   list.append (QLatin1String("http://foo.com"));
 
   QVariant expected (list);
@@ -229,6 +229,8 @@ void TestParser::testEscapeChars() {
   QVariant result = parser.parse (json, &ok);
   QVERIFY (ok);
   QCOMPARE(result.toList().size(), expected.toList().size() );
+  qDebug() << "result" << result;
+  qDebug() << "expected" << expected;
   QCOMPARE(result, expected);
 }
 
