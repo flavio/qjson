@@ -42,9 +42,11 @@ class TestParser: public QObject
     void testTrueFalseNullValues();
     void testEscapeChars();
     void testNumbers();
+    void testNumbers_data();
 };
 
 Q_DECLARE_METATYPE(QVariant)
+Q_DECLARE_METATYPE(QVariant::Type)
 
 using namespace QJson;
 
@@ -233,32 +235,97 @@ void TestParser::testEscapeChars() {
 }
 
 void TestParser::testNumbers() {
-  QByteArray json = "[1,2.4, -100, -3.4, 1.00004, 01.01, -5e+, 2e,3e+,4.3E,5.4E-]";
-  QVariantList list;
-  list.append (QVariant(1));
-  list.append (QVariant(2.4));
-  list.append (QVariant(-100));
-  list.append (QVariant(-3.4));
-  list.append (QVariant(1.00004));
-  list.append (QVariant(1.01));
-  list.append (QLatin1String("-5e+"));
-  list.append (QLatin1String("2e"));
-  list.append (QLatin1String("3e+"));
-  list.append (QLatin1String("4.3E"));
-  list.append (QLatin1String("5.4E-"));
-  QVariant expected (list);
+  QFETCH(QByteArray, input);
+  QFETCH(QVariant, expected);
+  QFETCH(QVariant::Type, type);
 
   Parser parser;
   bool ok;
-  QVariant result = parser.parse (json, &ok);
+  QVariant result = parser.parse ("[" + input +"]", &ok);
   QVERIFY (ok);
-  QCOMPARE(result, expected);
 
-  QVariantList numbers = result.toList();
-  QCOMPARE( numbers[0].type(),QVariant::Int );
-  QCOMPARE( numbers[1].type(), QVariant::Double );
-  QCOMPARE( numbers[2].type(), QVariant::Int );
-  QCOMPARE( numbers[3].type(), QVariant::Double );
+  QVariant value = result.toList().at(0);
+  QCOMPARE(value, expected);
+  QCOMPARE( value.type(), type);
+}
+
+void TestParser::testNumbers_data() {
+  QTest::addColumn<QByteArray>( "input" );
+  QTest::addColumn<QVariant>( "expected" );
+  QTest::addColumn<QVariant::Type>( "type" );
+
+  QByteArray input;
+  QVariant output;
+
+  // simple ulonglong
+  input = QByteArray("1");
+  output = QVariant(QVariant::ULongLong);
+  output.setValue(1);
+
+  QTest::newRow("simple ulonglong") << input << output << QVariant::ULongLong;
+
+  // big number
+  input = QByteArray("128708157440");
+  output = QVariant(QVariant::ULongLong);
+  output.setValue(128708157440);
+
+  QTest::newRow("big number") << input << output << QVariant::ULongLong;
+
+  // simple double
+  input = QByteArray("2.4");
+  output = QVariant(QVariant::Double);
+  output.setValue(2.4);
+
+  QTest::newRow("simple double") << input << output << QVariant::Double;
+
+  // negative int
+  input = QByteArray("-100");
+  output = QVariant(QVariant::LongLong);
+  output.setValue(-100);
+
+  QTest::newRow("negative int") << input << output << QVariant::LongLong;
+
+  // negative double
+  input = QByteArray("-3.4");
+  output = QVariant(QVariant::Double);
+  output.setValue(-3.4);
+
+  QTest::newRow("negative double") << input << output << QVariant::Double;
+
+  // exp1
+  input = QByteArray("-5e+");
+  output = QVariant(QVariant::ByteArray);
+  output.setValue(input);
+
+  QTest::newRow("exp1") << input << output << QVariant::ByteArray;
+
+  // exp2
+  input = QByteArray("2e");
+  output = QVariant(QVariant::ByteArray);
+  output.setValue(input);
+
+  QTest::newRow("exp2") << input << output << QVariant::ByteArray;
+
+  // exp3
+  input = QByteArray("3e+");
+  output = QVariant(QVariant::ByteArray);
+  output.setValue(input);
+
+  QTest::newRow("exp3") << input << output << QVariant::ByteArray;
+
+  // exp4
+  input = QByteArray("4.3E");
+  output = QVariant(QVariant::ByteArray);
+  output.setValue(input);
+
+  QTest::newRow("exp4") << input << output << QVariant::ByteArray;
+
+  // exp5
+  input = QByteArray("5.4E-");
+  output = QVariant(QVariant::ByteArray);
+  output.setValue(input);
+
+  QTest::newRow("exp5") << input << output << QVariant::ByteArray;
 }
 
 QTEST_MAIN(TestParser)

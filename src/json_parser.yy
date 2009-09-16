@@ -28,7 +28,6 @@
   #include "qjson_debug.h"
 
   #include <QtCore/QByteArray>
-  #include <QtCore/QDebug>
   #include <QtCore/QMap>
   #include <QtCore/QString>
   #include <QtCore/QVariant>
@@ -142,15 +141,21 @@ value: string { $$ = $1; }
         };
 
 number: int {
-            $$ = QVariant (QVariant::Int);
-            $$.setValue($1.toInt());
+            if ($1.toByteArray().startsWith('-')) {
+              $$ = QVariant (QVariant::LongLong);
+              $$.setValue($1.toLongLong());
+            }
+            else {
+              $$ = QVariant (QVariant::ULongLong);
+              $$.setValue($1.toULongLong());
+            }
           }
         | int fract {
             const QByteArray value = $1.toByteArray() + $2.toByteArray();
             $$ = QVariant(QVariant::Double);
             $$.setValue(value.toDouble());
           }
-        | int exp {  $$ = QVariant ($1.toByteArray() + $2.toByteArray()); }
+        | int exp { $$ = QVariant ($1.toByteArray() + $2.toByteArray()); }
         | int fract exp {
             const QByteArray value = $1.toByteArray() + $2.toByteArray() + $3.toByteArray();
             $$ = QVariant (value);
