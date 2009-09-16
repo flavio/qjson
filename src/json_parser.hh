@@ -55,7 +55,6 @@ namespace yy
   #include "qjson_debug.h"
 
   #include <QtCore/QByteArray>
-  #include <QtCore/QDebug>
   #include <QtCore/QMap>
   #include <QtCore/QString>
   #include <QtCore/QVariant>
@@ -70,7 +69,7 @@ namespace yy
 
 
 /* Line 35 of lalr1.cc.  */
-#line 74 "json_parser.hh"
+#line 73 "json_parser.hh"
 
 #include "location.hh"
 
