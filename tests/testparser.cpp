@@ -267,7 +267,7 @@ void TestParser::testNumbers_data() {
   // big number
   input = QByteArray("128708157440");
   output = QVariant(QVariant::ULongLong);
-  output.setValue(128708157440);
+  output.setValue(128708157440ull);
 
   QTest::newRow("big number") << input << output << QVariant::ULongLong;
 

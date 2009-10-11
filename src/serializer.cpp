@@ -134,10 +134,10 @@ QByteArray Serializer::serialize( const QVariant &v )
     }
   } else if ( v.type() == QVariant::Bool ) { // boolean value?
     str = ( v.toBool() ? "true" : "false" );
+  } else if ( v.type() == QVariant::ULongLong ) { // large unsigned number?
+    str = QByteArray::number( v.value<qulonglong>() );
   } else if ( v.canConvert<qlonglong>() ) { // any signed number?
     str = QByteArray::number( v.value<qlonglong>() );
-  } else if ( v.canConvert<qulonglong>() ) { // large unsigned number?
-    str = QByteArray::number( v.value<qulonglong>() );
   } else {
     error = true;
   }
