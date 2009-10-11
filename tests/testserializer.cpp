@@ -18,6 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include <limits>
+
 #include <QtTest/QtTest>
 
 #include "parser.h"
@@ -172,10 +174,10 @@ void TestSerializer::testValueInteger_data()
   QTest::newRow( "int 0" ) << QVariant( static_cast<int>( 0 ) ) << QString( QLatin1String( "\\s*0\\s*" ) );
   QTest::newRow( "uint 0" ) << QVariant( static_cast<uint>( 0 ) ) << QString( QLatin1String( "\\s*0\\s*" ) );
   QTest::newRow( "int -1" ) << QVariant( static_cast<int>( -1 ) ) << QString( QLatin1String( "\\s*-1\\s*" ) );
-  QTest::newRow( "int 0" ) << QVariant( static_cast<int>( 0 ) ) << QString( QLatin1String( "\\s*0\\s*" ) );
   QTest::newRow( "int 2133149800" ) << QVariant( static_cast<int>(2133149800) ) << QString( QLatin1String( "\\s*2133149800\\s*" ) );
   QTest::newRow( "uint 4133149800" ) << QVariant( static_cast<uint>(4133149800u) ) << QString( QLatin1String( "\\s*4133149800\\s*" ) );
   QTest::newRow( "uint64 932838457459459" ) << QVariant( Q_UINT64_C(932838457459459) ) << QString( QLatin1String( "\\s*932838457459459\\s*" ) );
+  QTest::newRow( "max unsigned long long" ) << QVariant( std::numeric_limits<unsigned long long>::max() ) << QString( QLatin1String( "\\s*%1\\s*" ) ).arg(std::numeric_limits<unsigned long long>::max());
 }
 
 void TestSerializer::testValueDouble()
