@@ -21,6 +21,7 @@
 #include "parser.h"
 #include "parser_p.h"
 #include "json_parser.hh"
+#include "json_scanner.h"
 
 #include <QtCore/QBuffer>
 #include <QtCore/QStringList>
