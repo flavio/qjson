@@ -68,7 +68,7 @@ namespace yy
   #define YYERROR_VERBOSE 1
 
 
-/* Line 35 of lalr1.cc.  */
+/* Line 303 of lalr1.cc.  */
 #line 73 "json_parser.hh"
 
 #include "location.hh"

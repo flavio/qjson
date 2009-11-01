@@ -97,13 +97,14 @@ object: CURLY_BRACKET_OPEN members CURLY_BRACKET_CLOSE { $$ = $2; };
 members: /* empty */ { $$ = QVariant (QVariantMap()); }
         | pair r_members {
             QVariantMap members = $2.toMap();
+            $2 = QVariant(); // Allow reuse of map
             $$ = QVariant(members.unite ($1.toMap()));
           };
 
 r_members: /* empty */ { $$ = QVariant (QVariantMap()); }
         | COMMA pair r_members {
           QVariantMap members = $3.toMap();
-          
+          $3 = QVariant(); // Allow reuse of map
           $$ = QVariant(members.unite ($2.toMap()));
           };
 
@@ -118,6 +119,7 @@ array: SQUARE_BRACKET_OPEN values SQUARE_BRACKET_CLOSE { $$ = $2; };
 values: /* empty */ { $$ = QVariant (QVariantList()); }
         | value r_values {
           QVariantList members = $2.toList();
+          $2 = QVariant(); // Allow reuse of list
           members.prepend ($1);
           $$ = QVariant(members);
         };
@@ -125,6 +127,7 @@ values: /* empty */ { $$ = QVariant (QVariantList()); }
 r_values: /* empty */ { $$ = QVariant (QVariantList()); }
           | COMMA value r_values {
             QVariantList members = $3.toList();
+            $3 = QVariant(); // Allow reuse of list
             members.prepend ($2);
             $$ = QVariant(members);
           };
@@ -175,7 +178,7 @@ fract: DOT digits {
 
 exp: E digits { $$ = QVariant($1.toByteArray() + $2.toByteArray()); };
 
-string: QUOTMARKOPEN string_arg QUOTMARKCLOSE { $$ = $2 };
+string: QUOTMARKOPEN string_arg QUOTMARKCLOSE { $$ = $2; };
 
 string_arg: /*empty */ { $$ = QVariant (QString(QLatin1String(""))); }
             | STRING {

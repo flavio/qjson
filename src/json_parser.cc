@@ -42,7 +42,7 @@
 #line 43 "json_parser.cc"
 
 #ifndef YY_
-# if YYENABLE_NLS
+# if defined YYENABLE_NLS && YYENABLE_NLS
 #  if ENABLE_NLS
 #   include <libintl.h> /* FIXME: INFRINGES ON USER NAME SPACE */
 #   define YY_(msgid) dgettext ("bison-runtime", msgid)
@@ -424,26 +424,27 @@ namespace yy
 #line 98 "json_parser.yy"
     {
             QVariantMap members = (yysemantic_stack_[(2) - (2)]).toMap();
+            (yysemantic_stack_[(2) - (2)]) = QVariant(); // Allow reuse of map
             (yyval) = QVariant(members.unite ((yysemantic_stack_[(2) - (1)]).toMap()));
           ;}
     break;
 
   case 10:
-#line 103 "json_parser.yy"
+#line 104 "json_parser.yy"
     { (yyval) = QVariant (QVariantMap()); ;}
     break;
 
   case 11:
-#line 104 "json_parser.yy"
+#line 105 "json_parser.yy"
     {
           QVariantMap members = (yysemantic_stack_[(3) - (3)]).toMap();
-          
+          (yysemantic_stack_[(3) - (3)]) = QVariant(); // Allow reuse of map
           (yyval) = QVariant(members.unite ((yysemantic_stack_[(3) - (2)]).toMap()));
           ;}
     break;
 
   case 12:
-#line 110 "json_parser.yy"
+#line 111 "json_parser.yy"
     {
             QVariantMap pair;
             pair.insert ((yysemantic_stack_[(3) - (1)]).toString(), QVariant((yysemantic_stack_[(3) - (3)])));
@@ -452,70 +453,72 @@ namespace yy
     break;
 
   case 13:
-#line 116 "json_parser.yy"
+#line 117 "json_parser.yy"
     { (yyval) = (yysemantic_stack_[(3) - (2)]); ;}
     break;
 
   case 14:
-#line 118 "json_parser.yy"
+#line 119 "json_parser.yy"
     { (yyval) = QVariant (QVariantList()); ;}
     break;
 
   case 15:
-#line 119 "json_parser.yy"
+#line 120 "json_parser.yy"
     {
           QVariantList members = (yysemantic_stack_[(2) - (2)]).toList();
+          (yysemantic_stack_[(2) - (2)]) = QVariant(); // Allow reuse of list
           members.prepend ((yysemantic_stack_[(2) - (1)]));
           (yyval) = QVariant(members);
         ;}
     break;
 
   case 16:
-#line 125 "json_parser.yy"
+#line 127 "json_parser.yy"
     { (yyval) = QVariant (QVariantList()); ;}
     break;
 
   case 17:
-#line 126 "json_parser.yy"
+#line 128 "json_parser.yy"
     {
             QVariantList members = (yysemantic_stack_[(3) - (3)]).toList();
+            (yysemantic_stack_[(3) - (3)]) = QVariant(); // Allow reuse of list
             members.prepend ((yysemantic_stack_[(3) - (2)]));
             (yyval) = QVariant(members);
           ;}
     break;
 
   case 18:
-#line 132 "json_parser.yy"
-    { (yyval) = (yysemantic_stack_[(1) - (1)]); ;}
-    break;
-
-  case 19:
-#line 133 "json_parser.yy"
-    { (yyval) = (yysemantic_stack_[(1) - (1)]); ;}
-    break;
-
-  case 20:
-#line 134 "json_parser.yy"
-    { (yyval) = (yysemantic_stack_[(1) - (1)]); ;}
-    break;
-
-  case 21:
 #line 135 "json_parser.yy"
     { (yyval) = (yysemantic_stack_[(1) - (1)]); ;}
     break;
 
-  case 22:
+  case 19:
 #line 136 "json_parser.yy"
+    { (yyval) = (yysemantic_stack_[(1) - (1)]); ;}
+    break;
+
+  case 20:
+#line 137 "json_parser.yy"
+    { (yyval) = (yysemantic_stack_[(1) - (1)]); ;}
+    break;
+
+  case 21:
+#line 138 "json_parser.yy"
+    { (yyval) = (yysemantic_stack_[(1) - (1)]); ;}
+    break;
+
+  case 22:
+#line 139 "json_parser.yy"
     { (yyval) = QVariant (true); ;}
     break;
 
   case 23:
-#line 137 "json_parser.yy"
+#line 140 "json_parser.yy"
     { (yyval) = QVariant (false); ;}
     break;
 
   case 24:
-#line 138 "json_parser.yy"
+#line 141 "json_parser.yy"
     {
           QVariant null_variant;
           (yyval) = null_variant;
@@ -523,7 +526,7 @@ namespace yy
     break;
 
   case 25:
-#line 143 "json_parser.yy"
+#line 146 "json_parser.yy"
     {
             if ((yysemantic_stack_[(1) - (1)]).toByteArray().startsWith('-')) {
               (yyval) = QVariant (QVariant::LongLong);
@@ -537,7 +540,7 @@ namespace yy
     break;
 
   case 26:
-#line 153 "json_parser.yy"
+#line 156 "json_parser.yy"
     {
             const QByteArray value = (yysemantic_stack_[(2) - (1)]).toByteArray() + (yysemantic_stack_[(2) - (2)]).toByteArray();
             (yyval) = QVariant(QVariant::Double);
@@ -546,12 +549,12 @@ namespace yy
     break;
 
   case 27:
-#line 158 "json_parser.yy"
+#line 161 "json_parser.yy"
     { (yyval) = QVariant ((yysemantic_stack_[(2) - (1)]).toByteArray() + (yysemantic_stack_[(2) - (2)]).toByteArray()); ;}
     break;
 
   case 28:
-#line 159 "json_parser.yy"
+#line 162 "json_parser.yy"
     {
             const QByteArray value = (yysemantic_stack_[(3) - (1)]).toByteArray() + (yysemantic_stack_[(3) - (2)]).toByteArray() + (yysemantic_stack_[(3) - (3)]).toByteArray();
             (yyval) = QVariant (value);
@@ -559,51 +562,51 @@ namespace yy
     break;
 
   case 29:
-#line 164 "json_parser.yy"
+#line 167 "json_parser.yy"
     { (yyval) = QVariant ((yysemantic_stack_[(2) - (1)]).toByteArray() + (yysemantic_stack_[(2) - (2)]).toByteArray()); ;}
     break;
 
   case 30:
-#line 165 "json_parser.yy"
+#line 168 "json_parser.yy"
     { (yyval) = QVariant (QByteArray("-") + (yysemantic_stack_[(3) - (2)]).toByteArray() + (yysemantic_stack_[(3) - (3)]).toByteArray()); ;}
     break;
 
   case 31:
-#line 167 "json_parser.yy"
+#line 170 "json_parser.yy"
     { (yyval) = QVariant (QByteArray("")); ;}
     break;
 
   case 32:
-#line 168 "json_parser.yy"
+#line 171 "json_parser.yy"
     {
           (yyval) = QVariant((yysemantic_stack_[(2) - (1)]).toByteArray() + (yysemantic_stack_[(2) - (2)]).toByteArray());
         ;}
     break;
 
   case 33:
-#line 172 "json_parser.yy"
+#line 175 "json_parser.yy"
     {
           (yyval) = QVariant(QByteArray(".") + (yysemantic_stack_[(2) - (2)]).toByteArray());
         ;}
     break;
 
   case 34:
-#line 176 "json_parser.yy"
+#line 179 "json_parser.yy"
     { (yyval) = QVariant((yysemantic_stack_[(2) - (1)]).toByteArray() + (yysemantic_stack_[(2) - (2)]).toByteArray()); ;}
     break;
 
   case 35:
-#line 178 "json_parser.yy"
-    { (yyval) = (yysemantic_stack_[(3) - (2)]) ;}
+#line 181 "json_parser.yy"
+    { (yyval) = (yysemantic_stack_[(3) - (2)]); ;}
     break;
 
   case 36:
-#line 180 "json_parser.yy"
+#line 183 "json_parser.yy"
     { (yyval) = QVariant (QString(QLatin1String(""))); ;}
     break;
 
   case 37:
-#line 181 "json_parser.yy"
+#line 184 "json_parser.yy"
     {
                 (yyval) = (yysemantic_stack_[(1) - (1)]);
               ;}
@@ -611,7 +614,7 @@ namespace yy
 
 
     /* Line 675 of lalr1.cc.  */
-#line 615 "json_parser.cc"
+#line 618 "json_parser.cc"
 	default: break;
       }
     YY_SYMBOL_PRINT ("-> $$ =", yyr1_[yyn], &yyval, &yyloc);
@@ -976,9 +979,9 @@ namespace yy
   json_parser::yyrline_[] =
   {
          0,    80,    80,    85,    86,    87,    93,    95,    97,    98,
-     103,   104,   110,   116,   118,   119,   125,   126,   132,   133,
-     134,   135,   136,   137,   138,   143,   153,   158,   159,   164,
-     165,   167,   168,   172,   176,   178,   180,   181
+     104,   105,   111,   117,   119,   120,   127,   128,   135,   136,
+     137,   138,   139,   140,   141,   146,   156,   161,   162,   167,
+     168,   170,   171,   175,   179,   181,   183,   184
   };
 
   // Print the state stack on the debug stream.
@@ -1065,7 +1068,7 @@ namespace yy
 
 } // namespace yy
 
-#line 185 "json_parser.yy"
+#line 188 "json_parser.yy"
 
 
 int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, QJson::ParserPrivate* driver)
