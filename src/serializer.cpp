@@ -1,6 +1,7 @@
 /* This file is part of qjson
   *
   * Copyright (C) 2009 Till Adam <adam@kde.org>
+  * Copyright (C) 2009 Flavio Castelli <flavio@castelli.name>
   *
   * This library is free software; you can redistribute it and/or
   * modify it under the terms of the GNU Library General Public
@@ -30,7 +31,6 @@
 using namespace QJson;
 
 class Serializer::SerializerPrivate {
-
 };
 
 Serializer::Serializer() : d( new SerializerPrivate ) {
@@ -184,21 +184,28 @@ QByteArray Serializer::serialize( const QVariant &v )
     return QByteArray();
 }
 
-QByteArray Serializer::serialize( const QObject* object, const QStringList& skip)
+QByteArray Serializer::serialize( const QObject* object, const QStringList& ignoredProperties)
 {
-  QVariantMap object2variant;
+  QVariantMap object2variant = qobject2qvariant(object, ignoredProperties);
+
+  return serialize(object2variant);
+}
+
+QVariantMap Serializer::qobject2qvariant( const QObject* object,
+                                          const QStringList& ignoredProperties)
+{
+  QVariantMap result;
   const QMetaObject *metaobject = object->metaObject();
   int count = metaobject->propertyCount();
   for (int i=0; i<count; ++i) {
     QMetaProperty metaproperty = metaobject->property(i);
     const char *name = metaproperty.name();
 
-    if (skip.contains(QLatin1String(name)))
+    if (ignoredProperties.contains(QLatin1String(name)))
       continue;
-    
-    QVariant value = object->property(name);
-    object2variant[QLatin1String(name)] = value;
- }
 
-  return serialize(object2variant);
+    QVariant value = object->property(name);
+    result[QLatin1String(name)] = value;
+ }
+  return result;
 }

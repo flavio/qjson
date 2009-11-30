@@ -1,6 +1,7 @@
 /* This file is part of qjson
   *
   * Copyright (C) 2009 Till Adam <adam@kde.org>
+  * Copyright (C) 2009 Flavio Castelli <flavio@castelli.name>
   *
   * This library is free software; you can redistribute it and/or
   * modify it under the terms of the GNU Library General Public
@@ -27,9 +28,9 @@ class QIODevice;
 class QObject;
 class QVariant;
 
-//class QString;
-#include <QtCore/QStringList>
 #include <QtCore/QLatin1String>
+#include <QtCore/QStringList>
+#include <QtCore/QVariant>
 
 namespace QJson {
   /**
@@ -141,7 +142,16 @@ namespace QJson {
     * @param ignoredProperties Properties that won't be serialized.
     */
     QByteArray serialize( const QObject* object, const QStringList& ignoredProperties = QStringList(QString(QLatin1String("objectName"))));
-//    QByteArray serialize( const QObject* object, const QStringList& ignoredProperties = QStringList() << QString(QLatin1String("objectName")));
+
+    /**
+    * This method converts a QObject instance into a QVariantMap.
+    * This method can be used to convert complex objects into a single QVariant
+    * object that can then be passed to the serialize methods defined by this class.
+    *
+    * @param object The QObject instance to be converted.
+    * @param ignoredProperties Properties that won't be converted.
+    */
+    QVariantMap qobject2qvariant( const QObject* object, const QStringList& ignoredProperties = QStringList(QString(QLatin1String("objectName"))));
 
   private:
     Q_DISABLE_COPY(Serializer)
