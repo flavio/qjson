@@ -138,8 +138,10 @@ namespace QJson {
     * was a parsing error.
     *
     * @param object The QObject instance to be serialized to JSON.
+    * @param ignoredProperties Properties that won't be serialized.
     */
-    QByteArray serialize( const QObject* object, const QStringList& skip = QStringList() << QString(QLatin1String("objectName")));
+    QByteArray serialize( const QObject* object, const QStringList& ignoredProperties = QStringList(QString(QLatin1String("objectName"))));
+//    QByteArray serialize( const QObject* object, const QStringList& ignoredProperties = QStringList() << QString(QLatin1String("objectName")));
 
   private:
     Q_DISABLE_COPY(Serializer)
