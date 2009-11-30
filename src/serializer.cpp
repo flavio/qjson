@@ -20,9 +20,12 @@
 
 #include "serializer.h"
 
-#include <QDataStream>
-#include <QStringList>
-#include <QVariant>
+#include <QtCore/QDataStream>
+#include <QtCore/QDate>
+#include <QtCore/QMetaObject>
+#include <QtCore/QMetaProperty>
+#include <QtCore/QStringList>
+#include <QtCore/QVariant>
 
 using namespace QJson;
 
@@ -58,6 +61,36 @@ void Serializer::serialize( const QVariant& v, QIODevice* io, bool* ok )
   }
 
   const QByteArray str = serialize( v );
+  if ( !str.isNull() ) {
+    QDataStream stream( io );
+    stream << str;
+  } else {
+    if ( ok )
+      *ok = false;
+  }
+}
+
+void Serializer::serialize( const QObject* object, QIODevice* io, bool* ok )
+{
+  Q_ASSERT( io );
+  if (!io->isOpen()) {
+    if (!io->open(QIODevice::WriteOnly)) {
+      if ( ok != 0 )
+        *ok = false;
+      qCritical ("Error opening device");
+      return;
+    }
+  }
+
+  if (!io->isWritable()) {
+    if (ok != 0)
+      *ok = false;
+    qCritical ("Device is not readable");
+    io->close();
+    return;
+  }
+
+  const QByteArray str = serialize( object );
   if ( !str.isNull() ) {
     QDataStream stream( io );
     stream << str;
@@ -138,6 +171,10 @@ QByteArray Serializer::serialize( const QVariant &v )
     str = QByteArray::number( v.value<qulonglong>() );
   } else if ( v.canConvert<qlonglong>() ) { // any signed number?
     str = QByteArray::number( v.value<qlonglong>() );
+  } else if ( v.canConvert<QString>() ){ // can value be converted to string?
+    // this will catch QDate, QDateTime, QUrl, ...
+    str = sanitizeString( v.toString() ).toUtf8();
+    //TODO: catch other values like QImage, QRect, ...
   } else {
     error = true;
   }
@@ -147,3 +184,21 @@ QByteArray Serializer::serialize( const QVariant &v )
     return QByteArray();
 }
 
+QByteArray Serializer::serialize( const QObject* object, const QStringList& skip)
+{
+  QVariantMap object2variant;
+  const QMetaObject *metaobject = object->metaObject();
+  int count = metaobject->propertyCount();
+  for (int i=0; i<count; ++i) {
+    QMetaProperty metaproperty = metaobject->property(i);
+    const char *name = metaproperty.name();
+
+    if (skip.contains(QLatin1String(name)))
+      continue;
+    
+    QVariant value = object->property(name);
+    object2variant[QLatin1String(name)] = value;
+ }
+
+  return serialize(object2variant);
+}

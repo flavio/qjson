@@ -22,10 +22,12 @@
 
 #include <QtTest/QtTest>
 
+#include "person.h"
 #include "parser.h"
 #include "serializer.h"
 
 #include <QtCore/QVariant>
+
 
 class TestSerializer: public QObject
 {
@@ -43,9 +45,11 @@ class TestSerializer: public QObject
     void testValueDouble_data();
     void testValueBoolean();
     void testValueBoolean_data();
+    void testValueQObject();
 
   private:
     void valueTest( const QVariant& value, const QString& expectedRegExp );
+    void valueTest( const QObject* object, const QString& expectedRegExp );
 };
 
 Q_DECLARE_METATYPE(QVariant)
@@ -87,7 +91,7 @@ void TestSerializer::testReadWrite_data()
 
     // array tests
     QTest::newRow( "empty array" ) << QByteArray("[]");
-    QTest::newRow( "basic array" ) << QByteArray("[\"foo\",\"bar\"]");
+    QTest::newRow( "basic array" ) << QByteArray("[\"person\",\"bar\"]");
     QTest::newRow( "single int array" ) << QByteArray("[6]");
     QTest::newRow( "int array" ) << QByteArray("[6,5,6,7]");
     const QByteArray json = "[1,2.4, -100, -3.4, -5e+, 2e,3e+,4.3E,5.4E-]";
@@ -95,13 +99,13 @@ void TestSerializer::testReadWrite_data()
 
     // document tests
     QTest::newRow( "empty object" ) << QByteArray("{}");
-    QTest::newRow( "basic document" ) << QByteArray("{\"foo\":\"bar\"}");
-    QTest::newRow( "object with ints" ) << QByteArray("{\"foo\":6}");
-    const QByteArray json2 = "{ \"foo\":\"bar\",\n\"number\" : 51.3 , \"array\":[\"item1\", 123]}";
+    QTest::newRow( "basic document" ) << QByteArray("{\"person\":\"bar\"}");
+    QTest::newRow( "object with ints" ) << QByteArray("{\"person\":6}");
+    const QByteArray json2 = "{ \"person\":\"bar\",\n\"number\" : 51.3 , \"array\":[\"item1\", 123]}";
     QTest::newRow( "complicated document" ) << json2;
 
     // more complex cases
-    const QByteArray json3 = "[ {\"foo\":\"bar\"},\n\"number\",51.3 , [\"item1\", 123]]";
+    const QByteArray json3 = "[ {\"person\":\"bar\"},\n\"number\",51.3 , [\"item1\", 123]]";
     QTest::newRow( "complicated array" ) << json3;
 }
 
@@ -110,6 +114,18 @@ void TestSerializer::valueTest( const QVariant& value, const QString& expectedRe
 {
   Serializer serializer;
   const QByteArray serialized = serializer.serialize( value );
+  const QString serializedUnicode = QString::fromUtf8( serialized );
+  QRegExp expected( expectedRegExp );
+  QVERIFY( expected.isValid() );
+  QVERIFY2( expected.exactMatch( serializedUnicode ),
+    qPrintable( QString( QLatin1String( "Expected regexp \"%1\" but got \"%2\"." ) )
+      .arg( expectedRegExp ).arg( serializedUnicode ) ) );
+}
+
+void TestSerializer::valueTest( const QObject* object, const QString& expectedRegExp )
+{
+  Serializer serializer;
+  const QByteArray serialized = serializer.serialize( object );
   const QString serializedUnicode = QString::fromUtf8( serialized );
   QRegExp expected( expectedRegExp );
   QVERIFY( expected.isValid() );
@@ -221,6 +237,36 @@ void TestSerializer::testValueBoolean_data()
 
   QTest::newRow( "bool false" ) << QVariant( false ) << QString( QLatin1String( "\\s*false\\s*" ) );
   QTest::newRow( "bool true" ) << QVariant( true ) << QString( QLatin1String( "\\s*true\\s*" ) );
+}
+
+void TestSerializer::testValueQObject()
+{
+  QString name = QLatin1String("Flavio Castelli");
+
+  int phoneNumber = 26;
+  QString phoneNumberString;
+  phoneNumberString.setNum(phoneNumber);
+
+  Person::Gender gender = Person::Male;
+  QString genderString;
+  genderString.setNum((int)gender);
+
+  QDate date (1982, 7, 12);
+
+  Person person;
+  person.setName(name);
+  person.setPhoneNumber(phoneNumber);
+  person.setGender(gender);
+  person.setDob(date);
+
+  QString expected = QLatin1String( "\\s*\\{");
+  expected += QLatin1String( "\\s*\"dob\"\\s*:\\s*\"") + date.toString(QLatin1String("yyyy-MM-dd")) + QLatin1String("\",");
+  expected += QLatin1String( "\\s*\"gender\"\\s*:\\s*") + genderString + QLatin1String(",");
+  expected += QLatin1String( "\\s*\"name\"\\s*:\\s*\"") + name + QLatin1String("\",");
+  expected += QLatin1String( "\\s*\"phoneNumber\"\\s*:\\s*") + phoneNumberString;
+  expected += QLatin1String( "\\s*\\}\\s*" );
+
+  valueTest( &person, expected );
 }
 
 QTEST_MAIN(TestSerializer)
