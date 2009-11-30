@@ -243,7 +243,7 @@ void TestSerializer::testValueQObject()
 {
   QString name = QLatin1String("Flavio Castelli");
 
-  int phoneNumber = 26;
+  int phoneNumber = 123456;
   QString phoneNumberString;
   phoneNumberString.setNum(phoneNumber);
 
