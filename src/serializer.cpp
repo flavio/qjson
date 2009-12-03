@@ -22,9 +22,6 @@
 #include "serializer.h"
 
 #include <QtCore/QDataStream>
-#include <QtCore/QDate>
-#include <QtCore/QMetaObject>
-#include <QtCore/QMetaProperty>
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 
@@ -61,36 +58,6 @@ void Serializer::serialize( const QVariant& v, QIODevice* io, bool* ok )
   }
 
   const QByteArray str = serialize( v );
-  if ( !str.isNull() ) {
-    QDataStream stream( io );
-    stream << str;
-  } else {
-    if ( ok )
-      *ok = false;
-  }
-}
-
-void Serializer::serialize( const QObject* object, QIODevice* io, bool* ok )
-{
-  Q_ASSERT( io );
-  if (!io->isOpen()) {
-    if (!io->open(QIODevice::WriteOnly)) {
-      if ( ok != 0 )
-        *ok = false;
-      qCritical ("Error opening device");
-      return;
-    }
-  }
-
-  if (!io->isWritable()) {
-    if (ok != 0)
-      *ok = false;
-    qCritical ("Device is not readable");
-    io->close();
-    return;
-  }
-
-  const QByteArray str = serialize( object );
   if ( !str.isNull() ) {
     QDataStream stream( io );
     stream << str;
@@ -182,30 +149,4 @@ QByteArray Serializer::serialize( const QVariant &v )
     return str;
   else
     return QByteArray();
-}
-
-QByteArray Serializer::serialize( const QObject* object, const QStringList& ignoredProperties)
-{
-  QVariantMap object2variant = qobject2qvariant(object, ignoredProperties);
-
-  return serialize(object2variant);
-}
-
-QVariantMap Serializer::qobject2qvariant( const QObject* object,
-                                          const QStringList& ignoredProperties)
-{
-  QVariantMap result;
-  const QMetaObject *metaobject = object->metaObject();
-  int count = metaobject->propertyCount();
-  for (int i=0; i<count; ++i) {
-    QMetaProperty metaproperty = metaobject->property(i);
-    const char *name = metaproperty.name();
-
-    if (ignoredProperties.contains(QLatin1String(name)))
-      continue;
-
-    QVariant value = object->property(name);
-    result[QLatin1String(name)] = value;
- }
-  return result;
 }
