@@ -28,12 +28,17 @@
 
 using namespace QJson;
 
+class QObjectHelper::QObjectHelperPrivate {
+};
+
 QObjectHelper::QObjectHelper()
+  : d (new QObjectHelperPrivate)
 {
 }
 
 QObjectHelper::~QObjectHelper()
 {
+  delete d;
 }
 
 QVariantMap QObjectHelper::qobject2qvariant( const QObject* object,

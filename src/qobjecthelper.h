@@ -133,6 +133,10 @@ namespace QJson {
     */
     static void qvariant2qobject(const QVariantMap& variant, QObject* object);
 
+    private:
+      Q_DISABLE_COPY(QObjectHelper)
+      class QObjectHelperPrivate;
+      QObjectHelperPrivate* const d;
   };
 }
 
