@@ -10,6 +10,7 @@ include_directories (./)
 install(FILES
         parser.h
         parserrunnable.h
+				qobjectheper.h
         serializer.h
         serializerrunnable.h
         qjson_export.h
@@ -23,7 +24,7 @@ set(qjson_MOC_HDRS
 
 qt4_wrap_cpp(qjson_MOC_SRCS ${qjson_MOC_HDRS})
 
-set (qjson_SRCS parser.cpp json_scanner.cpp json_parser.cc parserrunnable.cpp serializer.cpp serializerrunnable.cpp)
+set (qjson_SRCS parser.cpp qobjecthelper.cpp json_scanner.cpp json_parser.cc parserrunnable.cpp serializer.cpp serializerrunnable.cpp)
 
 add_library (qjson SHARED ${qjson_SRCS} ${qjson_MOC_SRCS})
 target_link_libraries( qjson ${QT_LIBRARIES})
