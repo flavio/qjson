@@ -22,7 +22,6 @@
 
 #include <QtTest/QtTest>
 
-#include "person.h"
 #include "parser.h"
 #include "serializer.h"
 
@@ -45,7 +44,6 @@ class TestSerializer: public QObject
     void testValueDouble_data();
     void testValueBoolean();
     void testValueBoolean_data();
-    void testValueQObject();
 
   private:
     void valueTest( const QVariant& value, const QString& expectedRegExp );
@@ -237,36 +235,6 @@ void TestSerializer::testValueBoolean_data()
 
   QTest::newRow( "bool false" ) << QVariant( false ) << QString( QLatin1String( "\\s*false\\s*" ) );
   QTest::newRow( "bool true" ) << QVariant( true ) << QString( QLatin1String( "\\s*true\\s*" ) );
-}
-
-void TestSerializer::testValueQObject()
-{
-  QString name = QLatin1String("Flavio Castelli");
-
-  int phoneNumber = 123456;
-  QString phoneNumberString;
-  phoneNumberString.setNum(phoneNumber);
-
-  Person::Gender gender = Person::Male;
-  QString genderString;
-  genderString.setNum((int)gender);
-
-  QDate date (1982, 7, 12);
-
-  Person person;
-  person.setName(name);
-  person.setPhoneNumber(phoneNumber);
-  person.setGender(gender);
-  person.setDob(date);
-
-  QString expected = QLatin1String( "\\s*\\{");
-  expected += QLatin1String( "\\s*\"dob\"\\s*:\\s*\"") + date.toString(QLatin1String("yyyy-MM-dd")) + QLatin1String("\",");
-  expected += QLatin1String( "\\s*\"gender\"\\s*:\\s*") + genderString + QLatin1String(",");
-  expected += QLatin1String( "\\s*\"name\"\\s*:\\s*\"") + name + QLatin1String("\",");
-  expected += QLatin1String( "\\s*\"phoneNumber\"\\s*:\\s*") + phoneNumberString;
-  expected += QLatin1String( "\\s*\\}\\s*" );
-
-  valueTest( &person, expected );
 }
 
 QTEST_MAIN(TestSerializer)
