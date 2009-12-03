@@ -33,6 +33,7 @@ TARGET_LINK_LIBRARIES(
 
 SET( UNIT_TESTS
   testparser
+ 	testqobjecthelper
   testserializer
 )
 
