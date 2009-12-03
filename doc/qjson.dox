@@ -70,6 +70,9 @@ length: 3
 use_space: true
 \endverbatim
 
+The QJson::QObjectHelper class permits to serialize QObject instances into JSON. QJson::QObjectHelper also allows to 
+initialize a QObject using the values stored inside of a JSON object. 
+
 \section _build Build instructions
 QJson build system is based on cmake. Download QJson sources, extract them, move inside the sources directory and then:
 \code
