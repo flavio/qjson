@@ -31,7 +31,7 @@ namespace QJson {
   class ParserPrivate;
 
   /**
-  * @brief Main class used for converting JSON data to QVariant objects
+  * @brief Main class used to convert JSON data to QVariant objects
   */
   class QJSON_EXPORT Parser
   {
