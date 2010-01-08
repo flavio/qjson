@@ -30,7 +30,10 @@ using namespace QJson;
 class Serializer::SerializerPrivate {
 };
 
-Serializer::Serializer() : d( new SerializerPrivate ) {
+Serializer::Serializer( bool escapeUnicode )
+  : d( new SerializerPrivate ),
+    escapeUnicode( escapeUnicode )
+{
 }
 
 Serializer::~Serializer() {
@@ -67,15 +70,37 @@ void Serializer::serialize( const QVariant& v, QIODevice* io, bool* ok )
   }
 }
 
-static QString sanitizeString( QString str )
+QString Serializer::sanitizeString( QString str )
 {
   str.replace( QLatin1String( "\\" ), QLatin1String( "\\\\" ) );
+
+  if ( this->escapeUnicode ) {
+    QString result;
+    const ushort* unicode = str.utf16();
+    unsigned int i = 0;
+
+    while ( unicode[ i ] ) {
+      if ( unicode[ i ] < 128 ) {
+        result.append( QChar( unicode[ i ] ) );
+      }
+      else {
+        QString hexCode =
+          QString::number( unicode[ i ], 16 ).rightJustified( 4, '0' );
+
+        result.append( "\\u" ).append( hexCode );
+      }
+      ++i;
+    }
+    str = result;
+  }
+
   str.replace( QLatin1String( "\"" ), QLatin1String( "\\\"" ) );
   str.replace( QLatin1String( "\b" ), QLatin1String( "\\b" ) );
   str.replace( QLatin1String( "\f" ), QLatin1String( "\\f" ) );
   str.replace( QLatin1String( "\n" ), QLatin1String( "\\n" ) );
   str.replace( QLatin1String( "\r" ), QLatin1String( "\\r" ) );
   str.replace( QLatin1String( "\t" ), QLatin1String( "\\t" ) );
+
   return QString( QLatin1String( "\"%1\"" ) ).arg( str );
 }
 
