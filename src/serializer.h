@@ -36,7 +36,7 @@ namespace QJson {
   */
   class QJSON_EXPORT Serializer {
   public:
-    Serializer( bool escapeUnicode = false );
+    Serializer();
     ~Serializer();
 
      /**
@@ -62,13 +62,9 @@ namespace QJson {
     QByteArray serialize( const QVariant& variant );
 
   private:
-    QString sanitizeString( QString str );
-
-  private:
     Q_DISABLE_COPY(Serializer)
     class SerializerPrivate;
     SerializerPrivate* const d;
-    bool escapeUnicode;
   };
 }
 

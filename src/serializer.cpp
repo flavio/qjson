@@ -28,11 +28,45 @@
 using namespace QJson;
 
 class Serializer::SerializerPrivate {
+  public:
+    QString sanitizeString( QString str );
 };
 
-Serializer::Serializer( bool escapeUnicode )
-  : d( new SerializerPrivate ),
-    escapeUnicode( escapeUnicode )
+QString Serializer::SerializerPrivate::sanitizeString( QString str )
+{
+  str.replace( QLatin1String( "\\" ), QLatin1String( "\\\\" ) );
+
+  // escape unicode chars
+  QString result;
+  const ushort* unicode = str.utf16();
+  unsigned int i = 0;
+
+  while ( unicode[ i ] ) {
+    if ( unicode[ i ] < 128 ) {
+      result.append( QChar( unicode[ i ] ) );
+    }
+    else {
+      QString hexCode = QString::number( unicode[ i ], 16 ).rightJustified( 4,
+                                                           QLatin1Char('0') );
+
+      result.append( QLatin1String ("\\u") ).append( hexCode );
+    }
+    ++i;
+  }
+  str = result;
+
+  str.replace( QLatin1String( "\"" ), QLatin1String( "\\\"" ) );
+  str.replace( QLatin1String( "\b" ), QLatin1String( "\\b" ) );
+  str.replace( QLatin1String( "\f" ), QLatin1String( "\\f" ) );
+  str.replace( QLatin1String( "\n" ), QLatin1String( "\\n" ) );
+  str.replace( QLatin1String( "\r" ), QLatin1String( "\\r" ) );
+  str.replace( QLatin1String( "\t" ), QLatin1String( "\\t" ) );
+
+  return QString( QLatin1String( "\"%1\"" ) ).arg( str );
+}
+
+Serializer::Serializer()
+  : d( new SerializerPrivate )
 {
 }
 
@@ -68,40 +102,6 @@ void Serializer::serialize( const QVariant& v, QIODevice* io, bool* ok )
     if ( ok )
       *ok = false;
   }
-}
-
-QString Serializer::sanitizeString( QString str )
-{
-  str.replace( QLatin1String( "\\" ), QLatin1String( "\\\\" ) );
-
-  if ( this->escapeUnicode ) {
-    QString result;
-    const ushort* unicode = str.utf16();
-    unsigned int i = 0;
-
-    while ( unicode[ i ] ) {
-      if ( unicode[ i ] < 128 ) {
-        result.append( QChar( unicode[ i ] ) );
-      }
-      else {
-        QString hexCode =
-          QString::number( unicode[ i ], 16 ).rightJustified( 4, '0' );
-
-        result.append( "\\u" ).append( hexCode );
-      }
-      ++i;
-    }
-    str = result;
-  }
-
-  str.replace( QLatin1String( "\"" ), QLatin1String( "\\\"" ) );
-  str.replace( QLatin1String( "\b" ), QLatin1String( "\\b" ) );
-  str.replace( QLatin1String( "\f" ), QLatin1String( "\\f" ) );
-  str.replace( QLatin1String( "\n" ), QLatin1String( "\\n" ) );
-  str.replace( QLatin1String( "\r" ), QLatin1String( "\\r" ) );
-  str.replace( QLatin1String( "\t" ), QLatin1String( "\\t" ) );
-
-  return QString( QLatin1String( "\"%1\"" ) ).arg( str );
 }
 
 static QByteArray join( const QList<QByteArray>& list, const QByteArray& sep ) {
@@ -146,12 +146,12 @@ QByteArray Serializer::serialize( const QVariant &v )
         error = true;
         break;
       }
-      pairs << sanitizeString( it.key() ).toUtf8() + " : " + serializedValue;
+      pairs << d->sanitizeString( it.key() ).toUtf8() + " : " + serializedValue;
     }
     str += join( pairs, ", " );
     str += " }";
   } else if (( v.type() == QVariant::String ) ||  ( v.type() == QVariant::ByteArray )) { // a string or a byte array?
-    str = sanitizeString( v.toString() ).toUtf8();
+    str = d->sanitizeString( v.toString() ).toUtf8();
   } else if ( v.type() == QVariant::Double ) { // a double?
     str = QByteArray::number( v.toDouble() );
     if( ! str.contains( "." ) && ! str.contains( "e" ) ) {
@@ -165,7 +165,7 @@ QByteArray Serializer::serialize( const QVariant &v )
     str = QByteArray::number( v.value<qlonglong>() );
   } else if ( v.canConvert<QString>() ){ // can value be converted to string?
     // this will catch QDate, QDateTime, QUrl, ...
-    str = sanitizeString( v.toString() ).toUtf8();
+    str = d->sanitizeString( v.toString() ).toUtf8();
     //TODO: catch other values like QImage, QRect, ...
   } else {
     error = true;
