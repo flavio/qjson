@@ -239,4 +239,9 @@ void TestSerializer::testValueBoolean_data()
 }
 
 QTEST_MAIN(TestSerializer)
-#include "moc_testserializer.cxx"
+
+#ifdef QMAKE_BUILD
+  #include "testserializer.moc"
+#else
+  #include "moc_testserializer.cxx"
+#endif
