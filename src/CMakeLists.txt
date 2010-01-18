@@ -10,7 +10,7 @@ include_directories (./)
 install(FILES
         parser.h
         parserrunnable.h
-				qobjecthelper.h
+        qobjecthelper.h
         serializer.h
         serializerrunnable.h
         qjson_export.h
