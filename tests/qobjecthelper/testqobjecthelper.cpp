@@ -88,4 +88,8 @@ void TestQObjectHelper::testQVariant2QObject()
 }
 
 QTEST_MAIN(TestQObjectHelper)
-#include "moc_testqobjecthelper.cxx"
+#ifdef QMAKE_BUILD
+  #include "testqobjecthelper.moc"
+#else
+  #include "moc_testqobjecthelper.cxx"
+#endif
