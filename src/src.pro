@@ -9,7 +9,10 @@ CONFIG += create_prl
 
 VERSION = 0.7.1
 
-windows:DEFINES += QJSON_MAKEDLL
+windows:symbian: {
+  DEFINES += QJSON_MAKEDLL
+}
+
 
 QJSON_CPP = $$QJSON_SRCBASE
 INCLUDEPATH += $$QJSON_CPP
