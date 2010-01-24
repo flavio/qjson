@@ -44,3 +44,23 @@ SOURCES += \
   qobjecthelper.cpp \
   serializer.cpp \
   serializerrunnable.cpp
+
+symbian: {
+  #export public header to \epocroot\epoc32\include to be able to use them
+  headers.files = $$PUBLIC_HEADERS
+  headers.path = $$PWD
+  for(header, headers.files) {
+    {BLD_INF_RULES.prj_exports += "$$header"}
+  }
+
+  TARGET.EPOCALLOWDLLDATA = 1
+  # uid for the dll
+  #TARGET.UID3=
+  #TARGET.CAPABILITY =
+
+  # add dll to the sis
+  QjsonDeployment.sources = $${TARGET}.dll
+  QjsonDeployment.path = /sys/bin
+
+  DEPLOYMENT += QjsonDeployment
+}
