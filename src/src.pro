@@ -56,7 +56,7 @@ symbian: {
   TARGET.EPOCALLOWDLLDATA = 1
   # uid for the dll
   #TARGET.UID3=
-  #TARGET.CAPABILITY = ReadDeviceData WriteDeviceData
+  TARGET.CAPABILITY = ReadDeviceData WriteDeviceData
   
   # do not freeze api-> no libs produced. Comment when freezing!
   # run "abld freeze winscw" to create def files
