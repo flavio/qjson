@@ -56,11 +56,11 @@ symbian: {
   TARGET.EPOCALLOWDLLDATA = 1
   # uid for the dll
   #TARGET.UID3=
-  #TARGET.CAPABILITY =
+  #TARGET.CAPABILITY = ReadDeviceData WriteDeviceData
   
   # do not freeze api-> no libs produced. Comment when freezing!
   # run "abld freeze winscw" to create def files
-  #symbian:MMP_RULES += "EXPORTUNFROZEN"
+  symbian:MMP_RULES += "EXPORTUNFROZEN"
 
   # add dll to the sis
   QjsonDeployment.sources = $${TARGET}.dll
