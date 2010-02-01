@@ -42,13 +42,13 @@ int main(int argc, char *argv[]) {
     exit (1);
   }
   
-  Parser driver;
+  Parser parser;
   bool ok;
 
   QFile file (filename);
-  QVariant data = driver.parse (&file, &ok);
+  QVariant data = parser.parse (&file, &ok);
   if (!ok) {
-    qCritical("%s:%i - Error: %s", filename.toLatin1().data(), driver.errorLine(), qPrintable(driver.errorString()));
+    qCritical("%s:%i - Error: %s", filename.toLatin1().data(), parser.errorLine(), qPrintable(parser.errorString()));
     exit (1);
   }
   else {
