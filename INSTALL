@@ -16,7 +16,9 @@ For Unix/Linux/Mac:
 
 Some possible cmake options:
  -DCMAKE_BUILD_TYPE=DEBUG
-   that enables the some debug output (other than making easier to debug the code)
+   enables some debug output (other than making easier to debug the code)
+ -DQJSON_BUILD_TESTS=yes or -DKDE4_BUILD_TESTS=yes
+   builds the unit tests
  -DCMAKE_INSTALL_PREFIX=${HOME}/testinstall
    install qjson in a custom directory
  -DCMAKE_INCLUDE_PATH=${HOME}/testinstall/include
