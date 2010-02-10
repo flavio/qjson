@@ -62,20 +62,23 @@ QVariantMap QObjectHelper::qobject2qvariant( const QObject* object,
 
 void QObjectHelper::qvariant2qobject(const QVariantMap& variant, QObject* object)
 {
-  QStringList properies;
   const QMetaObject *metaobject = object->metaObject();
-  int count = metaobject->propertyCount();
-  for (int i=0; i<count; ++i) {
-    QMetaProperty metaproperty = metaobject->property(i);
-    if (metaproperty.isWritable()) {
-      properies << QLatin1String( metaproperty.name());
-    }
-  }
 
   QVariantMap::const_iterator iter;
-  for (iter = variant.constBegin(); iter != variant.end(); iter++) {
-    if (properies.contains(iter.key())) {
-      object->setProperty(iter.key().toAscii(), iter.value());
+  for (iter = variant.constBegin(); iter != variant.constEnd(); iter++) {
+    int pIdx = metaobject->indexOfProperty( iter.key().toAscii() );
+
+    if ( pIdx < 0 ) {
+      continue;
+    }
+
+    QMetaProperty metaproperty = metaobject->property( pIdx );
+    QVariant::Type type = metaproperty.type();
+    QVariant v( iter.value() );
+
+    if ( v.canConvert( type ) ) {
+      v.convert( type );
+      metaproperty.write( object, v );
     }
   }
 }
