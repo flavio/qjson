@@ -32,30 +32,33 @@ For Unix/Linux/Mac:
 
 For Symbian:
   General instructions:
-  Use latest symbian/qt libraries (4.6.2 at this time). Also you should have most uptodate compiler (build 487 or newer) when compiling on symbian. You can
-  download a patch for Carbide/Qtcreator compiler (emulator compiler) from http://pepper.troll.no/s60prereleases/patches/x86Tools_3.2.5_Symbian_b487.zip 
-  (unzip to C:\Program Files\Nokia\Carbide.c++ v2.0\x86Build\Symbian_Tools\Command_Line_Tools) and if you are working with 3.1 device download this also
-  http://pepper.troll.no/s60prereleases/patches/getexports.exe (unzip it tp epoc32\tools\)
+    Use latest symbian/qt libraries (4.6.2 at this time). Also you should have most uptodate compiler (build 487 or newer) when compiling on symbian. You can
+    download a patch for Carbide/Qtcreator compiler (emulator compiler) from http://pepper.troll.no/s60prereleases/patches/x86Tools_3.2.5_Symbian_b487.zip
+    (unzip to C:\Program Files\Nokia\Carbide.c++ v2.0\x86Build\Symbian_Tools\Command_Line_Tools) and if you are working with 3.1 device download this also
+    http://pepper.troll.no/s60prereleases/patches/getexports.exe (unzip it tp epoc32\tools\)
 
-  Build exports public qjson headers to epoc32\include for use with your application.
-  Dll capabililies are set by default to "TARGET.CAPABILITY = ReadDeviceData WriteDeviceData" src.pro adjust to your needs. You might need to tweak this according to your app.
-  By default dll def file is not generated and abi is not freezed (hence symbian:MMP_RULES += "EXPORTUNFROZEN" is used)
+    Build exports public qjson headers to epoc32\include for use with your application.
+    Dll capabililies are set by default to "TARGET.CAPABILITY = ReadDeviceData WriteDeviceData" src.pro adjust to your needs. You might need to tweak this according to your app.
+    By default dll def file is not generated and abi is not freezed (hence symbian:MMP_RULES += "EXPORTUNFROZEN" is used)
 
   Detailed build instructions:
-  cd <qjson root, same level as this file>
-  "git checkout -b symbian origin/symbian" (checkout symbian branch)
+    cd <qjson root, same level as this file>
+    git checkout -b symbian origin/symbian # checkout symbian branch
+    qmake
+    make debug-winscw # for emulator build
+    make release-gcce # for phone build
 
-  "qmake"
-  "make debug-winscw" (for emulator build)
-  "make release-gcce" (for phone build)
+    For installable binary (dll):
+      cd src && make sis
+    now you should have "qjson.sis". Sis name varies between Qt versions, with 4.6.2 you should have name "qjson.sis".
 
-  "for installable binary (dll):
-  "cd src" && "make sis" (after this you should have qjson.sis (sis name varies between Qt versions, 4.6.2 should have name qjson.sis)
-
-  if you want to run for example cmlline_tester then
-  cd tests\cmdline_tester
-  "qmake"
-  "make debug-winscw" and for device "make release-gcce" and "make sis"
+    If you want to run for example "cmdline_tester" then:
+      cd tests\cmdline_tester
+      qmake
+      make debug-winscw
+    and for device:
+      make release-gcce
+      make sis
 
 Please report problems to:
   https://lists.sourceforge.net/mailman/listinfo/qjson-devel
