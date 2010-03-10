@@ -9,7 +9,7 @@ CONFIG += create_prl
 
 VERSION = 0.7.1
 
-windows: symbian: {
+windows: {
   DEFINES += QJSON_MAKEDLL
 }
 
