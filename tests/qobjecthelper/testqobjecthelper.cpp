@@ -36,8 +36,6 @@ class TestQObjectHelper: public QObject
     void testQVariant2QObject();
 };
 
-Q_DECLARE_METATYPE(QVariant)
-
 using namespace QJson;
 
 void TestQObjectHelper::testQObject2QVariant()
@@ -73,12 +71,7 @@ void TestQObjectHelper::testQVariant2QObject()
 
   Person person;
 
-  QVariantMap variant;
-  variant[QLatin1String("name")] = QVariant(name);
-  variant[QLatin1String("phoneNumber")] = QVariant(phoneNumber);
-  variant[QLatin1String("gender")] = QVariant(gender);
-  variant[QLatin1String("dob")] = QVariant(dob);
-
+  QVariantMap variant = QObjectHelper::qobject2qvariant(&person);
   QObjectHelper::qvariant2qobject(variant, &person);
 
   QCOMPARE(person.name(), name);
