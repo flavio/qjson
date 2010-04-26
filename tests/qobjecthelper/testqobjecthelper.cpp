@@ -23,7 +23,9 @@
 
 #include <QtTest/QtTest>
 
+#include "parser.h"
 #include "person.h"
+#include "serializer.h"
 #include "qobjecthelper.h"
 
 #include <QtCore/QVariant>
@@ -64,15 +66,30 @@ void TestQObjectHelper::testQObject2QVariant()
 
 void TestQObjectHelper::testQVariant2QObject()
 {
+  bool ok;
   QString name = QLatin1String("Flavio Castelli");
   int phoneNumber = 123456;
   Person::Gender gender = Person::Male;
   QDate dob (1982, 7, 12);
 
-  Person person;
+  Person expected_person;
+  expected_person.setName(name);
+  expected_person.setPhoneNumber(phoneNumber);
+  expected_person.setGender(gender);
+  expected_person.setDob(dob);
 
-  QVariantMap variant = QObjectHelper::qobject2qvariant(&person);
-  QObjectHelper::qvariant2qobject(variant, &person);
+  QVariantMap variant = QObjectHelper::qobject2qvariant(&expected_person);
+
+  Serializer serializer;
+  QByteArray json = serializer.serialize(variant);
+
+  Parser parser;
+  QVariant parsedVariant = parser.parse(json,&ok);
+  QVERIFY(ok);
+  QVERIFY(parsedVariant.canConvert(QVariant::Map));
+
+  Person person;
+  QObjectHelper::qvariant2qobject(parsedVariant.toMap(), &person);
 
   QCOMPARE(person.name(), name);
   QCOMPARE(person.phoneNumber(),phoneNumber);
