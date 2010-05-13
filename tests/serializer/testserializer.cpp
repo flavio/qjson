@@ -156,15 +156,15 @@ void TestSerializer::testValueString_data()
   QTest::addColumn<QVariant>( "value" );
   QTest::addColumn<QString>( "expected" );
   
-//  QTest::newRow( "null string" ) << QVariant( QString() ) << QString( QLatin1String( "\\s*\"\"\\s*" ) );
-//  QTest::newRow( "empty string" ) << QVariant( QString( QLatin1String( "" ) ) ) << QString( QLatin1String( "\\s*\"\"\\s*" ) );
-//  QTest::newRow( "Simple String" ) << QVariant( QString( QLatin1String( "simpleString" ) ) ) << QString( QLatin1String( "\\s*\"simpleString\"\\s*" ) );
-//  QTest::newRow( "string with tab" ) << QVariant( QString( QLatin1String( "string\tstring" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\tstring\"\\s*" ) );
-//  QTest::newRow( "string with newline" ) << QVariant( QString( QLatin1String( "string\nstring" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\nstring\"\\s*" ) );
-//  QTest::newRow( "string with bell" ) << QVariant( QString( QLatin1String( "string\bstring" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\bstring\"\\s*" ) );
-//  QTest::newRow( "string with return" ) << QVariant( QString( QLatin1String( "string\rstring" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\rstring\"\\s*" ) );
-//  QTest::newRow( "string with double quote" ) << QVariant( QString( QLatin1String( "string\"string" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\\"string\"\\s*" ) );
-//  QTest::newRow( "string with backslash" ) << QVariant( QString( QLatin1String( "string\\string" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\\\\\string\"\\s*" ) );
+  QTest::newRow( "null string" ) << QVariant( QString() ) << QString( QLatin1String( "\\s*\"\"\\s*" ) );
+  QTest::newRow( "empty string" ) << QVariant( QString( QLatin1String( "" ) ) ) << QString( QLatin1String( "\\s*\"\"\\s*" ) );
+  QTest::newRow( "Simple String" ) << QVariant( QString( QLatin1String( "simpleString" ) ) ) << QString( QLatin1String( "\\s*\"simpleString\"\\s*" ) );
+  QTest::newRow( "string with tab" ) << QVariant( QString( QLatin1String( "string\tstring" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\tstring\"\\s*" ) );
+  QTest::newRow( "string with newline" ) << QVariant( QString( QLatin1String( "string\nstring" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\nstring\"\\s*" ) );
+  QTest::newRow( "string with bell" ) << QVariant( QString( QLatin1String( "string\bstring" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\bstring\"\\s*" ) );
+  QTest::newRow( "string with return" ) << QVariant( QString( QLatin1String( "string\rstring" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\rstring\"\\s*" ) );
+  QTest::newRow( "string with double quote" ) << QVariant( QString( QLatin1String( "string\"string" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\\"string\"\\s*" ) );
+  QTest::newRow( "string with backslash" ) << QVariant( QString( QLatin1String( "string\\string" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\\\\\string\"\\s*" ) );
   QString testStringWithUnicode = QString( QLatin1String( "string" ) ) + QChar( 0x2665 ) + QLatin1String( "string" );
   QString testEscapedString = QString( QLatin1String( "string" ) ) + QLatin1String("\\\\u2665") + QLatin1String( "string" );
   QTest::newRow( "string with unicode" ) << QVariant( testStringWithUnicode ) << QLatin1String( "\\s*\"" ) + testEscapedString + QLatin1String( "\"\\s*" );
