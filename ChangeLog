@@ -1,36 +1,36 @@
 ----------------------------------------------------------------------
 Sat Mar 13 23:57:00 CEST 2009 - flavio@castelli.name
 
-- merged the symbian branch into master
+  * Merged the symbian branch into master,
 
 ----------------------------------------------------------------------
 Sun Oct 11 19:18:00 CEST 2009 - flavio@castelli.name
 
-- updated to 0.6.3: fixed a bug affecting ulonglong numbers serialization
+ * Updated to 0.6.3: fixed a bug affecting ulonglong numbers serialization.
 
 -------------------------------------------------------------------
 Wed Sep 15 19:21:00 CEST 2009 - flavio@castelli.name
 
-- updated to 0.6.2: fixed a bug affecting ulonglong numbers parsing
+ * Updated to 0.6.2: fixed a bug affecting ulonglong numbers parsing.
 
 -------------------------------------------------------------------
 Wed Sep 09 09:55:00 CEST 2009 - flavio@castelli.name
 
-- updated to 0.6.1: relevant bugs fixed
-- moved the SerializerRunnable class inside QJson namespace
-- fixed a bug in cmdline_tester
+ * Updated to 0.6.1: relevant bugs fixed.
+ * Moved the SerializerRunnable class inside QJson namespace.
+ * Fixed a bug in cmdline_tester.
 
 -------------------------------------------------------------------
 Mon Jul 20 15:24:32 CEST 2009 - prusnak@suse.cz
 
-- updated to 0.6.0 (KDE SVN rev 999750)
+ * Updated to 0.6.0 (KDE SVN rev 999750).
 
 -------------------------------------------------------------------
 Mon Apr 07 00:00:00 UTC 2009 - flavio@castelli.name
 
-- released 0.5.1 - added unicode support
+ * Released 0.5.1 - added unicode support.
 
 -------------------------------------------------------------------
 Mon Apr 03 00:00:00 UTC 2009 - flavio@castelli.name
 
-- first release
+ * First release.
