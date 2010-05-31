@@ -82,8 +82,7 @@ start: data {
               qjsonDebug() << "json_parser - parsing finished";
             };
 
-data: object {$$ = $1; }
-      | array {$$ = $1; }
+data: value { $$ = $1; }
       | error
           {
             qCritical()<< "json_parser - syntax error found, "
