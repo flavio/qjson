@@ -38,6 +38,8 @@ class TestSerializer: public QObject
     void testValueNull();
     void testValueString();
     void testValueString_data();
+    void testValueStringList();
+    void testValueStringList_data();
     void testValueInteger();
     void testValueInteger_data();
     void testValueDouble();
@@ -155,19 +157,43 @@ void TestSerializer::testValueString_data()
 {
   QTest::addColumn<QVariant>( "value" );
   QTest::addColumn<QString>( "expected" );
-  
-//  QTest::newRow( "null string" ) << QVariant( QString() ) << QString( QLatin1String( "\\s*\"\"\\s*" ) );
-//  QTest::newRow( "empty string" ) << QVariant( QString( QLatin1String( "" ) ) ) << QString( QLatin1String( "\\s*\"\"\\s*" ) );
-//  QTest::newRow( "Simple String" ) << QVariant( QString( QLatin1String( "simpleString" ) ) ) << QString( QLatin1String( "\\s*\"simpleString\"\\s*" ) );
-//  QTest::newRow( "string with tab" ) << QVariant( QString( QLatin1String( "string\tstring" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\tstring\"\\s*" ) );
-//  QTest::newRow( "string with newline" ) << QVariant( QString( QLatin1String( "string\nstring" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\nstring\"\\s*" ) );
-//  QTest::newRow( "string with bell" ) << QVariant( QString( QLatin1String( "string\bstring" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\bstring\"\\s*" ) );
-//  QTest::newRow( "string with return" ) << QVariant( QString( QLatin1String( "string\rstring" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\rstring\"\\s*" ) );
-//  QTest::newRow( "string with double quote" ) << QVariant( QString( QLatin1String( "string\"string" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\\"string\"\\s*" ) );
-//  QTest::newRow( "string with backslash" ) << QVariant( QString( QLatin1String( "string\\string" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\\\\\string\"\\s*" ) );
+  QTest::newRow( "null string" ) << QVariant( QString() ) << QString( QLatin1String( "\\s*\"\"\\s*" ) );
+  QTest::newRow( "empty string" ) << QVariant( QString( QLatin1String( "" ) ) ) << QString( QLatin1String( "\\s*\"\"\\s*" ) );
+  QTest::newRow( "Simple String" ) << QVariant( QString( QLatin1String( "simpleString" ) ) ) << QString( QLatin1String( "\\s*\"simpleString\"\\s*" ) );
+  QTest::newRow( "string with tab" ) << QVariant( QString( QLatin1String( "string\tstring" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\tstring\"\\s*" ) );
+  QTest::newRow( "string with newline" ) << QVariant( QString( QLatin1String( "string\nstring" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\nstring\"\\s*" ) );
+  QTest::newRow( "string with bell" ) << QVariant( QString( QLatin1String( "string\bstring" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\bstring\"\\s*" ) );
+  QTest::newRow( "string with return" ) << QVariant( QString( QLatin1String( "string\rstring" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\rstring\"\\s*" ) );
+  QTest::newRow( "string with double quote" ) << QVariant( QString( QLatin1String( "string\"string" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\\"string\"\\s*" ) );
+  QTest::newRow( "string with backslash" ) << QVariant( QString( QLatin1String( "string\\string" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\\\\\string\"\\s*" ) );
   QString testStringWithUnicode = QString( QLatin1String( "string" ) ) + QChar( 0x2665 ) + QLatin1String( "string" );
   QString testEscapedString = QString( QLatin1String( "string" ) ) + QLatin1String("\\\\u2665") + QLatin1String( "string" );
   QTest::newRow( "string with unicode" ) << QVariant( testStringWithUnicode ) << QLatin1String( "\\s*\"" ) + testEscapedString + QLatin1String( "\"\\s*" );
+}
+
+void TestSerializer::testValueStringList()
+{
+  QFETCH( QVariant, value );
+  QFETCH( QString, expected );
+  valueTest( value, expected );
+
+  QVariantMap map;
+  map[QLatin1String("value")] = value;
+  valueTest( QVariant(map), QLatin1String( "\\s*\\{\\s*\"value\"\\s*:" ) + expected + QLatin1String( "\\}\\s*" ) );
+}
+
+void TestSerializer::testValueStringList_data()
+{
+  QTest::addColumn<QVariant>( "value" );
+  QTest::addColumn<QString>( "expected" );
+
+  QStringList stringlist;
+  QString expected;
+
+  // simple QStringList
+  stringlist << QLatin1String("hello") << QLatin1String("world");
+  expected = QLatin1String( "\\s*\\[\\s*\"hello\"\\s*,\\s*\"world\"\\s*\\]\\s*" );
+  QTest::newRow( "simple QStringList" ) << QVariant( stringlist) << expected;
 }
 
 void TestSerializer::testValueInteger()
@@ -185,7 +211,7 @@ void TestSerializer::testValueInteger_data()
 {
   QTest::addColumn<QVariant>( "value" );
   QTest::addColumn<QString>( "expected" );
-  
+
   QTest::newRow( "int 0" ) << QVariant( static_cast<int>( 0 ) ) << QString( QLatin1String( "\\s*0\\s*" ) );
   QTest::newRow( "uint 0" ) << QVariant( static_cast<uint>( 0 ) ) << QString( QLatin1String( "\\s*0\\s*" ) );
   QTest::newRow( "int -1" ) << QVariant( static_cast<int>( -1 ) ) << QString( QLatin1String( "\\s*-1\\s*" ) );
@@ -210,7 +236,7 @@ void TestSerializer::testValueDouble_data()
 {
   QTest::addColumn<QVariant>( "value" );
   QTest::addColumn<QString>( "expected" );
-  
+
   QTest::newRow( "double 0" ) << QVariant( 0.0 ) << QString( QLatin1String( "\\s*0.0\\s*" ) );
   QTest::newRow( "double -1" ) << QVariant( -1.0 ) << QString( QLatin1String( "\\s*-1.0\\s*" ) );
   QTest::newRow( "double 1.5E-20" ) << QVariant( 1.5e-20 ) << QString( QLatin1String( "\\s*1.5[Ee]-20\\s*" ) );
@@ -239,4 +265,9 @@ void TestSerializer::testValueBoolean_data()
 }
 
 QTEST_MAIN(TestSerializer)
-#include "moc_testserializer.cxx"
+
+#ifdef QMAKE_BUILD
+  #include "testserializer.moc"
+#else
+  #include "moc_testserializer.cxx"
+#endif

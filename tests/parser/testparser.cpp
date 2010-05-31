@@ -329,4 +329,9 @@ void TestParser::testNumbers_data() {
 }
 
 QTEST_MAIN(TestParser)
-#include "moc_testparser.cxx"
+
+#ifdef QMAKE_BUILD
+  #include "testparser.moc"
+#else
+  #include "moc_testparser.cxx"
+#endif

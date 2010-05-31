@@ -121,7 +121,7 @@ QByteArray Serializer::serialize( const QVariant &v )
 
   if ( ! v.isValid() ) { // invalid or null?
     str = "null";
-  } else if ( v.type() == QVariant::List ) { // variant is a list?
+  } else if (( v.type() == QVariant::List ) || ( v.type() == QVariant::StringList )){ // an array or a stringlist?
     const QVariantList list = v.toList();
     QList<QByteArray> values;
     Q_FOREACH( const QVariant& v, list )

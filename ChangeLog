@@ -1,4 +1,9 @@
 ----------------------------------------------------------------------
+Sat Mar 13 23:57:00 CEST 2009 - flavio@castelli.name
+
+- merged the symbian branch into master
+
+----------------------------------------------------------------------
 Sun Oct 11 19:18:00 CEST 2009 - flavio@castelli.name
 
 - updated to 0.6.3: fixed a bug affecting ulonglong numbers serialization
