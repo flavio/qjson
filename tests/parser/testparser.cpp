@@ -43,6 +43,8 @@ class TestParser: public QObject
     void testEscapeChars();
     void testNumbers();
     void testNumbers_data();
+    void testTopLevelValues();
+    void testTopLevelValues_data();
 };
 
 Q_DECLARE_METATYPE(QVariant)
@@ -326,6 +328,67 @@ void TestParser::testNumbers_data() {
   output.setValue(input);
 
   QTest::newRow("exp5") << input << output << QVariant::ByteArray;
+}
+
+void TestParser::testTopLevelValues() {
+  QFETCH(QByteArray, input);
+  QFETCH(QVariant, expected);
+  QFETCH(QVariant::Type, type);
+
+  Parser parser;
+  bool ok;
+  QVariant result = parser.parse (input, &ok);
+  QVERIFY (ok);
+
+  QCOMPARE(result, expected);
+  QCOMPARE(result.type(), type);
+}
+
+void TestParser::testTopLevelValues_data() {
+  QTest::addColumn<QByteArray>( "input" );
+  QTest::addColumn<QVariant>( "expected" );
+  QTest::addColumn<QVariant::Type>( "type" );
+
+  QByteArray input;
+  QVariant output;
+
+  // string
+  input = QByteArray("\"foo bar\"");
+  output = QVariant(QLatin1String("foo bar")); 
+  QTest::newRow("string") << input << output << QVariant::String;
+
+  // number
+  input = QByteArray("2.4");
+  output = QVariant(QVariant::Double);
+  output.setValue(2.4);
+  QTest::newRow("simple double") << input << output << QVariant::Double;
+
+  // boolean
+  input = QByteArray("true");
+  output = QVariant(QVariant::Bool);
+  output.setValue(true);
+  QTest::newRow("bool") << input << output << QVariant::Bool;
+
+  // null
+  input = QByteArray("null");
+  output = QVariant();
+  QTest::newRow("null") << input << output << QVariant::Invalid;
+
+  // array
+  input = QByteArray("[1,2,3]");
+  QVariantList list;
+  list << QVariant(1) << QVariant(2) << QVariant(3);
+  output = QVariant(QVariant::List);
+  output.setValue(list);
+  QTest::newRow("array") << input << output << QVariant::List;
+
+  // object
+  input = QByteArray("{\"foo\" : \"bar\"}");
+  QVariantMap map;
+  map.insert(QLatin1String("foo"), QLatin1String("bar"));
+  output = QVariant(QVariant::Map);
+  output.setValue(map);
+  QTest::newRow("object") << input << output << QVariant::Map;
 }
 
 QTEST_MAIN(TestParser)
