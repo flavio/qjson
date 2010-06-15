@@ -68,7 +68,7 @@ namespace yy
   #define YYERROR_VERBOSE 1
 
 
-/* Line 303 of lalr1.cc.  */
+/* Line 35 of lalr1.cc.  */
 #line 73 "json_parser.hh"
 
 #include "location.hh"
@@ -241,7 +241,7 @@ namespace yy
     static const unsigned char yytable_[];
     static const signed char yytable_ninf_;
 
-    static const unsigned char yycheck_[];
+    static const signed char yycheck_[];
 
     /// For a state, its accessing symbol.
     static const unsigned char yystos_[];
