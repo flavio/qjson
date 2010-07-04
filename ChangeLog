@@ -1,3 +1,8 @@
+Sun Jul 04 15:41:08 CEST 2010  Flavio Castelli  <flavio@castelli.name>
+
+	* fix make install when not installing as root
+	* provide "make uninstall"
+
 Tue Jun 15 13:16:57 CEST 2010  Flavio Castelli  <flavio@castelli.name>
 
 	* Allow top level values
