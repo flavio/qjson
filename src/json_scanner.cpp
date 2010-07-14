@@ -38,10 +38,15 @@ bool ishexnstring(const QString& string) {
 }
 
 JSonScanner::JSonScanner(QIODevice* io)
-  : m_io (io)
+  : m_io (io),
+    m_allowSpecialNumbers(false)
 {
   m_quotmarkClosed = true;
   m_quotmarkCount = 0;
+}
+
+void JSonScanner::allowSpecialNumbers(bool allow) {
+  m_allowSpecialNumbers = allow;
 }
 
 static QString unescape( const QByteArray& ba, bool* ok ) {
@@ -156,24 +161,28 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
       
   } while (m_quotmarkClosed && (isspace(ch) != 0));
 
-  if (m_quotmarkClosed && ((ch == 't') || (ch == 'T')
-      || (ch == 'n') || (ch == 'N'))) {
-    // check true & null value
+  if (m_quotmarkClosed && (ch == 't') || (ch == 'T')) {
     const QByteArray buf = m_io->peek(3).toLower();
+    if (buf == "rue") {
+      m_io->read (3);
+      yylloc->columns(3);
+      qjsonDebug() << "JSonScanner::yylex - TRUE_VAL";
+      return yy::json_parser::token::TRUE_VAL;
+    }
+  }
+  else if ((ch == 'n') || (ch == 'N')) {
+    const QByteArray buf = m_io->peek(3).toLower();
+    if (buf == "ull") {
+      m_io->read (3);
+      yylloc->columns(3);
+      qjsonDebug() << "JSonScanner::yylex - NULL_VAL";
+      return yy::json_parser::token::NULL_VAL;
+    } else if (buf.startsWith("an") && m_allowSpecialNumbers) {
+      m_io->read(2);
+      yylloc->columns(2);
+      qjsonDebug() << "JSonScanner::yylex - NAN";
+      return yy::json_parser::token::NAN;
 
-    if (buf.length() == 3) {
-      if (buf == "rue") {
-        m_io->read (3);
-        yylloc->columns(3);
-        qjsonDebug() << "JSonScanner::yylex - TRUE_VAL";
-        return yy::json_parser::token::TRUE_VAL;
-      }
-      else if (buf == "ull") {
-        m_io->read (3);
-        yylloc->columns(3);
-        qjsonDebug() << "JSonScanner::yylex - NULL_VAL";
-        return yy::json_parser::token::NULL_VAL;
-      }
     }
   }
   else if (m_quotmarkClosed && ((ch == 'f') || (ch == 'F'))) {
@@ -200,7 +209,17 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
     *yylval = QVariant(QString::fromUtf8(ret));
     return yy::json_parser::token::E;
   }
-  
+  else if (m_allowSpecialNumbers && m_quotmarkClosed && ((ch == 'I') || (ch == 'i'))) {
+    QByteArray ret(1, ch);
+    const QByteArray buf = m_io->peek(7);
+    if (buf == "nfinity") {
+      m_io->read(7);
+      yylloc->columns(7);
+      qjsonDebug() << "JSonScanner::yylex - INFINITY_VAL";
+      return yy::json_parser::token::INFINITY;
+    }
+  }
+
   if (ch != '"' && !m_quotmarkClosed) {
     // we're inside a " " block
     QByteArray raw;

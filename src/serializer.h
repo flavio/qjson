@@ -61,6 +61,16 @@ namespace QJson {
 
     QByteArray serialize( const QVariant& variant );
 
+    /**
+     * Allow or disallow writing of NaN and/or Infinity (as an extension to QJson)
+     */
+    void allowSpecialNumbers(bool allow);
+
+    /**
+     * Is Nan and/or Infinity allowed?
+     */
+    bool specialNumbersAllowed() const;
+
   private:
     Q_DISABLE_COPY(Serializer)
     class SerializerPrivate;

@@ -41,9 +41,11 @@ class JSonScanner
     public:
         explicit JSonScanner(QIODevice* io);
         int yylex(YYSTYPE* yylval, yy::location *yylloc);
-        
+        void allowSpecialNumbers(bool allow);
+
     protected:
         bool m_quotmarkClosed;
+        bool m_allowSpecialNumbers;
         unsigned int m_quotmarkCount;
         QIODevice* m_io;
 };

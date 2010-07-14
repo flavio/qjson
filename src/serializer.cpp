@@ -31,6 +31,8 @@ using namespace QJson;
 
 class Serializer::SerializerPrivate {
   public:
+    SerializerPrivate() : specialNumbersAllowed(false) {}
+    bool specialNumbersAllowed;
     QString sanitizeString( QString str );
 };
 
@@ -158,8 +160,19 @@ QByteArray Serializer::serialize( const QVariant &v )
     const double value = v.toDouble();
     const bool special = std::isnan(value) || std::isinf(value);
     if (special) {
-      qCritical("Attempt to write NaN or infinity, which is not supported by json");
-      error = true;
+      if (specialNumbersAllowed()) {
+        if (std::isnan(value)) {
+          str += "NaN";
+        } else {
+          if (value<0) {
+            str += "-";
+          }
+          str += "Infinity";
+        }
+      } else {
+        qCritical("Attempt to write NaN or infinity, which is not supported by json");
+        error = true;
+    }
     } else {
       str = QByteArray::number( value );
       if( ! str.contains( "." ) && ! str.contains( "e" ) ) {
@@ -183,4 +196,12 @@ QByteArray Serializer::serialize( const QVariant &v )
     return str;
   else
     return QByteArray();
+}
+
+void QJson::Serializer::allowSpecialNumbers(bool allow) {
+  d->specialNumbersAllowed = allow;
+}
+
+bool QJson::Serializer::specialNumbersAllowed() const {
+  return d->specialNumbersAllowed;
 }

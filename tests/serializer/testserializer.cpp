@@ -46,6 +46,8 @@ class TestSerializer: public QObject
     void testValueDouble_data();
     void testValueBoolean();
     void testValueBoolean_data();
+    void testSpecialNumbers();
+    void testSpecialNumbers_data();
 
   private:
     void valueTest( const QVariant& value, const QString& expectedRegExp, bool errorExpected = false );
@@ -270,6 +272,27 @@ void TestSerializer::testValueBoolean_data()
 
   QTest::newRow( "bool false" ) << QVariant( false ) << QString( QLatin1String( "\\s*false\\s*" ) );
   QTest::newRow( "bool true" ) << QVariant( true ) << QString( QLatin1String( "\\s*true\\s*" ) );
+}
+
+void TestSerializer::testSpecialNumbers() {
+  QFETCH( QVariant, value );
+  QFETCH( QString, expected );
+  Serializer specialSerializer;
+  QVERIFY(!specialSerializer.specialNumbersAllowed());
+  specialSerializer.allowSpecialNumbers(true);
+  QVERIFY(specialSerializer.specialNumbersAllowed());
+  QByteArray serialized = specialSerializer.serialize(value);
+  QCOMPARE(QString::fromLocal8Bit(serialized), expected);
+
+}
+
+void TestSerializer::testSpecialNumbers_data() {
+  QTest::addColumn<QVariant>( "value" );
+  QTest::addColumn<QString>( "expected" );
+
+  QTest::newRow( "Infinity" ) << QVariant( std::numeric_limits< double >::infinity() ) << QString::fromLocal8Bit("Infinity");
+  QTest::newRow( "-Infinity" ) << QVariant( -std::numeric_limits< double >::infinity() ) << QString::fromLocal8Bit("-Infinity");
+  QTest::newRow( "Infinity" ) <<  QVariant( std::numeric_limits< double >::quiet_NaN() ) << QString::fromLocal8Bit("NaN");
 }
 
 QTEST_MAIN(TestSerializer)

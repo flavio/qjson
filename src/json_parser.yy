@@ -32,6 +32,8 @@
   #include <QtCore/QString>
   #include <QtCore/QVariant>
 
+  #include <limits>
+
   class JSonScanner;
 
   namespace QJson {
@@ -69,6 +71,8 @@
 %token QUOTMARKCLOSE 15 "close quotation mark"
 
 %token STRING 16 "string"
+%token INFINITY 17 "Infinity"
+%token NAN 18 "NaN"
 
 // define the initial token
 %start start
@@ -132,7 +136,7 @@ r_values: /* empty */ { $$ = QVariant (QVariantList()); }
           };
 
 value: string { $$ = $1; }
-        | number { $$ = $1; }
+        | special_or_number { $$ = $1; }
         | object { $$ = $1; }
         | array { $$ = $1; }
         | TRUE_VAL { $$ = QVariant (true); }
@@ -141,6 +145,11 @@ value: string { $$ = $1; }
           QVariant null_variant;
           $$ = null_variant;
         };
+
+special_or_number: MINUS INFINITY { $$ = QVariant(QVariant::Double); $$.setValue( -std::numeric_limits<double>::infinity() ); }
+                   | INFINITY { $$ = QVariant(QVariant::Double); $$.setValue( std::numeric_limits<double>::infinity() ); }
+                   | NAN { $$ = QVariant(QVariant::Double); $$.setValue( std::numeric_limits<double>::quiet_NaN() ); }
+                   | number;
 
 number: int {
             if ($1.toByteArray().startsWith('-')) {

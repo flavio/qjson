@@ -23,6 +23,7 @@
 #include "parser.h"
 
 #include <QtCore/QVariant>
+#include <cmath>
 
 class TestParser: public QObject
 {
@@ -37,6 +38,7 @@ class TestParser: public QObject
 
     void parseSimpleArray();
     void parseInvalidObject();
+    void parseInvalidObject_data();
     void parseMultipleArray();
 
     void testTrueFalseNullValues();
@@ -45,6 +47,8 @@ class TestParser: public QObject
     void testNumbers_data();
     void testTopLevelValues();
     void testTopLevelValues_data();
+    void testSpecialNumbers();
+    void testSpecialNumbers_data();
 };
 
 Q_DECLARE_METATYPE(QVariant)
@@ -96,13 +100,22 @@ void TestParser::parseEmptyValue() {
 }
 
 void TestParser::parseInvalidObject() {
-  QByteArray json = "{\"foo\":\"bar\"";
+  QFETCH(QByteArray, json);
 
   Parser parser;
   bool ok;
   QVariant result = parser.parse (json, &ok);
   QVERIFY (!ok);
 }
+
+void TestParser::parseInvalidObject_data() {
+  QTest::addColumn<QByteArray>("json");
+
+  QTest::newRow("unclosed object") <<  QByteArray("{\"foo\":\"bar\"");
+  QTest::newRow("infinum (disallow") << QByteArray("Infinum");
+  QTest::newRow("Nan (disallow") << QByteArray("NaN");
+}
+
 
 void TestParser::parseNonAsciiString() {
   QByteArray json = "{\"artist\":\"Queensr\\u00ffche\"}";
@@ -389,6 +402,43 @@ void TestParser::testTopLevelValues_data() {
   output = QVariant(QVariant::Map);
   output.setValue(map);
   QTest::newRow("object") << input << output << QVariant::Map;
+}
+
+void TestParser::testSpecialNumbers() {
+  QFETCH(QByteArray, input);
+  QFETCH(bool, isOk);
+  QFETCH(bool, isInfinity);
+  QFETCH(bool, isNegative);
+  QFETCH(bool, isNan);
+
+  Parser parser;
+  QVERIFY(!parser.specialNumbersAllowed());
+  parser.allowSpecialNumbers(true);
+  QVERIFY(parser.specialNumbersAllowed());
+  bool ok;
+  QVariant value = parser.parse(input, &ok);
+  QCOMPARE(ok, isOk);
+  QVERIFY(value.type() == QVariant::Double);
+  if (ok) {
+    double v = value.toDouble();
+    QCOMPARE(bool(std::isinf(v)), isInfinity);
+    QCOMPARE(v<0, isNegative);
+    QCOMPARE(bool(std::isnan(v)), isNan);
+  }
+}
+void TestParser::testSpecialNumbers_data() {
+  QTest::addColumn<QByteArray>("input");
+  QTest::addColumn<bool>("isOk");
+  QTest::addColumn<bool>("isInfinity");
+  QTest::addColumn<bool>("isNegative");
+  QTest::addColumn<bool>("isNan");
+
+  QTest::newRow("42.0") << QByteArray("42.0") << true << false << false << false;
+  QTest::newRow("0.0") << QByteArray("0.0") << true << false << false << false;
+  QTest::newRow("-42.0") << QByteArray("-42.0") << true << false << true << false;
+  QTest::newRow("Infinity") << QByteArray("Infinity") << true << true << false << false;
+  QTest::newRow("-Infinity") << QByteArray("-Infinity") << true << true << true << false;
+  QTest::newRow("NaN") << QByteArray("NaN") << true << false << false << true;
 }
 
 QTEST_MAIN(TestParser)

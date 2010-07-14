@@ -49,6 +49,7 @@ namespace QJson {
       int m_errorLine;
       QString m_errorMsg;
       QVariant m_result;
+      bool m_specialNumbersAllowed;
   };
 }
 

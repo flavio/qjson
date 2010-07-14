@@ -34,6 +34,7 @@ ParserPrivate::ParserPrivate() :
     m_scanner(0)
   , m_negate(false)
   , m_error(false)
+  , m_specialNumbersAllowed(false)
 {
 }
 
@@ -82,6 +83,7 @@ QVariant Parser::parse (QIODevice* io, bool* ok)
   }
 
   d->m_scanner = new JSonScanner (io);
+  d->m_scanner->allowSpecialNumbers(d->m_specialNumbersAllowed);
   yy::json_parser parser(d);
   parser.parse();
 
@@ -111,4 +113,12 @@ QString Parser::errorString() const
 int Parser::errorLine() const
 {
   return d->m_errorLine;
+}
+
+void QJson::Parser::allowSpecialNumbers(bool allowSpecialNumbers) {
+  d->m_specialNumbersAllowed = allowSpecialNumbers;
+}
+
+bool Parser::specialNumbersAllowed() const {
+  return d->m_specialNumbersAllowed;
 }

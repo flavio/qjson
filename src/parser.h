@@ -71,6 +71,20 @@ namespace QJson {
       */
       int errorLine() const;
 
+      /**
+       * Sets whether special numbers (Infinity, -Infinity, NaN) are allowed as an extension to
+       * the standard
+       * @param  allowSpecialNumbers new value of whether special numbers are allowed
+       * @sa specialNumbersAllowed
+       */
+      void allowSpecialNumbers(bool allowSpecialNumbers);
+
+      /**
+       * @returns whether special numbers (Infinity, -Infinity, NaN) are allowed
+       * @sa allowSpecialNumbers
+       */
+      bool specialNumbersAllowed() const;
+
     private:
       Q_DISABLE_COPY(Parser)
       ParserPrivate* const d;
