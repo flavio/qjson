@@ -86,7 +86,7 @@ data: value { $$ = $1; }
       | error
           {
             qCritical()<< "json_parser - syntax error found, "
-                    << "forcing abort";
+                    << "forcing abort, Line" << @$.begin.line << "Column" << @$.begin.column;
             YYABORT;
           }
       | END;
