@@ -48,7 +48,7 @@ class TestSerializer: public QObject
     void testValueBoolean_data();
 
   private:
-    void valueTest( const QVariant& value, const QString& expectedRegExp );
+    void valueTest( const QVariant& value, const QString& expectedRegExp, bool errorExpected = false );
     void valueTest( const QObject* object, const QString& expectedRegExp );
 };
 
@@ -110,16 +110,19 @@ void TestSerializer::testReadWrite_data()
 }
 
 
-void TestSerializer::valueTest( const QVariant& value, const QString& expectedRegExp )
+void TestSerializer::valueTest( const QVariant& value, const QString& expectedRegExp, bool errorExpected )
 {
   Serializer serializer;
   const QByteArray serialized = serializer.serialize( value );
+  QCOMPARE(serialized.isNull(), errorExpected);
   const QString serializedUnicode = QString::fromUtf8( serialized );
-  QRegExp expected( expectedRegExp );
-  QVERIFY( expected.isValid() );
-  QVERIFY2( expected.exactMatch( serializedUnicode ),
-    qPrintable( QString( QLatin1String( "Expected regexp \"%1\" but got \"%2\"." ) )
-      .arg( expectedRegExp ).arg( serializedUnicode ) ) );
+  if (!errorExpected) {
+    QRegExp expected( expectedRegExp );
+    QVERIFY( expected.isValid() );
+    QVERIFY2( expected.exactMatch( serializedUnicode ),
+      qPrintable( QString( QLatin1String( "Expected regexp \"%1\" but got \"%2\"." ) )
+        .arg( expectedRegExp ).arg( serializedUnicode ) ) );
+  }
 }
 
 void TestSerializer::valueTest( const QObject* object, const QString& expectedRegExp )
@@ -225,23 +228,28 @@ void TestSerializer::testValueDouble()
 {
   QFETCH( QVariant, value );
   QFETCH( QString, expected );
-  valueTest( value, expected );
+  QFETCH( bool, errorExpected );
+  valueTest( value, expected, errorExpected );
 
   QVariantMap map;
   map[QLatin1String("value")] = value;
-  valueTest( QVariant(map), QLatin1String( "\\s*\\{\\s*\"value\"\\s*:" ) + expected + QLatin1String( "\\}\\s*" ) );
+  valueTest( QVariant(map), QLatin1String( "\\s*\\{\\s*\"value\"\\s*:" ) + expected + QLatin1String( "\\}\\s*" ), errorExpected );
 }
 
 void TestSerializer::testValueDouble_data()
 {
   QTest::addColumn<QVariant>( "value" );
   QTest::addColumn<QString>( "expected" );
+  QTest::addColumn<bool>( "errorExpected" );
 
-  QTest::newRow( "double 0" ) << QVariant( 0.0 ) << QString( QLatin1String( "\\s*0.0\\s*" ) );
-  QTest::newRow( "double -1" ) << QVariant( -1.0 ) << QString( QLatin1String( "\\s*-1.0\\s*" ) );
-  QTest::newRow( "double 1.5E-20" ) << QVariant( 1.5e-20 ) << QString( QLatin1String( "\\s*1.5[Ee]-20\\s*" ) );
-  QTest::newRow( "double -1.5E-20" ) << QVariant( -1.5e-20 ) << QString( QLatin1String( "\\s*-1.5[Ee]-20\\s*" ) );
-  QTest::newRow( "double 2.0E-20" ) << QVariant( 2.0e-20 ) << QString( QLatin1String( "\\s*2(?:.0)?[Ee]-20\\s*" ) );
+  QTest::newRow( "double 0" ) << QVariant( 0.0 ) << QString( QLatin1String( "\\s*0.0\\s*" ) ) << false;
+  QTest::newRow( "double -1" ) << QVariant( -1.0 ) << QString( QLatin1String( "\\s*-1.0\\s*" ) ) << false;
+  QTest::newRow( "double 1.5E-20" ) << QVariant( 1.5e-20 ) << QString( QLatin1String( "\\s*1.5[Ee]-20\\s*" ) ) << false;
+  QTest::newRow( "double -1.5E-20" ) << QVariant( -1.5e-20 ) << QString( QLatin1String( "\\s*-1.5[Ee]-20\\s*" ) ) << false;
+  QTest::newRow( "double 2.0E-20" ) << QVariant( 2.0e-20 ) << QString( QLatin1String( "\\s*2(?:.0)?[Ee]-20\\s*" ) ) << false;
+  QTest::newRow( "double infinity" ) << QVariant( std::numeric_limits< double >::infinity() ) << QString( ) << true;
+  QTest::newRow( "double -infinity" ) << QVariant( -std::numeric_limits< double >::infinity() ) << QString( ) << true;
+  QTest::newRow( "double NaN" ) << QVariant( std::numeric_limits< double >::quiet_NaN() ) << QString( ) << true;
 }
 
 void TestSerializer::testValueBoolean()

@@ -25,6 +25,8 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 
+#include <cmath>
+
 using namespace QJson;
 
 class Serializer::SerializerPrivate {
@@ -153,9 +155,16 @@ QByteArray Serializer::serialize( const QVariant &v )
   } else if (( v.type() == QVariant::String ) ||  ( v.type() == QVariant::ByteArray )) { // a string or a byte array?
     str = d->sanitizeString( v.toString() ).toUtf8();
   } else if ( v.type() == QVariant::Double ) { // a double?
-    str = QByteArray::number( v.toDouble() );
-    if( ! str.contains( "." ) && ! str.contains( "e" ) ) {
-      str += ".0";
+    const double value = v.toDouble();
+    const bool special = std::isnan(value) || std::isinf(value);
+    if (special) {
+      qCritical("Attempt to write NaN or infinity, which is not supported by json");
+      error = true;
+    } else {
+      str = QByteArray::number( value );
+      if( ! str.contains( "." ) && ! str.contains( "e" ) ) {
+        str += ".0";
+      }
     }
   } else if ( v.type() == QVariant::Bool ) { // boolean value?
     str = ( v.toBool() ? "true" : "false" );
