@@ -77,5 +77,19 @@ CONFIGURE_FILE(
   "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
   IMMEDIATE @ONLY)
 
+GET_TARGET_PROPERTY(LIB_OUT_NAME qjson LOCATION)
+GET_FILENAME_COMPONENT(LIB_OUT_NAME  ${LIB_OUT_NAME} NAME)
+
+# cmake-modules
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/qjson-config.cmake.in
+               ${CMAKE_CURRENT_BINARY_DIR}/qjson-config.cmake
+               @ONLY)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/qjson-config-version.cmake.in
+               ${CMAKE_CURRENT_BINARY_DIR}/qjson-config-version.cmake
+               @ONLY)
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/qjson-config.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/qjson-config-version.cmake
+        DESTINATION "lib/cmake/qjson")
+
 ADD_CUSTOM_TARGET(uninstall
   "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
