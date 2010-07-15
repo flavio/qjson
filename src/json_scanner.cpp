@@ -170,7 +170,7 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
       return yy::json_parser::token::TRUE_VAL;
     }
   }
-  else if ((ch == 'n') || (ch == 'N')) {
+  else if (m_quotmarkClosed && ((ch == 'n') || (ch == 'N'))) {
     const QByteArray buf = m_io->peek(3).toLower();
     if (buf == "ull") {
       m_io->read (3);
