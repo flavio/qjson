@@ -59,6 +59,8 @@ namespace yy
   #include <QtCore/QString>
   #include <QtCore/QVariant>
 
+  #include <limits>
+
   class JSonScanner;
 
   namespace QJson {
@@ -68,8 +70,8 @@ namespace yy
   #define YYERROR_VERBOSE 1
 
 
-/* Line 35 of lalr1.cc.  */
-#line 73 "json_parser.hh"
+/* Line 303 of lalr1.cc.  */
+#line 75 "json_parser.hh"
 
 #include "location.hh"
 
@@ -146,7 +148,9 @@ namespace yy
      NULL_VAL = 13,
      QUOTMARKOPEN = 14,
      QUOTMARKCLOSE = 15,
-     STRING = 16
+     STRING = 16,
+     INFINITY = 17,
+     NAN = 18
    };
 
     };
