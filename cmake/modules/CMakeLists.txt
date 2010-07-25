@@ -1,9 +1,2 @@
 set(cmakeFiles FindQJSON.cmake)
-
-if(KDE4_USE_COMMON_CMAKE_PACKAGE_CONFIG_DIR)
-    set(_qjson_CONFIG_DEST "${LIB_INSTALL_DIR}/cmake/qjson")
-else(KDE4_USE_COMMON_CMAKE_PACKAGE_CONFIG_DIR)
-    set(_qjson_CONFIG_DEST "${LIB_INSTALL_DIR}/qjson")
-endif(KDE4_USE_COMMON_CMAKE_PACKAGE_CONFIG_DIR)
-
-install(FILES ${cmakeFiles} DESTINATION "${_qjson_CONFIG_DEST}")
+install(FILES ${cmakeFiles} DESTINATION ${CMAKE_MODULES_INSTALL_DIR})
