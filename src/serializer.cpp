@@ -156,7 +156,7 @@ QByteArray Serializer::serialize( const QVariant &v )
     str += " }";
   } else if (( v.type() == QVariant::String ) ||  ( v.type() == QVariant::ByteArray )) { // a string or a byte array?
     str = d->sanitizeString( v.toString() ).toUtf8();
-  } else if ( v.type() == QVariant::Double ) { // a double?
+  } else if (( v.type() == QVariant::Double) || (v.type() == QMetaType::Float)) { // a double or a float?
     const double value = v.toDouble();
     const bool special = std::isnan(value) || std::isinf(value);
     if (special) {

@@ -44,6 +44,8 @@ class TestSerializer: public QObject
     void testValueInteger_data();
     void testValueDouble();
     void testValueDouble_data();
+    void testValueFloat();
+    void testValueFloat_data();
     void testValueBoolean();
     void testValueBoolean_data();
     void testSpecialNumbers();
@@ -252,6 +254,40 @@ void TestSerializer::testValueDouble_data()
   QTest::newRow( "double infinity" ) << QVariant( std::numeric_limits< double >::infinity() ) << QString( ) << true;
   QTest::newRow( "double -infinity" ) << QVariant( -std::numeric_limits< double >::infinity() ) << QString( ) << true;
   QTest::newRow( "double NaN" ) << QVariant( std::numeric_limits< double >::quiet_NaN() ) << QString( ) << true;
+}
+
+void TestSerializer::testValueFloat()
+{
+  QFETCH( QVariant, value );
+  QFETCH( QString, expected );
+  QFETCH( bool, errorExpected );
+  valueTest( value, expected, errorExpected );
+
+  QVariantMap map;
+  map[QLatin1String("value")] = value;
+  valueTest( QVariant(map), QLatin1String( "\\s*\\{\\s*\"value\"\\s*:" ) + expected + QLatin1String( "\\}\\s*" ), errorExpected );
+}
+
+void TestSerializer::testValueFloat_data()
+{
+  QVariant v (QMetaType::Float);
+  float value;
+
+  QTest::addColumn<QVariant>( "value" );
+  QTest::addColumn<QString>( "expected" );
+  QTest::addColumn<bool>( "errorExpected" );
+
+  value = 0;
+  v.setValue(value);
+  QTest::newRow( "float 0" ) << v << QString( QLatin1String( "\\s*0.0\\s*" ) ) << false;
+
+  value = -1;
+  v.setValue(value);
+  QTest::newRow( "float -1" ) << v << QString( QLatin1String( "\\s*-1.0\\s*" ) ) << false;
+
+  value = 1.12;
+  v.setValue(value);
+  QTest::newRow( "float 1.12" ) << v << QString( QLatin1String( "\\s*1.12\\s*" ) ) << false;
 }
 
 void TestSerializer::testValueBoolean()
