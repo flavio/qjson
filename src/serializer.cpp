@@ -158,10 +158,18 @@ QByteArray Serializer::serialize( const QVariant &v )
     str = d->sanitizeString( v.toString() ).toUtf8();
   } else if (( v.type() == QVariant::Double) || (v.type() == QMetaType::Float)) { // a double or a float?
     const double value = v.toDouble();
+#ifdef _WIN32
+    const bool special = _isnan(value) || !_finite(value);
+#else
     const bool special = std::isnan(value) || std::isinf(value);
+#endif
     if (special) {
       if (specialNumbersAllowed()) {
+#ifdef _WIN32
+        if (_isnan(value)) {
+#else
         if (std::isnan(value)) {
+#endif
           str += "NaN";
         } else {
           if (value<0) {
