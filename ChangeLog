@@ -1,3 +1,7 @@
+Mon Sep 06 18:53:02 CEST 2010  Flavio Castelli  <flavio@castelli.name>
+
+	* 50% performance improvement when parsing numbers.
+
 Sun Jul 04 15:41:08 CEST 2010  Flavio Castelli  <flavio@castelli.name>
 
 	* fix make install when not installing as root
