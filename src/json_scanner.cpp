@@ -278,7 +278,17 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
     }
   }
   else if (isdigit(ch) != 0 && m_quotmarkClosed) {
-    *yylval = QVariant(QString::fromLatin1(QByteArray(&ch,1)));
+    qint64 number = atoll(&ch);
+    char nextCh;
+    qint64 ret = m_io->peek(&nextCh, 1);
+    while (ret == 1 && isdigit(nextCh)) {
+      m_io->read(1); //consume
+      yylloc->columns(1);
+      number = number *10 + atoll(&nextCh);
+      ret = m_io->peek(&nextCh, 1);
+    }
+
+    *yylval = QVariant(number);
     qjsonDebug() << "JSonScanner::yylex - yy::json_parser::token::DIGIT";
     return yy::json_parser::token::DIGIT;
   }
