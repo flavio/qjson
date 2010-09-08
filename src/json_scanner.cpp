@@ -278,13 +278,13 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
     }
   }
   else if (isdigit(ch) != 0 && m_quotmarkClosed) {
-    qint64 number = atoll(&ch);
+    quint64 number = atoll(&ch);
     char nextCh;
     qint64 ret = m_io->peek(&nextCh, 1);
     while (ret == 1 && isdigit(nextCh)) {
       m_io->read(1); //consume
       yylloc->columns(1);
-      number = number *10 + atoll(&nextCh);
+      number = number * 10 + atoll(&nextCh);
       ret = m_io->peek(&nextCh, 1);
     }
 
