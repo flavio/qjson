@@ -287,9 +287,9 @@ void TestParser::testNumbers_data() {
   QTest::newRow("big number") << input << output << QVariant::ULongLong;
 
   // simple double
-  input = QByteArray("2.4");
+  input = QByteArray("2.004");
   output = QVariant(QVariant::Double);
-  output.setValue(2.4);
+  output.setValue(2.004);
 
   QTest::newRow("simple double") << input << output << QVariant::Double;
 

@@ -279,6 +279,13 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
   }
   else if (isdigit(ch) != 0 && m_quotmarkClosed) {
     quint64 number = atoll(&ch);
+    if (number == 0) {
+      // we have to return immediately otherwise numbers like
+      // 2.04 will be converted to 2.4
+      *yylval = QVariant(number);
+      qjsonDebug() << "JSonScanner::yylex - yy::json_parser::token::DIGIT";
+      return yy::json_parser::token::DIGIT;
+    }
     char nextCh;
     qint64 ret = m_io->peek(&nextCh, 1);
     while (ret == 1 && isdigit(nextCh)) {
