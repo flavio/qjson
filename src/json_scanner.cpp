@@ -38,8 +38,8 @@ bool ishexnstring(const QString& string) {
 }
 
 JSonScanner::JSonScanner(QIODevice* io)
-  : m_io (io),
-    m_allowSpecialNumbers(false)
+  : m_allowSpecialNumbers(false),
+    m_io (io)
 {
   m_quotmarkClosed = true;
   m_quotmarkCount = 0;
@@ -161,7 +161,7 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
       
   } while (m_quotmarkClosed && (isspace(ch) != 0));
 
-  if (m_quotmarkClosed && (ch == 't') || (ch == 'T')) {
+  if (m_quotmarkClosed && ((ch == 't') || (ch == 'T'))) {
     const QByteArray buf = m_io->peek(3).toLower();
     if (buf == "rue") {
       m_io->read (3);
