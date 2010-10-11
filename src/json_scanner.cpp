@@ -130,7 +130,7 @@ static QString unescape( const QByteArray& ba, bool* ok ) {
 int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
 {
   char ch;
-  
+
   if (!m_io->isOpen()) {
     qCritical() << "JSonScanner::yylex - io device is not open";
     return -1;
@@ -153,12 +153,10 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
     }
 
     qjsonDebug() << "JSonScanner::yylex - got |" << ch << "|";
-    
     yylloc->columns();
-    
+
     if (ch == '\n' || ch == '\r')
       yylloc->lines();
-      
   } while (m_quotmarkClosed && (isspace(ch) != 0));
 
   if (m_quotmarkClosed && ((ch == 't') || (ch == 'T'))) {
@@ -180,8 +178,8 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
     } else if (buf.startsWith("an") && m_allowSpecialNumbers) {
       m_io->read(2);
       yylloc->columns(2);
-      qjsonDebug() << "JSonScanner::yylex - NAN";
-      return yy::json_parser::token::NAN;
+      qjsonDebug() << "JSonScanner::yylex - NAN_VAL";
+      return yy::json_parser::token::NAN_VAL;
 
     }
   }
@@ -202,7 +200,7 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
     const QByteArray buf = m_io->peek(1);
     if (!buf.isEmpty()) {
       if ((buf[0] == '+' ) || (buf[0] == '-' )) {
-        ret += m_io->read (1);  
+        ret += m_io->read (1);
         yylloc->columns();
       }
     }
@@ -216,7 +214,7 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
       m_io->read(7);
       yylloc->columns(7);
       qjsonDebug() << "JSonScanner::yylex - INFINITY_VAL";
-      return yy::json_parser::token::INFINITY;
+      return yy::json_parser::token::INFINITY_VAL;
     }
   }
 

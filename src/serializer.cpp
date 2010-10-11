@@ -160,6 +160,8 @@ QByteArray Serializer::serialize( const QVariant &v )
     const double value = v.toDouble();
 #ifdef _WIN32
     const bool special = _isnan(value) || !_finite(value);
+#elif defined(Q_OS_SYMBIAN)
+    const bool special = isnan(value) || isinf(value);
 #else
     const bool special = std::isnan(value) || std::isinf(value);
 #endif
@@ -167,6 +169,8 @@ QByteArray Serializer::serialize( const QVariant &v )
       if (specialNumbersAllowed()) {
 #ifdef _WIN32
         if (_isnan(value)) {
+#elif defined(Q_OS_SYMBIAN)
+        if (isnan(value)) {
 #else
         if (std::isnan(value)) {
 #endif

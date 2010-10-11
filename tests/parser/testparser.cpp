@@ -125,7 +125,7 @@ void TestParser::parseNonAsciiString() {
   QString unicode_string;
   unicode_string.setUnicode(&unicode_char, 1);
   unicode_string = QLatin1String("Queensr") + unicode_string + QLatin1String("che");
-  
+
   map.insert (QLatin1String("artist"), unicode_string);
   QVariant expected (map);
 
@@ -194,7 +194,7 @@ void TestParser::parseMultipleArray() {
   QVariantList array;
   array.append (QLatin1String("item1"));
   array.append (123);
-  
+
   QVariantList list;
   list.append (map);
   list.append (QLatin1String("number"));
@@ -367,7 +367,7 @@ void TestParser::testTopLevelValues_data() {
 
   // string
   input = QByteArray("\"foo bar\"");
-  output = QVariant(QLatin1String("foo bar")); 
+  output = QVariant(QLatin1String("foo bar"));
   QTest::newRow("string") << input << output << QVariant::String;
 
   // number
@@ -421,9 +421,17 @@ void TestParser::testSpecialNumbers() {
   QVERIFY(value.type() == QVariant::Double);
   if (ok) {
     double v = value.toDouble();
+#ifdef Q_OS_SYMBIAN
+    QCOMPARE(bool(isinf(v)), isInfinity);
+#else
     QCOMPARE(bool(std::isinf(v)), isInfinity);
+#endif
     QCOMPARE(v<0, isNegative);
+#ifdef Q_OS_SYMBIAN
+    QCOMPARE(bool(isnan(v)), isNan);
+#else
     QCOMPARE(bool(std::isnan(v)), isNan);
+#endif
   }
 }
 void TestParser::testSpecialNumbers_data() {
