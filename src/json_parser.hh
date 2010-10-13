@@ -149,8 +149,8 @@ namespace yy
      QUOTMARKOPEN = 14,
      QUOTMARKCLOSE = 15,
      STRING = 16,
-     INFINITY = 17,
-     NAN = 18
+     INFINITY_VAL = 17,
+     NAN_VAL = 18
    };
 
     };

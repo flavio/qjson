@@ -71,8 +71,8 @@
 %token QUOTMARKCLOSE 15 "close quotation mark"
 
 %token STRING 16 "string"
-%token INFINITY 17 "Infinity"
-%token NAN 18 "NaN"
+%token INFINITY_VAL 17 "Infinity"
+%token NAN_VAL 18 "NaN"
 
 // define the initial token
 %start start
@@ -146,9 +146,9 @@ value: string { $$ = $1; }
           $$ = null_variant;
         };
 
-special_or_number: MINUS INFINITY { $$ = QVariant(QVariant::Double); $$.setValue( -std::numeric_limits<double>::infinity() ); }
-                   | INFINITY { $$ = QVariant(QVariant::Double); $$.setValue( std::numeric_limits<double>::infinity() ); }
-                   | NAN { $$ = QVariant(QVariant::Double); $$.setValue( std::numeric_limits<double>::quiet_NaN() ); }
+special_or_number: MINUS INFINITY_VAL { $$ = QVariant(QVariant::Double); $$.setValue( -std::numeric_limits<double>::infinity() ); }
+                   | INFINITY_VAL { $$ = QVariant(QVariant::Double); $$.setValue( std::numeric_limits<double>::infinity() ); }
+                   | NAN_VAL { $$ = QVariant(QVariant::Double); $$.setValue( std::numeric_limits<double>::quiet_NaN() ); }
                    | number;
 
 number: int {
