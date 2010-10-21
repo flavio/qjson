@@ -291,6 +291,7 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
       qjsonDebug() << "JSonScanner::yylex - yy::json_parser::token::DIGIT";
       return yy::json_parser::token::DIGIT;
     }
+
     char nextCh;
     qint64 ret = m_io->peek(&nextCh, 1);
     while (ret == 1 && isdigit(nextCh)) {
