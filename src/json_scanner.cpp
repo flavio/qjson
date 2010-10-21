@@ -276,11 +276,14 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
     }
   }
   else if (isdigit(ch) != 0 && m_quotmarkClosed) {
-#ifdef Q_OS_WIN32
-    quint64 number = _atoi64(&ch);
-#else
-    quint64 number = atoll(&ch);
-#endif
+    bool ok;
+    QByteArray numArray = QByteArray::fromRawData( &ch, 1 * sizeof(char) );
+    qulonglong number = numArray.toULongLong(&ok);
+    if (!ok) {
+      //This shouldn't happen
+      qCritical() << "JSonScanner::yylex - error while converting char to ulonglong, returning -1";
+      return -1;
+    }
     if (number == 0) {
       // we have to return immediately otherwise numbers like
       // 2.04 will be converted to 2.4
@@ -293,11 +296,13 @@ int JSonScanner::yylex(YYSTYPE* yylval, yy::location *yylloc)
     while (ret == 1 && isdigit(nextCh)) {
       m_io->read(1); //consume
       yylloc->columns(1);
-#ifdef Q_OS_WIN32
-      number = number * 10 + _atoi64(&nextCh);
-#else
-      number = number * 10 + atoll(&nextCh);
-#endif
+      numArray = QByteArray::fromRawData( &nextCh, 1 * sizeof(char) );
+      number = number * 10 + numArray.toULongLong(&ok);
+      if (!ok) {
+        //This shouldn't happen
+        qCritical() << "JSonScanner::yylex - error while converting char to ulonglong, returning -1";
+        return -1;
+      }
       ret = m_io->peek(&nextCh, 1);
     }
 
