@@ -424,13 +424,19 @@ void TestParser::testSpecialNumbers() {
 #ifdef Q_OS_SYMBIAN
     QCOMPARE(bool(isinf(v)), isInfinity);
 #else
+// skip this test for MSVC, because there is no "isinf" function.
+#ifndef Q_CC_MSVC
     QCOMPARE(bool(std::isinf(v)), isInfinity);
+#endif
 #endif
     QCOMPARE(v<0, isNegative);
 #ifdef Q_OS_SYMBIAN
     QCOMPARE(bool(isnan(v)), isNan);
 #else
+// skip this test for MSVC, because there is no "isinf" function.
+#ifndef Q_CC_MSVC
     QCOMPARE(bool(std::isnan(v)), isNan);
+#endif
 #endif
   }
 }

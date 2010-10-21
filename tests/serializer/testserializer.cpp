@@ -285,7 +285,7 @@ void TestSerializer::testValueFloat_data()
   v.setValue(value);
   QTest::newRow( "float -1" ) << v << QString( QLatin1String( "\\s*-1.0\\s*" ) ) << false;
 
-  value = 1.12;
+  value = 1.12f;
   v.setValue(value);
   QTest::newRow( "float 1.12" ) << v << QString( QLatin1String( "\\s*1.12\\s*" ) ) << false;
 }

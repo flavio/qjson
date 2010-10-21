@@ -1,7 +1,12 @@
 TEMPLATE = app
-TARGET = 
+TARGET =
+CONFIG += link_prl
 DEPENDPATH += .
-LIBS += -L../../lib -lqjson
+win32 {
+  LIBS += -L../../lib -lqjson0
+} else {
+  LIBS += -L../../lib -lqjson
+}
 INCLUDEPATH +=  . \
                 ../../src
 

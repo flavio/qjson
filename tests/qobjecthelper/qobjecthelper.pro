@@ -1,5 +1,5 @@
 CONFIG  += qtestlib
-
+CONFIG += link_prl
 DEFINES += QMAKE_BUILD
 
 HEADERS = person.h
@@ -7,6 +7,10 @@ HEADERS = person.h
 SOURCES = testqobjecthelper.cpp \
           person.cpp
 
-LIBS += -L../../lib -lqjson
+win32 {
+  LIBS += -L../../lib -lqjson0
+} else {
+  LIBS += -L../../lib -lqjson
+}
 INCLUDEPATH +=  . \
                 ../../src
