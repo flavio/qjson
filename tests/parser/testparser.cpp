@@ -21,6 +21,7 @@
 #include <QtTest/QtTest>
 
 #include "parser.h"
+#include "serializer.h"
 
 #include <QtCore/QVariant>
 #include <cmath>
@@ -49,6 +50,8 @@ class TestParser: public QObject
     void testTopLevelValues_data();
     void testSpecialNumbers();
     void testSpecialNumbers_data();
+    void testReadWrite();
+    void testReadWrite_data();
 };
 
 Q_DECLARE_METATYPE(QVariant)
@@ -453,6 +456,40 @@ void TestParser::testSpecialNumbers_data() {
   QTest::newRow("Infinity") << QByteArray("Infinity") << true << true << false << false;
   QTest::newRow("-Infinity") << QByteArray("-Infinity") << true << true << true << false;
   QTest::newRow("NaN") << QByteArray("NaN") << true << false << false << true;
+}
+
+void TestParser::testReadWrite()
+{
+  QFETCH( QVariant, variant );
+  Serializer serializer;
+  bool ok;
+  
+  QByteArray json = serializer.serialize(variant);
+  QVERIFY(!json.isNull());
+
+  Parser parser;
+  QVariant result = parser.parse( json, &ok );
+  QVERIFY(ok);
+  QCOMPARE( result, variant );
+}
+
+void TestParser::testReadWrite_data()
+{
+    QTest::addColumn<QVariant>( "variant" );
+
+    // array tests
+    QTest::newRow( "empty array" ) << QVariant(QVariantList());
+    
+    // basic array
+    QVariantList list;
+    list << QString(QLatin1String("hello"));
+    list << 12; 
+    QTest::newRow( "basic array" ) << QVariant(list);
+
+    // simple map 
+    QVariantMap map;
+    map[QString(QLatin1String("Name"))] = 32;
+    QTest::newRow( "complicated array" ) << QVariant(map);
 }
 
 QTEST_MAIN(TestParser)
