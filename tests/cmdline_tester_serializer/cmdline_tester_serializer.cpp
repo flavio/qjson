@@ -58,17 +58,17 @@ int main(int argc, char *argv[]) {
 
   // serializer tests
   QJson::Serializer serializer;
-  QByteArray b = serializer.serialize(data); // defaults to QJson::indentNone;
-  qDebug() << "json serialized with option QJson::indentNone:";
+  QByteArray b = serializer.serialize(data); // defaults to QJson::IndentNone;
+  qDebug() << "json serialized with option QJson::IndentNone:";
   qDebug() << b;
-  b = serializer.serialize(data,QJson::indentMinimum);
-  qDebug() << "json serialized with option QJson::indentMinimum:";
+  b = serializer.serialize(data,QJson::IndentMinimum);
+  qDebug() << "json serialized with option QJson::IndentMinimum:";
   qDebug() << b;
-  b = serializer.serialize(data,QJson::indentMedium);
-  qDebug() << "json serialized with option QJson::indentMedium:";
+  b = serializer.serialize(data,QJson::IndentMedium);
+  qDebug() << "json serialized with option QJson::IndentMedium:";
   qDebug() << b;
-  b = serializer.serialize(data,QJson::indentFull);
-  qDebug() << "json serialized with option QJson::indentFull:";
+  b = serializer.serialize(data,QJson::IndentFull);
+  qDebug() << "json serialized with option QJson::IndentFull:";
   qDebug() << b;
   qDebug() << "JOB DONE, BYE";
   return 0;

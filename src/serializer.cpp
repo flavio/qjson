@@ -31,7 +31,7 @@ using namespace QJson;
 
 class Serializer::SerializerPrivate {
   public:
-    SerializerPrivate() : specialNumbersAllowed(false), indentOutput(QJson::indentNone) {}
+    SerializerPrivate() : specialNumbersAllowed(false), indentOutput(QJson::IndentNone) {}
     bool specialNumbersAllowed;
     IndentMode indentOutput;
     QByteArray buildIndent(int spaces);
@@ -155,11 +155,11 @@ QByteArray Serializer::serialize( const QVariant &v, int reserved )
       values << serializedValue;
     }
 
-    if (indentOutput() == QJson::indentMinimum) {
+    if (indentOutput() == QJson::IndentMinimum) {
       QByteArray indent = d->buildIndent(reserved - 1);
       str = "[\n" + join( values, ",\n" ) + "\n" + indent + "]";
     }
-    else if (indentOutput() == QJson::indentMedium || indentOutput() == QJson::indentFull){
+    else if (indentOutput() == QJson::IndentMedium || indentOutput() == QJson::IndentFull){
       QByteArray indent = d->buildIndent(reserved);
       str = "[\n" + join( values, ",\n" ) + "\n" + indent + "]";
     }
@@ -171,11 +171,11 @@ QByteArray Serializer::serialize( const QVariant &v, int reserved )
     const QVariantMap vmap = v.toMap();
     QMapIterator<QString, QVariant> it( vmap );
 
-    if (indentOutput() == QJson::indentMinimum) {
+    if (indentOutput() == QJson::IndentMinimum) {
       QByteArray indent = d->buildIndent(reserved);
       str = indent + "{ ";
     }
-    else if (indentOutput() == QJson::indentMedium || indentOutput() == QJson::indentFull) {
+    else if (indentOutput() == QJson::IndentMedium || indentOutput() == QJson::IndentFull) {
       QByteArray indent = d->buildIndent(reserved);
       QByteArray nextindent = d->buildIndent(reserved + 1);
       str = indent + "{\n" + nextindent;
@@ -197,7 +197,7 @@ QByteArray Serializer::serialize( const QVariant &v, int reserved )
       pairs << d->sanitizeString( it.key() ).toUtf8() + " : " + serializedValue;
     }
 
-    if (indentOutput() == QJson::indentFull) {
+    if (indentOutput() == QJson::IndentFull) {
       QByteArray indent = d->buildIndent(reserved + 1);
       str += join( pairs, ",\n" + indent);
     }
@@ -205,7 +205,7 @@ QByteArray Serializer::serialize( const QVariant &v, int reserved )
       str += join( pairs, ", " );
     }
 
-    if (indentOutput() == QJson::indentMedium || indentOutput()== QJson::indentFull) {
+    if (indentOutput() == QJson::IndentMedium || indentOutput()== QJson::IndentFull) {
       QByteArray indent = d->buildIndent(reserved);
       str += "\n" + indent + "}";
     }

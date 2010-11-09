@@ -56,10 +56,10 @@ namespace QJson {
   *        }
   */
   enum IndentMode {
-      indentNone,
-      indentMinimum,
-      indentMedium,
-      indentFull
+      IndentNone,
+      IndentMinimum,
+      IndentMedium,
+      IndentFull
   };
   /**
   * @brief Main class used to convert QVariant objects to JSON data.
@@ -108,7 +108,7 @@ namespace QJson {
     /**
      * set output indentation mode as defined in QJson::IndentMode
      */
-    void allowIndentOutput(IndentMode mode = QJson::indentNone);
+    void allowIndentOutput(IndentMode mode = QJson::IndentNone);
 
     /**
      * Returns one of the indentation modes defined in QJson::IndentMode
