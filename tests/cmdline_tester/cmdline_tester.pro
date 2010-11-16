@@ -11,4 +11,4 @@ INCLUDEPATH +=  . \
                 ../../src
 
 # Input
-SOURCES += cmdline_tester.cpp
+SOURCES += cmdline_tester.cpp cmdlineparser.cpp

@@ -14,6 +14,7 @@ INCLUDE_DIRECTORIES(
 ADD_EXECUTABLE(
   cmdline_tester
   cmdline_tester.cpp
+  cmdlineparser.cpp
 )
 
 TARGET_LINK_LIBRARIES(
