@@ -34,6 +34,7 @@ ParserPrivate::ParserPrivate() :
     m_scanner(0)
   , m_negate(false)
   , m_error(false)
+  , m_errorLine(0)
   , m_specialNumbersAllowed(false)
 {
 }
