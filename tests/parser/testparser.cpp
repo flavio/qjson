@@ -107,7 +107,7 @@ void TestParser::parseInvalidObject() {
 
   Parser parser;
   bool ok;
-  QVariant result = parser.parse (json, &ok);
+  parser.parse (json, &ok);
   QVERIFY (!ok);
 }
 
