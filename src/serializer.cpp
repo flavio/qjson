@@ -128,9 +128,9 @@ QByteArray Serializer::serialize( const QVariant &v )
   } else if (( v.type() == QVariant::List ) || ( v.type() == QVariant::StringList )){ // an array or a stringlist?
     const QVariantList list = v.toList();
     QList<QByteArray> values;
-    Q_FOREACH( const QVariant& v, list )
+    Q_FOREACH( const QVariant& var, list )
     {
-      QByteArray serializedValue = serialize( v );
+      QByteArray serializedValue = serialize( var );
       if ( serializedValue.isNull() ) {
         error = true;
         break;
