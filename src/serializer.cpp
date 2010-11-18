@@ -177,7 +177,7 @@ QByteArray Serializer::serialize( const QVariant &v )
           str += "NaN";
         } else {
           if (value<0) {
-            str += "-";
+            str += '-';
           }
           str += "Infinity";
         }
