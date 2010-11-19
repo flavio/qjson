@@ -33,7 +33,7 @@ namespace QJson {
       enum Result {Ok, Help, Error};
 
       CmdLineParser(const QStringList &arguments);
-      Result CmdLineParser::parse();
+      Result parse();
 
       void setIndentationMode(const IndentMode &mode);
       IndentMode indentationMode() const;

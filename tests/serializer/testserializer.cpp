@@ -51,6 +51,9 @@ class TestSerializer: public QObject
     void testSpecialNumbers();
     void testSpecialNumbers_data();
 
+    void testIndentation();
+    void testIndentation_data();
+
   private:
     void valueTest( const QVariant& value, const QString& expectedRegExp, bool errorExpected = false );
     void valueTest( const QObject* object, const QString& expectedRegExp );
@@ -113,6 +116,60 @@ void TestSerializer::testReadWrite_data()
     QTest::newRow( "complicated array" ) << json3;
 }
 
+void TestSerializer::testIndentation()
+{
+  QFETCH( QByteArray, json );
+  QFETCH( QByteArray, expected_min );
+  QFETCH( QByteArray, expected_med );
+  QFETCH( QByteArray, expected_full );
+
+  // parse
+  Parser parser;
+  bool ok;
+  QVariant parsed = parser.parse( json, &ok );
+  QVERIFY(ok);
+
+  Serializer serializer;
+  QVariant reparsed;
+  QByteArray serialized;
+
+  // serialize with indent minimum and reparse
+  serializer.setIndentMode(QJson::IndentMinimum);
+  serialized = serializer.serialize( parsed );
+  QCOMPARE( serialized, expected_min);
+  reparsed = parser.parse( serialized, &ok );
+  QVERIFY(ok);
+  QCOMPARE( parsed, reparsed);
+
+  // serialize with indent medium and reparse
+  serializer.setIndentMode(QJson::IndentMedium);
+  serialized = serializer.serialize( parsed );
+  QCOMPARE( serialized, expected_med);
+  reparsed = parser.parse( serialized, &ok );
+  QVERIFY(ok);
+  QCOMPARE( parsed, reparsed);
+
+  // serialize with indent full and reparse
+  serializer.setIndentMode(QJson::IndentFull);
+  serialized = serializer.serialize( parsed );
+  QCOMPARE( serialized, expected_full);
+  reparsed = parser.parse( serialized, &ok );
+  QVERIFY(ok);
+  QCOMPARE( parsed, reparsed);
+}
+
+void TestSerializer::testIndentation_data()
+{
+    QTest::addColumn<QByteArray>( "json" );
+    QTest::addColumn<QByteArray>( "expected_min" );
+    QTest::addColumn<QByteArray>( "expected_med" );
+    QTest::addColumn<QByteArray>( "expected_full" );
+    const QByteArray json = " { \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [ { \"foo3\" : 3, \"foo4\" : 4 } ] }";
+    const QByteArray ex_min = "{ \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [\n  { \"foo3\" : 3, \"foo4\" : 4 }\n] }";
+    const QByteArray ex_med = "{\n \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [\n  {\n   \"foo3\" : 3, \"foo4\" : 4\n  }\n ]\n}";
+    const QByteArray ex_full = "{\n \"foo\" : 0,\n \"foo1\" : 1,\n \"foo2\" : [\n  {\n   \"foo3\" : 3,\n   \"foo4\" : 4\n  }\n ]\n}";
+    QTest::newRow( "test indents" ) << json << ex_min << ex_med << ex_full;
+}
 
 void TestSerializer::valueTest( const QVariant& value, const QString& expectedRegExp, bool errorExpected )
 {
