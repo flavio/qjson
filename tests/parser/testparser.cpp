@@ -107,7 +107,7 @@ void TestParser::parseInvalidObject() {
 
   Parser parser;
   bool ok;
-  QVariant result = parser.parse (json, &ok);
+  parser.parse (json, &ok);
   QVERIFY (!ok);
 }
 
@@ -259,7 +259,7 @@ void TestParser::testNumbers() {
 
   Parser parser;
   bool ok;
-  QVariant result = parser.parse ("[" + input +"]", &ok);
+  QVariant result = parser.parse ('[' + input + ']', &ok);
   QVERIFY (ok);
 
   QVariant value = result.toList().at(0);
