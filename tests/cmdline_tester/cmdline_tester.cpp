@@ -24,19 +24,24 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 
+#include "cmdlineparser.h"
 #include "parser.h"
+#include "serializer.h"
 
 using namespace QJson;
 
 int main(int argc, char *argv[]) {
   QCoreApplication app (argc, argv);
-  
-  if (app.arguments().size() != 2) {
-    qCritical("You have to specify the file containing the json code");
-    exit (1);
-  }
-  
-  QString filename = app.arguments()[1];
+ 
+  CmdLineParser cmd (app.arguments());
+  CmdLineParser::Result res = cmd.parse();
+  if (res == CmdLineParser::Help)
+      return 0;
+  else if (res == CmdLineParser::Error)
+      return -1;
+
+
+  QString filename = cmd.file();
   if (!QFile::exists ( filename )) {
     qCritical ("The file you specified doesn't exist!");
     exit (1);
@@ -54,6 +59,15 @@ int main(int argc, char *argv[]) {
   else {
     qDebug() << "json object successfully converted to:";
     qDebug() << data;
+  }
+
+  if (cmd.serialize()) {
+    // serializer tests
+    qDebug() << "Serialization output";
+    QJson::Serializer serializer;
+    serializer.setIndentMode(cmd.indentationMode());
+    QByteArray b = serializer.serialize(data);
+    qDebug() << b;
   }
 
   qDebug() << "JOB DONE, BYE";

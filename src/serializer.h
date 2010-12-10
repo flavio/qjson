@@ -29,6 +29,39 @@ class QVariant;
 
 namespace QJson {
   /**
+  * @brief How the indentation should work.
+  *
+  * none (default) : { "foo" : 0, "foo1" : 1, "foo2" : [ { "foo3 : 3, "foo4" : 4 } ] }
+  *
+  * minimum : { "foo" : 0, "foo1" : 1, "foo2" : [
+  *             { "foo3 : 3, "foo4" : 4 }
+  *           ] }
+  *
+  * medium : {
+  *           "foo" : 0, "foo1" : 1, "foo2" : [
+  *            {
+  *             "foo3 : 3, "foo4" : 4
+  *            }
+  *           ]
+  *          }
+  * full : {
+  *         "foo" : 0,
+  *         "foo1" : 1,
+  *         "foo2" : [
+  *          {
+  *           "foo3 : 3,
+  *           "foo4" : 4
+  *          }
+  *         ]
+  *        }
+  */
+  enum IndentMode {
+    IndentNone,
+    IndentMinimum,
+    IndentMedium,
+    IndentFull
+  };
+  /**
   * @brief Main class used to convert QVariant objects to JSON data.
   *
   * QVariant objects are converted to a string containing the JSON data.
@@ -47,7 +80,7 @@ namespace QJson {
       * @param out Input output device
       * @param ok if a conversion error occurs, *ok is set to false; otherwise *ok is set to true
       */
-    void serialize( const QVariant& variant, QIODevice* out, bool* ok = 0 );
+    void serialize( const QVariant& variant, QIODevice* out, bool* ok = 0);
 
     /**
       * This is a method provided for convenience. It turns the passed in in-memory
@@ -59,7 +92,7 @@ namespace QJson {
       * parser.
       */
 
-    QByteArray serialize( const QVariant& variant );
+    QByteArray serialize( const QVariant& variant);
 
     /**
      * Allow or disallow writing of NaN and/or Infinity (as an extension to QJson)
@@ -70,6 +103,16 @@ namespace QJson {
      * Is Nan and/or Infinity allowed?
      */
     bool specialNumbersAllowed() const;
+
+    /**
+     * set output indentation mode as defined in QJson::IndentMode
+     */
+    void setIndentMode(IndentMode mode = QJson::IndentNone);
+
+    /**
+     * Returns one of the indentation modes defined in QJson::IndentMode
+     */
+    IndentMode indentMode() const;
 
   private:
     Q_DISABLE_COPY(Serializer)
