@@ -20,6 +20,7 @@
 
 #include <QtCore/QStringBuilder>
 #include <QtGui/QMessageBox>
+#include <stdio.h>
 
 #include "cmdlineparser.h"
 
