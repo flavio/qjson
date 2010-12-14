@@ -27,6 +27,10 @@
 
 #include <cmath>
 
+#ifdef _MSC_VER  // using MSVC compiler
+#include <float.h>
+#endif
+
 using namespace QJson;
 
 class Serializer::SerializerPrivate {
