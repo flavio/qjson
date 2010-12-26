@@ -68,7 +68,7 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, int rese
     Q_FOREACH( const QVariant& var, list )
     {
       reserved++;
-      QByteArray serializedValue = serialize( v,reserved );
+      QByteArray serializedValue = serialize( var,reserved );
       reserved--;
       if ( serializedValue.isNull() ) {
         error = true;
