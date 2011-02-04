@@ -9,6 +9,9 @@ SOURCES = testqobjecthelper.cpp \
 
 win32 {
   LIBS += -L../../lib -lqjson0
+} macx {
+  QMAKE_LFLAGS += -F../../lib
+  LIBS += -framework qjson
 } else {
   LIBS += -L../../lib -lqjson
 }

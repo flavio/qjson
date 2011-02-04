@@ -13,6 +13,8 @@ windows: {
   DEFINES += QJSON_MAKEDLL
 }
 
+macx: CONFIG += lib_bundle
+
 QJSON_CPP = $$QJSON_SRCBASE
 INCLUDEPATH += $$QJSON_CPP
 
@@ -57,7 +59,7 @@ symbian: {
   # uid for the dll
   #TARGET.UID3=
   TARGET.CAPABILITY = ReadDeviceData WriteDeviceData
-  
+
   # do not freeze api-> no libs produced. Comment when freezing!
   # run "abld freeze winscw" to create def files
   symbian:MMP_RULES += "EXPORTUNFROZEN"
