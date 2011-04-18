@@ -50,9 +50,9 @@ class TestSerializer: public QObject
     void testValueBoolean_data();
     void testSpecialNumbers();
     void testSpecialNumbers_data();
-
     void testIndentation();
     void testIndentation_data();
+    void testSerializetoQIODevice();
 
   private:
     void valueTest( const QVariant& value, const QString& expectedRegExp, bool errorExpected = false );
@@ -386,6 +386,22 @@ void TestSerializer::testSpecialNumbers_data() {
   QTest::newRow( "Infinity" ) << QVariant( std::numeric_limits< double >::infinity() ) << QString::fromLocal8Bit("Infinity");
   QTest::newRow( "-Infinity" ) << QVariant( -std::numeric_limits< double >::infinity() ) << QString::fromLocal8Bit("-Infinity");
   QTest::newRow( "Infinity" ) <<  QVariant( std::numeric_limits< double >::quiet_NaN() ) << QString::fromLocal8Bit("NaN");
+}
+
+void TestSerializer::testSerializetoQIODevice() {
+  QBuffer buffer;
+  QVariantList variant;
+  variant << QVariant(QLatin1String("Hello"));
+  variant << QVariant(QLatin1String("world!"));
+
+  Serializer serializer;
+  bool ok;
+
+  serializer.serialize(variant, &buffer, &ok);
+
+  QCOMPARE(QString(QLatin1String(buffer.data())),
+           QString(QLatin1String("[ \"Hello\", \"world!\" ]")));
+  QVERIFY(ok);
 }
 
 QTEST_MAIN(TestSerializer)

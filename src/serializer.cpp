@@ -250,30 +250,26 @@ Serializer::~Serializer() {
 void Serializer::serialize( const QVariant& v, QIODevice* io, bool* ok)
 {
   Q_ASSERT( io );
+  if (ok)
+      *ok = false;
+
   if (!io->isOpen()) {
     if (!io->open(QIODevice::WriteOnly)) {
-      if ( ok != 0 )
-        *ok = false;
       qCritical ("Error opening device");
       return;
     }
   }
 
   if (!io->isWritable()) {
-    if (ok != 0)
-      *ok = false;
     qCritical ("Device is not readable");
     io->close();
     return;
   }
 
   const QByteArray str = serialize( v );
-  if ( !str.isNull() ) {
-    QDataStream stream( io );
-    stream << str;
-  } else {
-    if ( ok )
-      *ok = false;
+  if (io->write(str) == str.count()) {
+    if (ok)
+      *ok = true;
   }
 }
 
