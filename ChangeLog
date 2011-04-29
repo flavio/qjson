@@ -1,3 +1,8 @@
+Fri Apr 23:04:29 CEST 2011  Flavio Castelli <flavio@castelli.name>
+
+	* Fixed QVariant de-serialization. QVariant properties were ignored
+	  during QVariant -> QObject conversion.
+
 Sun Dec 18:59:28 CET 2010  Flavio Castelli <flavio@castelli.name>
 
 	* It's now possible to indent the output produced by the Serializer.
