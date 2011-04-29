@@ -51,3 +51,14 @@ void Person::setDob(const QDate& dob)
 {
   m_dob = dob;
 }
+
+QVariant Person::customField() const
+{
+  return m_customField;
+}
+
+void Person::setCustomField(const QVariant& customField)
+{
+  m_customField = customField;
+}
+

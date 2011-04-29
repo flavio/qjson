@@ -29,6 +29,7 @@
 #include "qobjecthelper.h"
 
 #include <QtCore/QVariant>
+#include <QtCore/QVariantList>
 
 class TestQObjectHelper: public QObject
 {
@@ -46,21 +47,24 @@ void TestQObjectHelper::testQObject2QVariant()
   int phoneNumber = 123456;
   Person::Gender gender = Person::Male;
   QDate dob (1982, 7, 12);
+  QVariantList nicknames;
+  nicknames << QLatin1String("nickname1") << QLatin1String("nickname2");
 
   Person person;
   person.setName(name);
   person.setPhoneNumber(phoneNumber);
   person.setGender(gender);
   person.setDob(dob);
+  person.setCustomField(nicknames);
 
   QVariantMap expected;
   expected[QLatin1String("name")] = QVariant(name);
   expected[QLatin1String("phoneNumber")] = QVariant(phoneNumber);
   expected[QLatin1String("gender")] = QVariant(gender);
   expected[QLatin1String("dob")] = QVariant(dob);
+  expected[QLatin1String("customField")] = nicknames;
 
   QVariantMap result = QObjectHelper::qobject2qvariant(&person);
-
   QCOMPARE(result, expected);
 }
 
@@ -71,12 +75,15 @@ void TestQObjectHelper::testQVariant2QObject()
   int phoneNumber = 123456;
   Person::Gender gender = Person::Male;
   QDate dob (1982, 7, 12);
+  QVariantList nicknames;
+  nicknames << QLatin1String("nickname1") << QLatin1String("nickname2");
 
   Person expected_person;
   expected_person.setName(name);
   expected_person.setPhoneNumber(phoneNumber);
   expected_person.setGender(gender);
   expected_person.setDob(dob);
+  expected_person.setCustomField(nicknames);
 
   QVariantMap variant = QObjectHelper::qobject2qvariant(&expected_person);
 
@@ -95,6 +102,7 @@ void TestQObjectHelper::testQVariant2QObject()
   QCOMPARE(person.phoneNumber(),phoneNumber);
   QCOMPARE(person.gender(), gender);
   QCOMPARE(person.dob(), dob);
+  QCOMPARE(person.customField(), QVariant(nicknames));
 }
 
 QTEST_MAIN(TestQObjectHelper)

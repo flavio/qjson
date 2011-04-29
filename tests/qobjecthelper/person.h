@@ -23,6 +23,7 @@
 
 #include <QtCore/QDate>
 #include <QtCore/QObject>
+#include <QtCore/QVariant>
 
 class Person : public QObject
 {
@@ -32,6 +33,7 @@ class Person : public QObject
   Q_PROPERTY(int phoneNumber READ phoneNumber WRITE setPhoneNumber)
   Q_PROPERTY(Gender gender READ gender WRITE setGender)
   Q_PROPERTY(QDate dob READ dob WRITE setDob)
+  Q_PROPERTY(QVariant customField READ customField WRITE setCustomField)
   Q_ENUMS(Gender)
 
  public:
@@ -51,11 +53,15 @@ class Person : public QObject
     QDate dob() const;
     void setDob(const QDate& dob);
 
+    QVariant customField() const;
+    void setCustomField(const QVariant& customField);
+
   private:
     QString m_name;
     int m_phoneNumber;
     Gender m_gender;
     QDate m_dob;
+    QVariant m_customField;
 };
 
 #endif

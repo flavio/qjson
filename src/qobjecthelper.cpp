@@ -75,10 +75,11 @@ void QObjectHelper::qvariant2qobject(const QVariantMap& variant, QObject* object
     QMetaProperty metaproperty = metaobject->property( pIdx );
     QVariant::Type type = metaproperty.type();
     QVariant v( iter.value() );
-
     if ( v.canConvert( type ) ) {
       v.convert( type );
       metaproperty.write( object, v );
+    } else if (QString(QLatin1String("QVariant")).compare(QLatin1String(metaproperty.typeName())) == 0) {
+     metaproperty.write( object, v );
     }
   }
 }
