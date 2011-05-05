@@ -34,6 +34,7 @@ namespace QJson {
   * @brief Class used to convert QObject into QVariant and vivce-versa.
   * During these operations only the class attributes defined as properties will
   * be considered.
+  * Properties marked as 'non-stored' will be ignored.
   *
   * Suppose the declaration of the Person class looks like this:
   * \code
