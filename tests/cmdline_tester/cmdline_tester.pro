@@ -7,7 +7,7 @@ win32 {
 } macx {
   QMAKE_LFLAGS += -F../../lib
   LIBS += -framework qjson
-} else {
+} unix {
   LIBS += -L../../lib -lqjson
 }
 INCLUDEPATH +=  . \
