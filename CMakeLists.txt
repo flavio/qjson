@@ -33,7 +33,9 @@ endif(QJSON_VERBOSE_DEBUG_OUTPUT)
 # Find Qt4
 FIND_PACKAGE( Qt4 REQUIRED )
 
-SET( QT_DONT_USE_QTGUI TRUE )
+IF (NOT WIN32)
+  SET( QT_DONT_USE_QTGUI TRUE )
+ENDIF()
 
 #add extra search paths for libraries and includes
 SET (LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)" )
