@@ -24,9 +24,10 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 
+#include <QJson/Parser>
+#include <QJson/Serializer>
+
 #include "cmdlineparser.h"
-#include "parser.h"
-#include "serializer.h"
 
 using namespace QJson;
 

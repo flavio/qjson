@@ -24,7 +24,7 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QStringList>
 
-#include "serializer.h"
+#include <QJson/Serializer>
 
 namespace QJson {
   class CmdLineParser

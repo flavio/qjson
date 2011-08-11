@@ -12,4 +12,4 @@ win32 {
   LIBS += -L../../lib -lqjson
 }
 INCLUDEPATH +=  . \
-                ../../src
+                ../../include

@@ -18,13 +18,15 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <QtTest/QtTest>
-
-#include "parser.h"
-#include "serializer.h"
+#include <cmath>
 
 #include <QtCore/QVariant>
-#include <cmath>
+
+#include <QtTest/QtTest>
+
+#include <QJson/Parser>
+#include <QJson/Serializer>
+
 
 class TestParser: public QObject
 {

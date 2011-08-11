@@ -9,7 +9,7 @@ INCLUDE(AddFileDependencies)
 
 # Include the library include directories, and the current build directory (moc)
 INCLUDE_DIRECTORIES(
-  ../../src
+  ../../include
   ${CMAKE_CURRENT_BINARY_DIR}
 )
 

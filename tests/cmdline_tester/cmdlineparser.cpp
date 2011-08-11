@@ -18,9 +18,10 @@
   * Boston, MA 02110-1301, USA.
   */
 
+#include <stdio.h>
+
 #include <QtCore/QStringBuilder>
 #include <QtGui/QMessageBox>
-#include <stdio.h>
 
 #include "cmdlineparser.h"
 

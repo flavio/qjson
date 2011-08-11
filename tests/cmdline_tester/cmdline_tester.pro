@@ -11,7 +11,7 @@ win32 {
   LIBS += -L../../lib -lqjson
 }
 INCLUDEPATH +=  . \
-                ../../src
+                ../../include
 
 # Input
 SOURCES += cmdline_tester.cpp cmdlineparser.cpp

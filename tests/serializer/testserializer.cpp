@@ -20,13 +20,12 @@
 
 #include <limits>
 
-#include <QtTest/QtTest>
-
-#include "parser.h"
-#include "serializer.h"
-
 #include <QtCore/QVariant>
 
+#include <QtTest/QtTest>
+
+#include <QJson/Parser>
+#include <QJson/Serializer>
 
 class TestSerializer: public QObject
 {

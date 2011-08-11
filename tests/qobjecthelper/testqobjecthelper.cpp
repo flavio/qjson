@@ -21,15 +21,16 @@
 
 #include <limits>
 
-#include <QtTest/QtTest>
-
-#include "parser.h"
-#include "person.h"
-#include "serializer.h"
-#include "qobjecthelper.h"
-
 #include <QtCore/QVariant>
 #include <QtCore/QVariantList>
+
+#include <QtTest/QtTest>
+
+#include <QJson/Parser>
+#include <QJson/Serializer>
+#include <QJson/QObjectHelper>
+
+#include "person.h"
 
 class TestQObjectHelper: public QObject
 {
