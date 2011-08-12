@@ -1,5 +1,3 @@
-include_directories (./)
-
 # add_custom_command (OUTPUT ${qjson_SOURCE_DIR}/lib/json_parser.cc
 #                    PRE_BUILD
 #                    COMMAND bison -t -o json_parser.cc -d json_parser.yy
