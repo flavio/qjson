@@ -71,7 +71,7 @@ add_subdirectory(cmake/modules)
 
 
 CONFIGURE_FILE(
-  "${CMAKE_MODULE_PATH}/cmake_uninstall.cmake.in"
+  "${CMAKE_SOURCE_DIR}/cmake_uninstall.cmake.in"
   "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
   IMMEDIATE @ONLY)
 
