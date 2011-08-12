@@ -16,8 +16,7 @@ set(CMAKE_INSTALL_NAME_DIR ${LIB_INSTALL_DIR})
 # compile in debug mode
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
-      "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
-      FORCE)
+      "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel.")
 ENDIF(NOT CMAKE_BUILD_TYPE)
 
 IF("${CMAKE_BUILD_TYPE}" MATCHES "^Rel.*")
