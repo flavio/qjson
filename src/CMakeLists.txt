@@ -37,7 +37,7 @@ set_target_properties(qjson PROPERTIES
                       DEFINE_SYMBOL QJSON_MAKEDLL
                       )
 
-INSTALL(TARGETS qjson
+INSTALL(TARGETS qjson EXPORT qjson-export
    LIBRARY DESTINATION ${LIB_INSTALL_DIR}
    RUNTIME DESTINATION bin
    ARCHIVE DESTINATION  ${LIB_INSTALL_DIR}

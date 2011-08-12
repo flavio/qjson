@@ -37,7 +37,7 @@ INCLUDE( ${QT_USE_FILE} )
 SET (LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)" )
 SET (LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Directory where lib will install")
 SET (INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
-SET (CMAKE_MODULES_INSTALL_DIR "${CMAKE_ROOT}/Modules" CACHE PATH "The directory to install FindQJSON.cmake to")
+SET (CMAKECONFIG_INSTALL_DIR "${LIB_INSTALL_DIR}/cmake/${CMAKE_PROJECT_NAME}" CACHE PATH "Directory where to install qjson-config.cmake")
 
 set(QJSON_LIB_MAJOR_VERSION "0")
 set(QJSON_LIB_MINOR_VERSION "7")
@@ -63,16 +63,17 @@ IF (KDE4_BUILD_TESTS OR QJSON_BUILD_TESTS)
   ADD_SUBDIRECTORY(tests)
 ENDIF (KDE4_BUILD_TESTS OR QJSON_BUILD_TESTS)
 
-add_subdirectory(cmake/modules)
-
-
 CONFIGURE_FILE(
   "${CMAKE_SOURCE_DIR}/cmake_uninstall.cmake.in"
   "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
   IMMEDIATE @ONLY)
 
-GET_TARGET_PROPERTY(LIB_OUT_NAME qjson LOCATION)
-GET_FILENAME_COMPONENT(LIB_OUT_NAME  ${LIB_OUT_NAME} NAME)
+INSTALL(EXPORT qjson-export DESTINATION ${CMAKECONFIG_INSTALL_DIR} FILE qjson-targets.cmake)
+
+# figure out the relative path from the installed Config.cmake file to the install prefix (which may be at
+# runtime different from the chosen CMAKE_INSTALL_PREFIX if under Windows the package was installed anywhere)
+# This relative path will be configured into the qjson-config.cmake
+file(RELATIVE_PATH relInstallDir ${CMAKE_INSTALL_PREFIX}/${CMAKECONFIG_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX} )
 
 # cmake-modules
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/qjson-config.cmake.in
