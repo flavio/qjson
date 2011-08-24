@@ -1,3 +1,12 @@
+Wed Aug 24 17:58:56 CEST 2011  Flavio Castelli <flavio@castelli.name>
+
+	* Buildsystem adjustments, fix issues mentioned here:
+		- http://lists.kde.org/?l=kde-buildsystem&m=130947194605100&w=3
+		- http://lists.kde.org/?l=kde-buildsystem&m=128835747626464&w=3
+		The biggest difference now is that find_package(QJSON) won't work
+		anymore as only a lowercase config file will be installed; so
+		one should do find_package(qjson). Thanks to Raphael Kubo da Costa
+
 Fri Apr 23:04:29 CEST 2011  Flavio Castelli <flavio@castelli.name>
 
 	* Fixed QVariant de-serialization. QVariant properties were ignored
