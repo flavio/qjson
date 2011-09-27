@@ -31,16 +31,18 @@ namespace QJson {
   /**
   * @brief How the indentation should work.
   *
-  * none (default) : { "foo" : 0, "foo1" : 1, "foo2" : [ { "foo3 : 3, "foo4" : 4 } ] }
+  * none (default) : { "foo" : 0, "foo1" : 1, "foo2" : [ { "foo3" : 3, "foo4" : 4 } ] }
+  *
+  * compact : {"foo":0,"foo1":1,"foo2":[{"foo3":3,"foo4":4}]}
   *
   * minimum : { "foo" : 0, "foo1" : 1, "foo2" : [
-  *             { "foo3 : 3, "foo4" : 4 }
+  *             { "foo3" : 3, "foo4" : 4 }
   *           ] }
   *
   * medium : {
   *           "foo" : 0, "foo1" : 1, "foo2" : [
   *            {
-  *             "foo3 : 3, "foo4" : 4
+  *             "foo3" : 3, "foo4" : 4
   *            }
   *           ]
   *          }
@@ -49,7 +51,7 @@ namespace QJson {
   *         "foo1" : 1,
   *         "foo2" : [
   *          {
-  *           "foo3 : 3,
+  *           "foo3" : 3,
   *           "foo4" : 4
   *          }
   *         ]
@@ -57,6 +59,7 @@ namespace QJson {
   */
   enum IndentMode {
     IndentNone,
+    IndentCompact,
     IndentMinimum,
     IndentMedium,
     IndentFull

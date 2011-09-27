@@ -118,6 +118,7 @@ void TestSerializer::testReadWrite_data()
 void TestSerializer::testIndentation()
 {
   QFETCH( QByteArray, json );
+  QFETCH( QByteArray, expected_compact );
   QFETCH( QByteArray, expected_min );
   QFETCH( QByteArray, expected_med );
   QFETCH( QByteArray, expected_full );
@@ -131,6 +132,14 @@ void TestSerializer::testIndentation()
   Serializer serializer;
   QVariant reparsed;
   QByteArray serialized;
+
+  // serialize with indent compact and reparse
+  serializer.setIndentMode(QJson::IndentCompact);
+  serialized = serializer.serialize( parsed );
+  QCOMPARE( serialized, expected_compact);
+  reparsed = parser.parse( serialized, &ok );
+  QVERIFY(ok);
+  QCOMPARE( parsed, reparsed);
 
   // serialize with indent minimum and reparse
   serializer.setIndentMode(QJson::IndentMinimum);
@@ -160,14 +169,16 @@ void TestSerializer::testIndentation()
 void TestSerializer::testIndentation_data()
 {
     QTest::addColumn<QByteArray>( "json" );
+    QTest::addColumn<QByteArray>( "expected_compact" );
     QTest::addColumn<QByteArray>( "expected_min" );
     QTest::addColumn<QByteArray>( "expected_med" );
     QTest::addColumn<QByteArray>( "expected_full" );
     const QByteArray json = " { \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [ { \"foo3\" : 3, \"foo4\" : 4 } ] }";
+    const QByteArray ex_compact = "{\"foo\":0,\"foo1\":1,\"foo2\":[{\"foo3\":3,\"foo4\":4}]}";
     const QByteArray ex_min = "{ \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [\n  { \"foo3\" : 3, \"foo4\" : 4 }\n] }";
     const QByteArray ex_med = "{\n \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [\n  {\n   \"foo3\" : 3, \"foo4\" : 4\n  }\n ]\n}";
     const QByteArray ex_full = "{\n \"foo\" : 0,\n \"foo1\" : 1,\n \"foo2\" : [\n  {\n   \"foo3\" : 3,\n   \"foo4\" : 4\n  }\n ]\n}";
-    QTest::newRow( "test indents" ) << json << ex_min << ex_med << ex_full;
+    QTest::newRow( "test indents" ) << json << ex_compact << ex_min << ex_med << ex_full;
 }
 
 void TestSerializer::valueTest( const QVariant& value, const QString& expectedRegExp, bool errorExpected )
