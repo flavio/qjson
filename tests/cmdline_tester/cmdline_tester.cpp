@@ -23,6 +23,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
+#include <QtCore/QTime>
 
 #include <QJson/Parser>
 #include <QJson/Serializer>
@@ -33,6 +34,9 @@ using namespace QJson;
 
 int main(int argc, char *argv[]) {
   QCoreApplication app (argc, argv);
+  QTime time;
+  int   duration;
+
  
   CmdLineParser cmd (app.arguments());
   CmdLineParser::Result res = cmd.parse();
@@ -40,7 +44,6 @@ int main(int argc, char *argv[]) {
       return 0;
   else if (res == CmdLineParser::Error)
       return -1;
-
 
   QString filename = cmd.file();
   if (!QFile::exists ( filename )) {
@@ -52,23 +55,30 @@ int main(int argc, char *argv[]) {
   bool ok;
 
   QFile file (filename);
+  time.start();
   QVariant data = parser.parse (&file, &ok);
+  duration = time.elapsed();
   if (!ok) {
     qCritical("%s:%i - Error: %s", filename.toLatin1().data(), parser.errorLine(), qPrintable(parser.errorString()));
     exit (1);
   }
   else {
-    qDebug() << "json object successfully converted to:";
-    qDebug() << data;
+    qDebug() << "Parsing of" << filename << "took" << duration << "ms";
+    if (!cmd.quiet())
+      qDebug() << data;
   }
 
   if (cmd.serialize()) {
     // serializer tests
-    qDebug() << "Serialization output";
+    qDebug() << "Serializing... ";
     QJson::Serializer serializer;
     serializer.setIndentMode(cmd.indentationMode());
+    time.start();
     QByteArray b = serializer.serialize(data);
-    qDebug() << b;
+    duration = time.elapsed();
+    qDebug() << "Serialization took:" << duration << "ms";
+    if (!cmd.quiet())
+     qDebug() << b;
   }
 
   qDebug() << "JOB DONE, BYE";

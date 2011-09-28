@@ -40,6 +40,7 @@ namespace QJson {
       QString helpFile() const;
       QString file() const;
       bool serialize();
+      bool quiet();
 
       void showMessage(const QString &msg, bool error);
 
@@ -53,6 +54,7 @@ namespace QJson {
       IndentMode m_indentationMode;
       QString m_file;
       bool m_serialize;
+      bool m_quiet;
       static const QString m_helpMessage;
       QString m_error;
   };
