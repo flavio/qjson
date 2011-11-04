@@ -35,9 +35,14 @@ using namespace QJson;
 
 class Serializer::SerializerPrivate {
   public:
-    SerializerPrivate() : specialNumbersAllowed(false), indentMode(QJson::IndentNone) {}
+    SerializerPrivate() :
+      specialNumbersAllowed(false),
+      indentMode(QJson::IndentNone),
+      doublePrecision(6) {
+      }
     bool specialNumbersAllowed;
     IndentMode indentMode;
+    int doublePrecision;
     QByteArray buildIndent(int spaces);
     QByteArray serialize( const QVariant &v, int reserved = 0);
     QString sanitizeString( QString str );
@@ -185,7 +190,7 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, int rese
         error = true;
     }
     } else {
-      str = QByteArray::number( value );
+      str = QByteArray::number( value , 'g', doublePrecision);
       if( ! str.contains( "." ) && ! str.contains( "e" ) ) {
         str += ".0";
       }
@@ -306,6 +311,10 @@ bool QJson::Serializer::specialNumbersAllowed() const {
 
 void QJson::Serializer::setIndentMode(IndentMode mode) {
   d->indentMode = mode;
+}
+
+void QJson::Serializer::setDoublePrecision(int precision) {
+  d->doublePrecision = precision;
 }
 
 IndentMode QJson::Serializer::indentMode() const {

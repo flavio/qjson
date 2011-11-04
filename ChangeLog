@@ -1,3 +1,7 @@
+Fri Nov 04 16:50:56 CET 2011  Flavio Castelli <flavio@castelli.name>
+
+	* Make possible to set double precision during serialization.
+
 Wed Aug 24 17:58:56 CEST 2011  Flavio Castelli <flavio@castelli.name>
 
 	* Buildsystem adjustments, fix issues mentioned here:

@@ -112,6 +112,13 @@ namespace QJson {
      */
     void setIndentMode(IndentMode mode = QJson::IndentNone);
 
+
+    /**
+    * set double precision used while converting Double
+    * \sa QByteArray::number
+    */
+    void setDoublePrecision(int precision);
+
     /**
      * Returns one of the indentation modes defined in QJson::IndentMode
      */

@@ -43,6 +43,7 @@ class TestSerializer: public QObject
     void testValueInteger_data();
     void testValueDouble();
     void testValueDouble_data();
+    void testSetDoublePrecision();
     void testValueFloat();
     void testValueFloat_data();
     void testValueBoolean();
@@ -321,6 +322,55 @@ void TestSerializer::testValueDouble_data()
   QTest::newRow( "double infinity" ) << QVariant( std::numeric_limits< double >::infinity() ) << QString( ) << true;
   QTest::newRow( "double -infinity" ) << QVariant( -std::numeric_limits< double >::infinity() ) << QString( ) << true;
   QTest::newRow( "double NaN" ) << QVariant( std::numeric_limits< double >::quiet_NaN() ) << QString( ) << true;
+}
+
+void TestSerializer::testSetDoublePrecision()
+{
+  Serializer serializer;
+  QByteArray actual;
+  QString    expected, actualUnicode;
+
+  double num = 0.12345678;
+
+  // Set 1 as double precision
+  serializer.setDoublePrecision(1);
+  expected      = QString(QLatin1String("0.1"));
+  actual        = serializer.serialize( QVariant(num) );
+  actualUnicode = QString::fromUtf8(actual);
+
+  QVERIFY2( QString::compare(expected, actualUnicode ) == 0,
+            qPrintable( QString( QLatin1String( "Expected \"%1\" but got \"%2\"." ) )
+          .arg( expected ).arg( actualUnicode ) ) );
+
+  // Set 2 as double precision
+  serializer.setDoublePrecision(2);
+  expected      = QString(QLatin1String("0.12"));
+  actual        = serializer.serialize( QVariant(num) );
+  actualUnicode = QString::fromUtf8(actual);
+
+  QVERIFY2( QString::compare(expected, actualUnicode ) == 0,
+            qPrintable( QString( QLatin1String( "Expected \"%1\" but got \"%2\"." ) )
+          .arg( expected ).arg( actualUnicode ) ) );
+
+  // Set 4 as double precision
+  serializer.setDoublePrecision(4);
+  expected      = QString(QLatin1String("0.1235"));
+  actual        = serializer.serialize( QVariant(num) );
+  actualUnicode = QString::fromUtf8(actual);
+
+  QVERIFY2( QString::compare(expected, actualUnicode ) == 0,
+            qPrintable( QString( QLatin1String( "Expected \"%1\" but got \"%2\"." ) )
+          .arg( expected ).arg( actualUnicode ) ) );
+
+  // Set 14 as double precision
+  serializer.setDoublePrecision(14);
+  expected      = QString(QLatin1String("0.12345678"));
+  actual        = serializer.serialize( QVariant(num) );
+  actualUnicode = QString::fromUtf8(actual);
+
+  QVERIFY2( QString::compare(expected, actualUnicode ) == 0,
+            qPrintable( QString( QLatin1String( "Expected \"%1\" but got \"%2\"." ) )
+          .arg( expected ).arg( actualUnicode ) ) );
 }
 
 void TestSerializer::testValueFloat()
