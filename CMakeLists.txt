@@ -23,6 +23,10 @@ IF(QJSON_VERBOSE_DEBUG_OUTPUT)
   ADD_DEFINITIONS("-DQJSON_VERBOSE_DEBUG_OUTPUT")
 endif(QJSON_VERBOSE_DEBUG_OUTPUT)
 
+# Don't use absolute path in qjson-targets-*.cmake
+# (This will have no effect with CMake < 2.8)
+SET(QT_USE_IMPORTED_TARGETS TRUE)
+
 # Find Qt4
 FIND_PACKAGE( Qt4 REQUIRED )
 
