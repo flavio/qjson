@@ -37,7 +37,7 @@ INCLUDE( ${QT_USE_FILE} )
 SET (LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)" )
 SET (LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Directory where lib will install")
 SET (INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
-SET (CMAKECONFIG_INSTALL_DIR "${LIB_INSTALL_DIR}/cmake/${CMAKE_PROJECT_NAME}" CACHE PATH "Directory where to install qjson-config.cmake")
+SET (CMAKECONFIG_INSTALL_DIR "${LIB_INSTALL_DIR}/cmake/${CMAKE_PROJECT_NAME}" CACHE PATH "Directory where to install QJSONConfig.cmake")
 
 set(QJSON_LIB_MAJOR_VERSION "0")
 set(QJSON_LIB_MINOR_VERSION "7")
@@ -68,23 +68,23 @@ CONFIGURE_FILE(
   "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
   IMMEDIATE @ONLY)
 
-INSTALL(EXPORT qjson-export DESTINATION ${CMAKECONFIG_INSTALL_DIR} FILE qjson-targets.cmake)
+INSTALL(EXPORT qjson-export DESTINATION ${CMAKECONFIG_INSTALL_DIR} FILE QJSONTargets.cmake)
 
 # figure out the relative path from the installed Config.cmake file to the install prefix (which may be at
 # runtime different from the chosen CMAKE_INSTALL_PREFIX if under Windows the package was installed anywhere)
-# This relative path will be configured into the qjson-config.cmake
+# This relative path will be configured into the QJSONConfig.cmake
 file(RELATIVE_PATH relInstallDir ${CMAKE_INSTALL_PREFIX}/${CMAKECONFIG_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX} )
 
 # cmake-modules
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/qjson-config.cmake.in
-               ${CMAKE_CURRENT_BINARY_DIR}/qjson-config.cmake
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/QJSONConfig.cmake.in
+               ${CMAKE_CURRENT_BINARY_DIR}/QJSONConfig.cmake
                @ONLY)
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/qjson-config-version.cmake.in
-               ${CMAKE_CURRENT_BINARY_DIR}/qjson-config-version.cmake
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/QJSONConfigVersion.cmake.in
+               ${CMAKE_CURRENT_BINARY_DIR}/QJSONConfigVersion.cmake
                @ONLY)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/qjson-config.cmake
-              ${CMAKE_CURRENT_BINARY_DIR}/qjson-config-version.cmake
-        DESTINATION "lib/cmake/qjson")
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/QJSONConfig.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/QJSONConfigVersion.cmake
+        DESTINATION "${CMAKECONFIG_INSTALL_DIR}")
 
 ADD_CUSTOM_TARGET(uninstall
   "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
