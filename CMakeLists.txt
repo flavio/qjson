@@ -57,7 +57,7 @@ IF (NOT WIN32)
                   ${CMAKE_CURRENT_BINARY_DIR}/QJson.pc
                   @ONLY)
   INSTALL (FILES ${CMAKE_CURRENT_BINARY_DIR}/QJson.pc
-           DESTINATION lib${LIB_SUFFIX}/pkgconfig)
+           DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
 ENDIF (NOT WIN32)
 
 # Subdirs
