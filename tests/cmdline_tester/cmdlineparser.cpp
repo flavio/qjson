@@ -59,14 +59,14 @@ CmdLineParser::Result CmdLineParser::parse()
     bool showHelp = false;
 
     while (m_error.isEmpty() && hasMoreArgs()) {
-        const QString &arg = nextArg().toLower();
-        if (arg == QLatin1String("--indent"))
+        const QString &arg = nextArg();
+        if (arg.toLower() == QLatin1String("--indent"))
             handleSetIndentationMode();
-        else if (arg == QLatin1String("--help"))
+        else if (arg.toLower() == QLatin1String("--help"))
             showHelp = true;
-        else if (arg == QLatin1String("--serialize"))
+        else if (arg.toLower() == QLatin1String("--serialize"))
             m_serialize = true;
-        else if (arg == QLatin1String("--quiet"))
+        else if (arg.toLower() == QLatin1String("--quiet"))
             m_quiet = true;
         else if (!arg.startsWith(QLatin1String("--")))
             m_file = arg;
