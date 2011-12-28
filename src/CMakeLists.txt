@@ -27,17 +27,13 @@ endif()
 set_target_properties(qjson PROPERTIES
                       DEFINE_SYMBOL QJSON_MAKEDLL
                       PUBLIC_HEADER "${qjson_HEADERS}"
+                      FRAMEWORK ${OSX_FRAMEWORK}
                       )
-
-if(APPLE)
-set_target_properties(qjson PROPERTIES
-                      FRAMEWORK ${OPTION_FRAMEWORK})
-endif()
 
 INSTALL(TARGETS qjson EXPORT qjson-export
    LIBRARY DESTINATION ${LIB_INSTALL_DIR}
    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
    ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
-   FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX}/Library/Frameworks
+   FRAMEWORK DESTINATION ${FRAMEWORK_INSTALL_DIR}
    PUBLIC_HEADER DESTINATION ${INCLUDE_INSTALL_DIR}/qjson
 )
