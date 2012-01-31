@@ -29,6 +29,9 @@ For Unix/Linux/Mac:
   make install
   /sbin/ldconfig, if necessary
 
+For Mac:
+It's possible to build qjson as an OS X framework using the OSX_FRAMEWORK option.
+
 For Symbian:
 	Read this page: http://qjson.sourceforge.net/get_it/symbian.html
 
