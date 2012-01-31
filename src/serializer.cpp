@@ -160,7 +160,7 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, int rese
 
   } else if (( v.type() == QVariant::String ) ||  ( v.type() == QVariant::ByteArray )) { // a string or a byte array?
     str = sanitizeString( v.toString() ).toUtf8();
-  } else if (( v.type() == QVariant::Double) || (v.type() == QMetaType::Float)) { // a double or a float?
+  } else if (( v.type() == QVariant::Double) || ((QMetaType::Type)v.type() == QMetaType::Float)) { // a double or a float?
     const double value = v.toDouble();
 #if defined _WIN32 && !defined(Q_OS_SYMBIAN)
     const bool special = _isnan(value) || !_finite(value);
