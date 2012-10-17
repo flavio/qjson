@@ -97,10 +97,11 @@ void TestQObjectHelper::testQVariant2QObject()
   QVERIFY(parsedVariant.canConvert(QVariant::Map));
 
   Person person;
+  QCOMPARE(Person::Female, person.gender());
   QObjectHelper::qvariant2qobject(parsedVariant.toMap(), &person);
 
   QCOMPARE(person.name(), name);
-  QCOMPARE(person.phoneNumber(),phoneNumber);
+  QCOMPARE(person.phoneNumber(), phoneNumber);
   QCOMPARE(person.gender(), gender);
   QCOMPARE(person.dob(), dob);
   QCOMPARE(person.customField(), QVariant(nicknames));
