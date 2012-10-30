@@ -72,8 +72,8 @@ void TestSerializer::testReadWriteEmptyDocument()
   QVERIFY(ok);
   QVERIFY( ! result.isValid() );
   Serializer serializer;
-  const QByteArray serialized = serializer.serialize( result );
-  QVERIFY( !serialized.isNull() );
+  const QByteArray serialized = serializer.serialize( result, &ok);
+  QVERIFY( ok );
   QByteArray expected = "null";
   QCOMPARE(expected, serialized);
 }
@@ -86,7 +86,8 @@ void TestSerializer::testReadWrite()
   QVariant result = parser.parse( json, &ok );
   QVERIFY(ok);
   Serializer serializer;
-  const QByteArray serialized = serializer.serialize( result );
+  const QByteArray serialized = serializer.serialize( result, &ok);
+  QVERIFY(ok);
   QVariant writtenThenRead = parser.parse( serialized, &ok );
   QVERIFY(ok);
   QCOMPARE( result, writtenThenRead );
@@ -136,23 +137,26 @@ void TestSerializer::testIndentation()
 
   // serialize with indent compact and reparse
   serializer.setIndentMode(QJson::IndentCompact);
-  serialized = serializer.serialize( parsed );
+  serialized = serializer.serialize( parsed, &ok);
+  QVERIFY(ok);
   QCOMPARE( serialized, expected_compact);
-  reparsed = parser.parse( serialized, &ok );
+  reparsed = parser.parse( serialized, &ok);
   QVERIFY(ok);
   QCOMPARE( parsed, reparsed);
 
   // serialize with indent minimum and reparse
   serializer.setIndentMode(QJson::IndentMinimum);
-  serialized = serializer.serialize( parsed );
+  serialized = serializer.serialize( parsed, &ok);
+  QVERIFY(ok);
   QCOMPARE( serialized, expected_min);
-  reparsed = parser.parse( serialized, &ok );
+  reparsed = parser.parse( serialized, &ok);
   QVERIFY(ok);
   QCOMPARE( parsed, reparsed);
 
   // serialize with indent medium and reparse
   serializer.setIndentMode(QJson::IndentMedium);
-  serialized = serializer.serialize( parsed );
+  serialized = serializer.serialize( parsed, &ok);
+  QVERIFY(ok);
   QCOMPARE( serialized, expected_med);
   reparsed = parser.parse( serialized, &ok );
   QVERIFY(ok);
@@ -160,7 +164,8 @@ void TestSerializer::testIndentation()
 
   // serialize with indent full and reparse
   serializer.setIndentMode(QJson::IndentFull);
-  serialized = serializer.serialize( parsed );
+  serialized = serializer.serialize( parsed, &ok);
+  QVERIFY(ok);
   QCOMPARE( serialized, expected_full);
   reparsed = parser.parse( serialized, &ok );
   QVERIFY(ok);
@@ -185,7 +190,9 @@ void TestSerializer::testIndentation_data()
 void TestSerializer::valueTest( const QVariant& value, const QString& expectedRegExp, bool errorExpected )
 {
   Serializer serializer;
-  const QByteArray serialized = serializer.serialize( value );
+  bool ok;
+  const QByteArray serialized = serializer.serialize( value, &ok);
+  QCOMPARE(ok, !errorExpected);
   QCOMPARE(serialized.isNull(), errorExpected);
   const QString serializedUnicode = QString::fromUtf8( serialized );
   if (!errorExpected) {
@@ -194,13 +201,17 @@ void TestSerializer::valueTest( const QVariant& value, const QString& expectedRe
     QVERIFY2( expected.exactMatch( serializedUnicode ),
       qPrintable( QString( QLatin1String( "Expected regexp \"%1\" but got \"%2\"." ) )
         .arg( expectedRegExp ).arg( serializedUnicode ) ) );
+  } else {
+    QVERIFY(!serializer.errorMessage().isEmpty());
   }
 }
 
 void TestSerializer::valueTest( const QObject* object, const QString& expectedRegExp )
 {
   Serializer serializer;
-  const QByteArray serialized = serializer.serialize( object );
+  bool ok;
+  const QByteArray serialized = serializer.serialize( object, &ok);
+  QVERIFY(ok);
   const QString serializedUnicode = QString::fromUtf8( serialized );
   QRegExp expected( expectedRegExp );
   QVERIFY( expected.isValid() );
@@ -326,6 +337,7 @@ void TestSerializer::testValueDouble_data()
 
 void TestSerializer::testSetDoublePrecision()
 {
+  bool ok;
   Serializer serializer;
   QByteArray actual;
   QString    expected, actualUnicode;
@@ -335,7 +347,8 @@ void TestSerializer::testSetDoublePrecision()
   // Set 1 as double precision
   serializer.setDoublePrecision(1);
   expected      = QString(QLatin1String("0.1"));
-  actual        = serializer.serialize( QVariant(num) );
+  actual        = serializer.serialize( QVariant(num), &ok);
+  QVERIFY(ok);
   actualUnicode = QString::fromUtf8(actual);
 
   QVERIFY2( QString::compare(expected, actualUnicode ) == 0,
@@ -345,7 +358,8 @@ void TestSerializer::testSetDoublePrecision()
   // Set 2 as double precision
   serializer.setDoublePrecision(2);
   expected      = QString(QLatin1String("0.12"));
-  actual        = serializer.serialize( QVariant(num) );
+  actual        = serializer.serialize( QVariant(num), &ok);
+  QVERIFY(ok);
   actualUnicode = QString::fromUtf8(actual);
 
   QVERIFY2( QString::compare(expected, actualUnicode ) == 0,
@@ -355,7 +369,8 @@ void TestSerializer::testSetDoublePrecision()
   // Set 4 as double precision
   serializer.setDoublePrecision(4);
   expected      = QString(QLatin1String("0.1235"));
-  actual        = serializer.serialize( QVariant(num) );
+  actual        = serializer.serialize( QVariant(num), &ok);
+  QVERIFY(ok);
   actualUnicode = QString::fromUtf8(actual);
 
   QVERIFY2( QString::compare(expected, actualUnicode ) == 0,
@@ -365,7 +380,8 @@ void TestSerializer::testSetDoublePrecision()
   // Set 14 as double precision
   serializer.setDoublePrecision(14);
   expected      = QString(QLatin1String("0.12345678"));
-  actual        = serializer.serialize( QVariant(num) );
+  actual        = serializer.serialize( QVariant(num), &ok);
+  QVERIFY(ok);
   actualUnicode = QString::fromUtf8(actual);
 
   QVERIFY2( QString::compare(expected, actualUnicode ) == 0,
@@ -428,15 +444,16 @@ void TestSerializer::testValueBoolean_data()
 }
 
 void TestSerializer::testSpecialNumbers() {
+  bool ok;
   QFETCH( QVariant, value );
   QFETCH( QString, expected );
   Serializer specialSerializer;
   QVERIFY(!specialSerializer.specialNumbersAllowed());
   specialSerializer.allowSpecialNumbers(true);
   QVERIFY(specialSerializer.specialNumbersAllowed());
-  QByteArray serialized = specialSerializer.serialize(value);
+  QByteArray serialized = specialSerializer.serialize(value, &ok);
+  QVERIFY(ok);
   QCOMPARE(QString::fromLocal8Bit(serialized), expected);
-
 }
 
 void TestSerializer::testSpecialNumbers_data() {

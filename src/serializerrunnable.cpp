@@ -56,5 +56,7 @@ void SerializerRunnable::setJsonObject( const QVariant& json )
 void SerializerRunnable::run()
 {
   Serializer serializer;
-  emit parsingFinished( Serializer().serialize( d->json ), true, QString() );
+  bool ok;
+  const QByteArray serialized = serializer.serialize( d->json, &ok);
+  emit parsingFinished( serialized, ok, serializer.errorMessage() );
 }

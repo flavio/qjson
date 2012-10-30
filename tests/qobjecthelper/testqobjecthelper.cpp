@@ -50,6 +50,7 @@ void TestQObjectHelper::testQObject2QVariant()
   QDate dob (1982, 7, 12);
   QVariantList nicknames;
   nicknames << QLatin1String("nickname1") << QLatin1String("nickname2");
+  quint16 luckyNumber = 123;
 
   Person person;
   person.setName(name);
@@ -57,6 +58,7 @@ void TestQObjectHelper::testQObject2QVariant()
   person.setGender(gender);
   person.setDob(dob);
   person.setCustomField(nicknames);
+  person.setLuckyNumber(luckyNumber);
 
   QVariantMap expected;
   expected[QLatin1String("name")] = QVariant(name);
@@ -64,6 +66,7 @@ void TestQObjectHelper::testQObject2QVariant()
   expected[QLatin1String("gender")] = QVariant(gender);
   expected[QLatin1String("dob")] = QVariant(dob);
   expected[QLatin1String("customField")] = nicknames;
+  expected[QLatin1String("luckyNumber")] = luckyNumber;
 
   QVariantMap result = QObjectHelper::qobject2qvariant(&person);
   QCOMPARE(result, expected);
@@ -78,6 +81,7 @@ void TestQObjectHelper::testQVariant2QObject()
   QDate dob (1982, 7, 12);
   QVariantList nicknames;
   nicknames << QLatin1String("nickname1") << QLatin1String("nickname2");
+  quint16 luckyNumber = 123;
 
   Person expected_person;
   expected_person.setName(name);
@@ -85,15 +89,19 @@ void TestQObjectHelper::testQVariant2QObject()
   expected_person.setGender(gender);
   expected_person.setDob(dob);
   expected_person.setCustomField(nicknames);
+  expected_person.setLuckyNumber(luckyNumber);
 
   QVariantMap variant = QObjectHelper::qobject2qvariant(&expected_person);
 
   Serializer serializer;
-  QByteArray json = serializer.serialize(variant);
+  QByteArray json = serializer.serialize(variant, &ok);
+  qDebug() << "json is" << json;
+  QVERIFY(ok);
 
   Parser parser;
   QVariant parsedVariant = parser.parse(json,&ok);
   QVERIFY(ok);
+  qDebug() << parsedVariant;
   QVERIFY(parsedVariant.canConvert(QVariant::Map));
 
   Person person;
@@ -105,6 +113,7 @@ void TestQObjectHelper::testQVariant2QObject()
   QCOMPARE(person.gender(), gender);
   QCOMPARE(person.dob(), dob);
   QCOMPARE(person.customField(), QVariant(nicknames));
+  QCOMPARE(person.luckyNumber(), luckyNumber);
 }
 
 QTEST_MAIN(TestQObjectHelper)

@@ -1,10 +1,11 @@
 #include "person.h"
 
 Person::Person(QObject* parent)
-  : QObject(parent)
-  , m_name()
-  , m_phoneNumber(0)
-  , m_gender(Female)
+  : QObject(parent),
+    m_name(),
+    m_phoneNumber(0),
+    m_gender(Female),
+    m_luckyNumber(0)
 {
 }
 
@@ -60,5 +61,15 @@ QVariant Person::customField() const
 void Person::setCustomField(const QVariant& customField)
 {
   m_customField = customField;
+}
+
+const quint16 Person::luckyNumber() const
+{
+  return m_luckyNumber;
+}
+
+void Person::setLuckyNumber(const quint16 luckyNumber)
+{
+  m_luckyNumber = luckyNumber;
 }
 

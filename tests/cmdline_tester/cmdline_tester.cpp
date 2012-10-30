@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
     qCritical ("The file you specified doesn't exist!");
     exit (1);
   }
-  
+
   Parser parser;
   bool ok;
 
@@ -74,11 +74,16 @@ int main(int argc, char *argv[]) {
     QJson::Serializer serializer;
     serializer.setIndentMode(cmd.indentationMode());
     time.start();
-    QByteArray b = serializer.serialize(data);
-    duration = time.elapsed();
-    qDebug() << "Serialization took:" << duration << "ms";
-    if (!cmd.quiet())
-     qDebug() << b;
+    QByteArray b = serializer.serialize(data, &ok);
+    if (!ok) {
+      qCritical() << "Serialization failed:" << serializer.errorMessage();
+      exit(1);
+    } else {
+      duration = time.elapsed();
+      qDebug() << "Serialization took:" << duration << "ms";
+      if (!cmd.quiet())
+       qDebug() << b;
+    }
   }
 
   qDebug() << "JOB DONE, BYE";

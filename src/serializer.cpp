@@ -39,12 +39,14 @@ class Serializer::SerializerPrivate {
       specialNumbersAllowed(false),
       indentMode(QJson::IndentNone),
       doublePrecision(6) {
-      }
+        errorMessage.clear();
+    }
+    QString errorMessage;
     bool specialNumbersAllowed;
     IndentMode indentMode;
     int doublePrecision;
     QByteArray buildIndent(int spaces);
-    QByteArray serialize( const QVariant &v, int reserved = 0);
+    QByteArray serialize( const QVariant &v, bool *ok, int indentLevel = 0);
     QString sanitizeString( QString str );
     QByteArray join( const QList<QByteArray>& list, const QByteArray& sep );
 };
@@ -59,7 +61,7 @@ QByteArray Serializer::SerializerPrivate::join( const QList<QByteArray>& list, c
   return res;
 }
 
-QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, int reserved )
+QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok, int indentLevel)
 {
   QByteArray str;
   bool error = false;
@@ -72,22 +74,21 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, int rese
     QList<QByteArray> values;
     Q_FOREACH( const QVariant& var, list )
     {
-      reserved++;
-      QByteArray serializedValue = serialize( var,reserved );
-      reserved--;
-      if ( serializedValue.isNull() ) {
-        error = true;
+      indentLevel++;
+      QByteArray serializedValue = serialize( var, ok, indentLevel);
+      indentLevel--;
+      if ( !*ok ) {
         break;
       }
       values << serializedValue;
     }
 
     if (indentMode == QJson::IndentMinimum) {
-      QByteArray indent = buildIndent(reserved - 1);
+      QByteArray indent = buildIndent(indentLevel - 1);
       str = "[\n" + join( values, ",\n" ) + "\n" + indent + "]";
     }
     else if (indentMode == QJson::IndentMedium || indentMode == QJson::IndentFull) {
-      QByteArray indent = buildIndent(reserved);
+      QByteArray indent = buildIndent(indentLevel);
       str = "[\n" + join( values, ",\n" ) + "\n" + indent + "]";
     }
     else if (indentMode == QJson::IndentCompact) {
@@ -102,12 +103,12 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, int rese
     QMapIterator<QString, QVariant> it( vmap );
 
     if (indentMode == QJson::IndentMinimum) {
-      QByteArray indent = buildIndent(reserved);
+      QByteArray indent = buildIndent(indentLevel);
       str = indent + "{ ";
     }
     else if (indentMode == QJson::IndentMedium || indentMode == QJson::IndentFull) {
-      QByteArray indent = buildIndent(reserved);
-      QByteArray nextindent = buildIndent(reserved + 1);
+      QByteArray indent = buildIndent(indentLevel);
+      QByteArray nextindent = buildIndent(indentLevel + 1);
       str = indent + "{\n" + nextindent;
     }
     else if (indentMode == QJson::IndentCompact) {
@@ -120,11 +121,10 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, int rese
     QList<QByteArray> pairs;
     while ( it.hasNext() ) {
       it.next();
-      reserved++;
-      QByteArray serializedValue = serialize( it.value() , reserved);
-      reserved--;
-      if ( serializedValue.isNull() ) {
-        error = true;
+      indentLevel++;
+      QByteArray serializedValue = serialize( it.value(), ok, indentLevel);
+      indentLevel--;
+      if ( !*ok ) {
         break;
       }
       QByteArray key   = sanitizeString( it.key() ).toUtf8();
@@ -137,7 +137,7 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, int rese
     }
 
     if (indentMode == QJson::IndentFull) {
-      QByteArray indent = buildIndent(reserved + 1);
+      QByteArray indent = buildIndent(indentLevel + 1);
       str += join( pairs, ",\n" + indent);
     }
     else if (indentMode == QJson::IndentCompact) {
@@ -148,7 +148,7 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, int rese
     }
 
     if (indentMode == QJson::IndentMedium || indentMode == QJson::IndentFull) {
-      QByteArray indent = buildIndent(reserved);
+      QByteArray indent = buildIndent(indentLevel);
       str += "\n" + indent + "}";
     }
     else if (indentMode == QJson::IndentCompact) {
@@ -186,8 +186,8 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, int rese
           str += "Infinity";
         }
       } else {
-        qCritical("Attempt to write NaN or infinity, which is not supported by json");
-        error = true;
+        errorMessage += QLatin1String("Attempt to write NaN or infinity, which is not supported by json\n");
+        *ok = false;
     }
     } else {
       str = QByteArray::number( value , 'g', doublePrecision);
@@ -199,16 +199,25 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, int rese
     str = ( v.toBool() ? "true" : "false" );
   } else if ( v.type() == QVariant::ULongLong ) { // large unsigned number?
     str = QByteArray::number( v.value<qulonglong>() );
+  } else if ( v.type() == QVariant::UInt ) { // unsigned int number?
+    str = QByteArray::number( v.value<quint32>() );
   } else if ( v.canConvert<qlonglong>() ) { // any signed number?
     str = QByteArray::number( v.value<qlonglong>() );
+  } else if ( v.canConvert<int>() ) { // unsigned short number?
+    str = QByteArray::number( v.value<int>() );
   } else if ( v.canConvert<QString>() ){ // can value be converted to string?
     // this will catch QDate, QDateTime, QUrl, ...
     str = sanitizeString( v.toString() ).toUtf8();
     //TODO: catch other values like QImage, QRect, ...
   } else {
-    error = true;
+    *ok = false;
+    errorMessage += QLatin1String("Cannot serialize ");
+    errorMessage += v.toString();
+    errorMessage += QLatin1String(" because type ");
+    errorMessage += QLatin1String(v.typeName());
+    errorMessage += QLatin1String(" is not supported by QJson\n");
   }
-  if ( !error )
+  if ( *ok )
   {
     return str;
   }
@@ -273,32 +282,35 @@ Serializer::~Serializer() {
 void Serializer::serialize( const QVariant& v, QIODevice* io, bool* ok)
 {
   Q_ASSERT( io );
-  if (ok)
-      *ok = false;
+  *ok = true;
 
   if (!io->isOpen()) {
     if (!io->open(QIODevice::WriteOnly)) {
-      qCritical ("Error opening device");
+      d->errorMessage = QLatin1String("Error opening device");
+      *ok = false;
       return;
     }
   }
 
   if (!io->isWritable()) {
-    qCritical ("Device is not readable");
+    d->errorMessage = QLatin1String("Device is not readable");
     io->close();
+    *ok = false;
     return;
   }
 
-  const QByteArray str = serialize( v );
-  if (io->write(str) == str.count()) {
-    if (ok)
-      *ok = true;
+  const QByteArray str = serialize( v, ok);
+  if (*ok && (io->write(str) != str.count())) {
+    *ok = false;
+    d->errorMessage = QLatin1String("Something went wrong while writing to IO device");
   }
 }
 
-QByteArray Serializer::serialize( const QVariant &v)
+QByteArray Serializer::serialize( const QVariant &v, bool *ok)
 {
-  return d->serialize(v);
+  *ok = true;
+  d->errorMessage.clear();
+  return d->serialize(v, ok);
 }
 
 void QJson::Serializer::allowSpecialNumbers(bool allow) {
@@ -320,3 +332,8 @@ void QJson::Serializer::setDoublePrecision(int precision) {
 IndentMode QJson::Serializer::indentMode() const {
   return d->indentMode;
 }
+
+QString QJson::Serializer::errorMessage() const {
+  return d->errorMessage;
+}
+

@@ -22,6 +22,7 @@
 #define PERSON_H
 
 #include <QtCore/QDate>
+#include <QtCore/QtGlobal>
 #include <QtCore/QObject>
 #include <QtCore/QVariant>
 
@@ -34,6 +35,7 @@ class Person : public QObject
   Q_PROPERTY(Gender gender READ gender WRITE setGender)
   Q_PROPERTY(QDate dob READ dob WRITE setDob)
   Q_PROPERTY(QVariant customField READ customField WRITE setCustomField)
+  Q_PROPERTY(quint16 luckyNumber READ luckyNumber WRITE setLuckyNumber)
   Q_ENUMS(Gender)
 
  public:
@@ -56,12 +58,16 @@ class Person : public QObject
     QVariant customField() const;
     void setCustomField(const QVariant& customField);
 
+    const quint16 luckyNumber() const;
+    void setLuckyNumber(const quint16 luckyNumber);
+
   private:
     QString m_name;
     int m_phoneNumber;
     Gender m_gender;
     QDate m_dob;
     QVariant m_customField;
+    quint16 m_luckyNumber;
 };
 
 #endif

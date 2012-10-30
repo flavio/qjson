@@ -465,9 +465,9 @@ void TestParser::testReadWrite()
   QFETCH( QVariant, variant );
   Serializer serializer;
   bool ok;
-  
-  QByteArray json = serializer.serialize(variant);
-  QVERIFY(!json.isNull());
+
+  QByteArray json = serializer.serialize(variant, &ok);
+  QVERIFY(ok);
 
   Parser parser;
   QVariant result = parser.parse( json, &ok );
