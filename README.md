@@ -39,7 +39,6 @@ For Unix/Linux/Mac:
 
 # Resources
 
-Website: http://qjson.sourceforge.net/
-Mailing List: https://lists.sourceforge.net/mailman/listinfo/qjson-devel
-Project Lead/Maintainer (2008-current):
-  Flavio Castelli <flavio@castelli.name>
+* [Website](http://qjson.sourceforge.net/)
+* [Mailing List](https://lists.sourceforge.net/mailman/listinfo/qjson-devel)
+* Project Lead/Maintainer (2008-current): Flavio Castelli <flavio@castelli.name>
