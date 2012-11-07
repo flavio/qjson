@@ -308,8 +308,15 @@ void Serializer::serialize( const QVariant& v, QIODevice* io, bool* ok)
 
 QByteArray Serializer::serialize( const QVariant &v, bool *ok)
 {
-  *ok = true;
   d->errorMessage.clear();
+
+  if (ok) {
+    *ok = true;
+  } else {
+    bool _ok = true;
+    ok = &_ok;
+  }
+
   return d->serialize(v, ok);
 }
 

@@ -95,7 +95,7 @@ namespace QJson {
       * parser.
       * @param ok if a conversion error occurs, *ok is set to false; otherwise *ok is set to true
       */
-    QByteArray serialize( const QVariant& variant, bool *ok);
+    QByteArray serialize( const QVariant& variant, bool *ok = 0);
 
     /**
      * Allow or disallow writing of NaN and/or Infinity (as an extension to QJson)

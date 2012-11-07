@@ -53,6 +53,7 @@ class TestSerializer: public QObject
     void testIndentation();
     void testIndentation_data();
     void testSerializetoQIODevice();
+    void testSerializeWithoutOkParam();
 
   private:
     void valueTest( const QVariant& value, const QString& expectedRegExp, bool errorExpected = false );
@@ -479,6 +480,24 @@ void TestSerializer::testSerializetoQIODevice() {
   QCOMPARE(QString(QLatin1String(buffer.data())),
            QString(QLatin1String("[ \"Hello\", \"world!\" ]")));
   QVERIFY(ok);
+}
+
+void TestSerializer::testSerializeWithoutOkParam() {
+  QBuffer buffer;
+  QVariantList variant;
+  variant << QVariant(QLatin1String("Hello"));
+  variant << QVariant(QLatin1String("world!"));
+
+  Serializer serializer;
+
+  const QByteArray serialized = serializer.serialize(variant);
+  const QByteArray expected = "[ \"Hello\", \"world!\" ]";
+  QCOMPARE(expected, serialized);
+
+
+  // test a serialization which produces an error
+  QVariant brokenVariant ( std::numeric_limits< double >::quiet_NaN() );
+  QVERIFY(serializer.serialize(brokenVariant).isEmpty());
 }
 
 QTEST_MAIN(TestSerializer)
