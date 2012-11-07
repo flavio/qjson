@@ -83,13 +83,5 @@ make
 sudo make install
 \endcode
 
-\section _download Get the code
-Actually QJson code is hosted on KDE subversion repository. You can download it using a svn client:
-\code
-svn co svn://anonsvn.kde.org/home/kde/trunk/playground/libs/qjson 
-\endcode
-
-Otherwise you can download source tarballs <a HREF="https://sourceforge.net/project/showfiles.php?group_id=244195">here</a>.
-
 \author Flavio Castelli <flavio@castelli.name>
 */
