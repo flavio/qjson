@@ -26,13 +26,16 @@
 class QIODevice;
 class QVariant;
 
+/**
+ * Namespace used by QJson
+ */
 namespace QJson {
 
   class ParserPrivate;
 
   /**
-  * @brief Main class used to convert JSON data to QVariant objects
-  */
+   * @brief Main class used to convert JSON data to QVariant objects
+   */
   class QJSON_EXPORT Parser
   {
     public:

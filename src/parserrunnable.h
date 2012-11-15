@@ -36,11 +36,6 @@ namespace QJson {
   {
     Q_OBJECT
     public:
-      /**
-      * This signal is emitted when the conversion process has been completed
-      * @param data contains the JSON data that has to be converted
-      * @param parent parent of the object
-      **/
       explicit ParserRunnable(QObject* parent = 0);
       ~ParserRunnable();
 

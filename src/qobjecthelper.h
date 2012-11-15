@@ -117,7 +117,7 @@ namespace QJson {
     public:
       QObjectHelper();
       ~QObjectHelper();
-      
+
     /**
     * This method converts a QObject instance into a QVariantMap.
     *
@@ -130,7 +130,8 @@ namespace QJson {
     /**
     * This method converts a QVariantMap instance into a QObject
     *
-    * @param object The QObject instance to be converted.
+    * @param variant Attributes to assign to the object.
+    * @param object The QObject instance to update.
     */
     static void qvariant2qobject(const QVariantMap& variant, QObject* object);
 
