@@ -29,33 +29,35 @@ class QVariant;
 
 namespace QJson {
   /**
-  * @brief How the indentation should work.
-  *
-  * none (default) : { "foo" : 0, "foo1" : 1, "foo2" : [ { "foo3" : 3, "foo4" : 4 } ] }
-  *
-  * compact : {"foo":0,"foo1":1,"foo2":[{"foo3":3,"foo4":4}]}
-  *
-  * minimum : { "foo" : 0, "foo1" : 1, "foo2" : [
-  *             { "foo3" : 3, "foo4" : 4 }
-  *           ] }
-  *
-  * medium : {
-  *           "foo" : 0, "foo1" : 1, "foo2" : [
-  *            {
-  *             "foo3" : 3, "foo4" : 4
-  *            }
-  *           ]
-  *          }
-  * full : {
-  *         "foo" : 0,
-  *         "foo1" : 1,
-  *         "foo2" : [
-  *          {
-  *           "foo3" : 3,
-  *           "foo4" : 4
-  *          }
-  *         ]
-  *        }
+   @brief How the indentation should work.
+   \verbatim
+   none (default) : { "foo" : 0, "foo1" : 1, "foo2" : [ { "foo3" : 3, "foo4" : 4 } ] }
+  
+   compact : {"foo":0,"foo1":1,"foo2":[{"foo3":3,"foo4":4}]}
+  
+   minimum : { "foo" : 0, "foo1" : 1, "foo2" : [
+               { "foo3" : 3, "foo4" : 4 }
+             ] }
+  
+   medium : {
+             "foo" : 0, "foo1" : 1, "foo2" : [
+              {
+               "foo3" : 3, "foo4" : 4
+              }
+             ]
+            }
+   full : {
+           "foo" : 0,
+           "foo1" : 1,
+           "foo2" : [
+            {
+             "foo3" : 3,
+             "foo4" : 4
+            }
+           ]
+          }
+  
+   \endverbatim
   */
   enum IndentMode {
     IndentNone,
@@ -68,7 +70,42 @@ namespace QJson {
   * @brief Main class used to convert QVariant objects to JSON data.
   *
   * QVariant objects are converted to a string containing the JSON data.
-  * If QVariant object is empty or not valid a <em>null</em> json object is returned.
+  *
+  *
+  * Usage:
+  *
+  * \code
+  * QVariantList people;
+  *
+  * QVariantMap bob;
+  * bob.insert("Name", "Bob");
+  * bob.insert("Phonenumber", 123);
+  *
+  * QVariantMap alice;
+  * alice.insert("Name", "Alice");
+  * alice.insert("Phonenumber", 321);
+  *
+  * people << bob << alice;
+  *
+  * QJson::Serializer serializer;
+  * bool ok;
+  * QByteArray json = serializer.serialize(people, &ok);
+  *
+  * if (ok) {
+  *   qDebug() << json;
+  * } else {
+  *   qCritical() << "Something went wrong:" << serializer.errorMessage();
+  * }
+  * \endcode
+  *
+  * The output will be:
+  *
+  * \code
+  *  "[ { "Name" : "Bob", "Phonenumber" : 123 },
+  *     { "Name" : "Alice", "Phonenumber" : 321 } ]"
+  * \endcode
+  *
+  * It's possible to tune the indentation level of the resulting string. \sa setIndentMode
   */
   class QJSON_EXPORT Serializer {
   public:
