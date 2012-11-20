@@ -39,6 +39,7 @@ class TestSerializer: public QObject
     void testValueString_data();
     void testValueStringList();
     void testValueStringList_data();
+    void testValueHashMap();
     void testValueInteger();
     void testValueInteger_data();
     void testValueDouble();
@@ -498,6 +499,37 @@ void TestSerializer::testSerializeWithoutOkParam() {
   // test a serialization which produces an error
   QVariant brokenVariant ( std::numeric_limits< double >::quiet_NaN() );
   QVERIFY(serializer.serialize(brokenVariant).isEmpty());
+}
+
+void TestSerializer::testValueHashMap()
+{
+  Serializer serializer;
+  bool ok;
+
+  QVariantHash hash;
+  hash[QLatin1String("one")]   = 1;
+  hash[QLatin1String("three")] = 3;
+  hash[QLatin1String("seven")] = 7;
+
+  QByteArray json = serializer.serialize(hash, &ok);
+  QVERIFY(ok);
+
+  Parser parser;
+  QVariant var = parser.parse(json, &ok);
+  QVERIFY(ok);
+
+  QVariantMap vmap = var.toMap();
+  QHashIterator<QString, QVariant> hIt( hash );
+  while ( hIt.hasNext() ) {
+    hIt.next();
+    QString key = hIt.key();
+    QVariant value = hIt.value();
+
+    QMap<QString, QVariant>::const_iterator mIt = vmap.find(key);
+    QVERIFY(mIt != vmap.end());
+    QCOMPARE(mIt.value(), value);
+  }
+
 }
 
 QTEST_MAIN(TestSerializer)

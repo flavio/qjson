@@ -158,6 +158,66 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
       str += " }";
     }
 
+  } else if ( v.type() == QVariant::Hash ) { // variant is a hash?
+    const QVariantHash vhash = v.toHash();
+    QHashIterator<QString, QVariant> it( vhash );
+
+    if (indentMode == QJson::IndentMinimum) {
+      QByteArray indent = buildIndent(indentLevel);
+      str = indent + "{ ";
+    }
+    else if (indentMode == QJson::IndentMedium || indentMode == QJson::IndentFull) {
+      QByteArray indent = buildIndent(indentLevel);
+      QByteArray nextindent = buildIndent(indentLevel + 1);
+      str = indent + "{\n" + nextindent;
+    }
+    else if (indentMode == QJson::IndentCompact) {
+      str = "{";
+    }
+    else {
+      str = "{ ";
+    }
+
+    QList<QByteArray> pairs;
+    while ( it.hasNext() ) {
+      it.next();
+      indentLevel++;
+      QByteArray serializedValue = serialize( it.value(), ok, indentLevel);
+      indentLevel--;
+      if ( !*ok ) {
+        break;
+      }
+      QByteArray key   = sanitizeString( it.key() ).toUtf8();
+      QByteArray value = serializedValue;
+      if (indentMode == QJson::IndentCompact) {
+        pairs << key + ":" + value;
+      } else {
+        pairs << key + " : " + value;
+      }
+    }
+
+    if (indentMode == QJson::IndentFull) {
+      QByteArray indent = buildIndent(indentLevel + 1);
+      str += join( pairs, ",\n" + indent);
+    }
+    else if (indentMode == QJson::IndentCompact) {
+      str += join( pairs, "," );
+    }
+    else {
+      str += join( pairs, ", " );
+    }
+
+    if (indentMode == QJson::IndentMedium || indentMode == QJson::IndentFull) {
+      QByteArray indent = buildIndent(indentLevel);
+      str += "\n" + indent + "}";
+    }
+    else if (indentMode == QJson::IndentCompact) {
+      str += "}";
+    }
+    else {
+      str += " }";
+    }
+
   } else if (( v.type() == QVariant::String ) ||  ( v.type() == QVariant::ByteArray )) { // a string or a byte array?
     str = sanitizeString( v.toString() ).toUtf8();
   } else if (( v.type() == QVariant::Double) || ((QMetaType::Type)v.type() == QMetaType::Float)) { // a double or a float?
