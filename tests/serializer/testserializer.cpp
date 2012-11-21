@@ -525,8 +525,8 @@ void TestSerializer::testValueHashMap()
     QString key = hIt.key();
     QVariant value = hIt.value();
 
-    QMap<QString, QVariant>::const_iterator mIt = vmap.find(key);
-    QVERIFY(mIt != vmap.end());
+    QMap<QString, QVariant>::const_iterator mIt = vmap.constFind(key);
+    QVERIFY(mIt != vmap.constEnd());
     QCOMPARE(mIt.value(), value);
   }
 
