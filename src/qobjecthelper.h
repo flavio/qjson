@@ -82,7 +82,8 @@ namespace QJson {
     person.setGender(Person::Male);
     person.setDob(QDate(1982, 7, 12));
 
-    QVariantMap variant = QObjectHelper::qobject2qvariant(&person);
+    QObjectHelper helper;
+    QVariantMap variant = helper.qobject2qvariant(&person);
     Serializer serializer;
     qDebug() << serializer.serialize( variant);
     \endcode
@@ -107,7 +108,8 @@ namespace QJson {
     QVariant variant = parser.parse(json);
 
     Person person;
-    QObjectHelper::qvariant2qobject(variant.toMap(), &person);
+    QObjectHelper helper;
+    helper.qvariant2qobject(variant.toMap(), &person);
     \endcode
 
     \sa Parser
@@ -118,22 +120,34 @@ namespace QJson {
       QObjectHelper();
       ~QObjectHelper();
 
-    /**
-    * This method converts a QObject instance into a QVariantMap.
-    *
-    * @param object The QObject instance to be converted.
-    * @param ignoredProperties Properties that won't be converted.
-    */
-    static QVariantMap qobject2qvariant( const QObject* object,
-                                  const QStringList& ignoredProperties = QStringList(QString(QLatin1String("objectName"))));
+      /**
+       * Set a list of properties to ignore during the serialization process.
+       * Note well: the `objectName` property is always going to be ignored.
+       * @param QStringList properties: list of properties to ignore.
+       */
+      void setIgnoredProperties(const QStringList& properties);
 
-    /**
-    * This method converts a QVariantMap instance into a QObject
-    *
-    * @param variant Attributes to assign to the object.
-    * @param object The QObject instance to update.
-    */
-    static void qvariant2qobject(const QVariantMap& variant, QObject* object);
+      /**
+       * Retrieves the list of properties that are going to be ignored during the serialization process.
+       * Note well: the `objectName` property is always going to be ignored, but
+       * is not going to be part of this QStringList
+       */
+      QStringList ignoredProperties() const;
+
+      /**
+      * This method converts a QObject instance into a QVariantMap.
+      *
+      * @param object The QObject instance to be converted.
+      */
+      QVariantMap qobject2qvariant(const QObject* object);
+
+      /**
+      * This method converts a QVariantMap instance into a QObject
+      *
+      * @param variant Attributes to assign to the object.
+      * @param object The QObject instance to update.
+      */
+      void qvariant2qobject(const QVariantMap& variant, QObject* object);
 
     private:
       Q_DISABLE_COPY(QObjectHelper)
