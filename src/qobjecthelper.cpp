@@ -29,38 +29,41 @@
 using namespace QJson;
 
 class QObjectHelper::QObjectHelperPrivate {
+  public:
+    QObjectHelperPrivate() {
+      ignoredProperties << QLatin1String("objectName");
+    }
+
+    QVariantMap qobject2qvariant(const QObject* object);
+    void qvariant2qobject(const QVariantMap& variant, QObject* object);
+
+
+    QStringList ignoredProperties;
 };
 
-QObjectHelper::QObjectHelper()
-  : d (new QObjectHelperPrivate)
-{
-}
-
-QObjectHelper::~QObjectHelper()
-{
-  delete d;
-}
-
-QVariantMap QObjectHelper::qobject2qvariant( const QObject* object,
-                              const QStringList& ignoredProperties)
+QVariantMap QObjectHelper::QObjectHelperPrivate::qobject2qvariant(const QObject* object)
 {
   QVariantMap result;
+  QString objectNameString = QLatin1String("objectName");
+
   const QMetaObject *metaobject = object->metaObject();
   int count = metaobject->propertyCount();
   for (int i=0; i<count; ++i) {
     QMetaProperty metaproperty = metaobject->property(i);
-    const char *name = metaproperty.name();
+    const char *name        = metaproperty.name();
+    QLatin1String latinName = QLatin1String(name);
 
-    if (ignoredProperties.contains(QLatin1String(name)) || (!metaproperty.isReadable()))
+    if ((objectNameString == latinName) || (ignoredProperties.contains(latinName)) || (!metaproperty.isReadable()))
       continue;
 
     QVariant value = object->property(name);
-    result[QLatin1String(name)] = value;
+    result[latinName] = value;
  }
   return result;
+
 }
 
-void QObjectHelper::qvariant2qobject(const QVariantMap& variant, QObject* object)
+void QObjectHelper::QObjectHelperPrivate::qvariant2qobject(const QVariantMap& variant, QObject* object)
 {
   const QMetaObject *metaobject = object->metaObject();
 
@@ -83,3 +86,36 @@ void QObjectHelper::qvariant2qobject(const QVariantMap& variant, QObject* object
     }
   }
 }
+
+
+QObjectHelper::QObjectHelper()
+  : d (new QObjectHelperPrivate)
+{
+}
+
+QObjectHelper::~QObjectHelper()
+{
+  delete d;
+}
+
+QVariantMap QObjectHelper::qobject2qvariant(const QObject* object)
+{
+  return d->qobject2qvariant(object);
+}
+
+void QObjectHelper::qvariant2qobject(const QVariantMap& variant, QObject* object)
+{
+  d->qvariant2qobject(variant, object);
+}
+
+void QObjectHelper::setIgnoredProperties(const QStringList& properties)
+{
+  d->ignoredProperties = properties;
+}
+
+QStringList QObjectHelper::ignoredProperties() const
+{
+  return d->ignoredProperties;
+}
+
+
