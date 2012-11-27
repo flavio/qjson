@@ -1,3 +1,8 @@
+Tue Nov 27 11:04:12 CET 2012  Flavio Castelli <flavio@castelli.name>
+
+	* Relase 0.8.1:
+		- ensure API and ABI compatibility with 0.7.1
+
 Thu Nov 22 21:20:11 CET 2012  Flavio Castelli <flavio@castelli.name>
 
 	* Fix unsafe pointer usage in Serializer::serialize()
