@@ -1,7 +1,22 @@
+<TODO>  Flavio Castelli <flavio@castelli.name>
+
+	* Version 1.0.0 released:
+		- refactoring of the whole parsing system to improve json to QVariant
+		conversion performance.
+		-  QObjectHelper:
+			- change API.
+			- automatically convert strings to Enum values during QVariant -> QObject
+				serialization
+			- make possible to convert Enum values to strings (rather then int)
+				during QObject -> QVariant conversion.
+		- Serializer: drop deprecated "serialize(QVariant)" API
+
+----------------------------------------------------------------------
 Mon Jan 28 23:01:40 CET 2013  Flavio Castelli <flavio@castelli.name>
 
 	* Fix compilation on BlackBerry 10.
 
+----------------------------------------------------------------------
 Tue Nov 27 11:04:12 CET 2012  Flavio Castelli <flavio@castelli.name>
 
 	* Relase 0.8.1:
