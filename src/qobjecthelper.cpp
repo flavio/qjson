@@ -31,7 +31,7 @@ using namespace QJson;
 class QObjectHelper::QObjectHelperPrivate {
   public:
     QObjectHelperPrivate() {
-      ignoredProperties << QLatin1String("objectName");
+      convertEnumToString = false;
     }
 
     QVariantMap qobject2qvariant(const QObject* object);
@@ -39,6 +39,7 @@ class QObjectHelper::QObjectHelperPrivate {
 
 
     QStringList ignoredProperties;
+    bool convertEnumToString;
 };
 
 QVariantMap QObjectHelper::QObjectHelperPrivate::qobject2qvariant(const QObject* object)
@@ -56,7 +57,14 @@ QVariantMap QObjectHelper::QObjectHelperPrivate::qobject2qvariant(const QObject*
     if ((objectNameString == latinName) || (ignoredProperties.contains(latinName)) || (!metaproperty.isReadable()))
       continue;
 
-    QVariant value = object->property(name);
+    QVariant value;
+
+    if (metaproperty.isEnumType() && convertEnumToString) {
+      QMetaEnum metaEnum = metaproperty.enumerator();
+      value = QLatin1String(metaEnum.valueToKey(object->property(name).toInt()));
+    } else {
+      value = object->property(name);
+    }
     result[latinName] = value;
  }
   return result;
@@ -78,6 +86,14 @@ void QObjectHelper::QObjectHelperPrivate::qvariant2qobject(const QVariantMap& va
     QMetaProperty metaproperty = metaobject->property( pIdx );
     QVariant::Type type = metaproperty.type();
     QVariant v( iter.value() );
+
+    if ((metaproperty.isEnumType()) && type == QVariant::String)
+    {
+      QMetaEnum metaEnum = metaproperty.enumerator();
+      type = QVariant::Int;
+      v = metaEnum.keyToValue(v.toByteArray().data());
+    }
+
     if ( v.canConvert( type ) ) {
       v.convert( type );
       metaproperty.write( object, v );
@@ -118,4 +134,13 @@ QStringList QObjectHelper::ignoredProperties() const
   return d->ignoredProperties;
 }
 
+void QObjectHelper::convertEnumToString(bool toggle)
+{
+  d->convertEnumToString = toggle;
+}
+
+bool QObjectHelper::enumConvertedToString() const
+{
+  return d->convertEnumToString;
+}
 

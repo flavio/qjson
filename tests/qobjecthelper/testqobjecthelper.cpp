@@ -39,6 +39,8 @@ class TestQObjectHelper: public QObject
     void testQObject2QVariant();
     void testQVariant2QObject();
     void testIgnorePropertiesDuringQVariantConversion();
+    void testEnumToStringConversionDuringQObject2QVariantConversion();
+    void testQVariant2QObjectWithEnumConvertedToString();
 };
 
 using namespace QJson;
@@ -146,6 +148,83 @@ void TestQObjectHelper::testIgnorePropertiesDuringQVariantConversion()
   helper.setIgnoredProperties(QStringList(QLatin1String("luckyNumber")));
   QVariantMap result = helper.qobject2qvariant(&person);
   QCOMPARE(result, expected);
+}
+
+void TestQObjectHelper::testEnumToStringConversionDuringQObject2QVariantConversion() {
+  QString name = QLatin1String("Flavio Castelli");
+  int phoneNumber = 123456;
+  Person::Gender gender = Person::Male;
+  QDate dob (1982, 7, 12);
+  QVariantList nicknames;
+  nicknames << QLatin1String("nickname1") << QLatin1String("nickname2");
+  quint16 luckyNumber = 123;
+
+  Person person;
+  person.setName(name);
+  person.setPhoneNumber(phoneNumber);
+  person.setGender(gender);
+  person.setDob(dob);
+  person.setCustomField(nicknames);
+  person.setLuckyNumber(luckyNumber);
+
+  QVariantMap expected;
+  expected[QLatin1String("name")] = QVariant(name);
+  expected[QLatin1String("phoneNumber")] = QVariant(phoneNumber);
+  expected[QLatin1String("gender")] = QVariant(QLatin1String("Male"));
+  expected[QLatin1String("dob")] = QVariant(dob);
+  expected[QLatin1String("customField")] = nicknames;
+  expected[QLatin1String("luckyNumber")] = luckyNumber;
+
+  QObjectHelper helper;
+  helper.convertEnumToString(true);
+  QVariantMap result = helper.qobject2qvariant(&person);
+  QCOMPARE(result, expected);
+}
+
+void TestQObjectHelper::testQVariant2QObjectWithEnumConvertedToString()
+{
+  QObjectHelper helper;
+  helper.convertEnumToString(true);
+
+  bool ok;
+  QString name = QLatin1String("Flavio Castelli");
+  int phoneNumber = 123456;
+  Person::Gender gender = Person::Male;
+  QDate dob (1982, 7, 12);
+  QVariantList nicknames;
+  nicknames << QLatin1String("nickname1") << QLatin1String("nickname2");
+  quint16 luckyNumber = 123;
+
+  Person expected_person;
+  expected_person.setName(name);
+  expected_person.setPhoneNumber(phoneNumber);
+  expected_person.setGender(gender);
+  expected_person.setDob(dob);
+  expected_person.setCustomField(nicknames);
+  expected_person.setLuckyNumber(luckyNumber);
+
+  QVariantMap variant = helper.qobject2qvariant(&expected_person);
+  QCOMPARE(variant[QLatin1String("gender")].toString(), QLatin1String("Male"));
+
+  Serializer serializer;
+  QByteArray json = serializer.serialize(variant, &ok);
+  QVERIFY(ok);
+
+  Parser parser;
+  QVariant parsedVariant = parser.parse(json,&ok);
+  QVERIFY(ok);
+  QVERIFY(parsedVariant.canConvert(QVariant::Map));
+
+  Person person;
+  QCOMPARE(Person::Female, person.gender());
+  helper.qvariant2qobject(parsedVariant.toMap(), &person);
+
+  QCOMPARE(person.name(), name);
+  QCOMPARE(person.phoneNumber(), phoneNumber);
+  QCOMPARE(person.gender(), gender);
+  QCOMPARE(person.dob(), dob);
+  QCOMPARE(person.customField(), QVariant(nicknames));
+  QCOMPARE(person.luckyNumber(), luckyNumber);
 }
 
 QTEST_MAIN(TestQObjectHelper)

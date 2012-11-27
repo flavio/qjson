@@ -135,6 +135,15 @@ namespace QJson {
       QStringList ignoredProperties() const;
 
       /**
+       * Convert Enum to strings, do not use the int value.
+       * The default behaviour is to use int notation.
+       * @param toggle: convert Enum to strings if toggle is true, use int values otherwise.
+       */
+      void convertEnumToString(bool toggle);
+
+      bool enumConvertedToString() const;
+
+      /**
       * This method converts a QObject instance into a QVariantMap.
       *
       * @param object The QObject instance to be converted.
