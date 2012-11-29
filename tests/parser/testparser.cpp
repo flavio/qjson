@@ -426,7 +426,7 @@ void TestParser::testSpecialNumbers() {
   QVERIFY(value.type() == QVariant::Double);
   if (ok) {
     double v = value.toDouble();
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_ANDROID) || defined(Q_OS_BLACKBERRY)
     QCOMPARE(bool(isinf(v)), isInfinity);
 #else
 // skip this test for MSVC, because there is no "isinf" function.
@@ -435,7 +435,7 @@ void TestParser::testSpecialNumbers() {
 #endif
 #endif
     QCOMPARE(v<0, isNegative);
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_ANDROID) || defined(Q_OS_BLACKBERRY)
     QCOMPARE(bool(isnan(v)), isNan);
 #else
 // skip this test for MSVC, because there is no "isinf" function.
