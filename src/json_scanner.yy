@@ -1,3 +1,23 @@
+/* This file is part of QJson
+ *
+ * Copyright (C) 2013 Silvio Moioli <silvio@moioli.net>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License version 2.1, as published by the Free Software Foundation.
+ * 
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
 %option 8bit c++ full warn
 %option noyywrap nounistd
 %option noinput nounput noyy_push_state noyy_pop_state noyy_top_state noyy_scan_buffer noyy_scan_bytes noyy_scan_string noyyget_extra noyyset_extra noyyget_leng noyyget_text noyyget_lineno noyyset_lineno noyyget_in noyyset_in noyyget_out noyyset_out noyyget_lval noyyset_lval noyyget_lloc noyyset_lloc noyyget_debug noyyset_debug
