@@ -21,13 +21,17 @@
 #ifndef _JSON_SCANNER
 #define _JSON_SCANNER
 
-#include <fstream>
-#include <string>
-
 #include <QtCore/QIODevice>
 #include <QtCore/QVariant>
+#include <QStringList>
 
 #define YYSTYPE QVariant
+#define ALLOW_SPECIAL_NUMBERS 1
+
+// Only include FlexLexer.h if it hasn't been already included
+#if ! defined(yyFlexLexerOnce)
+#include <FlexLexer.h>
+#endif
 
 #include "parser_p.h"
 
@@ -36,19 +40,23 @@ namespace yy {
   int yylex(YYSTYPE *yylval, yy::location *yylloc, QJson::ParserPrivate* driver);
 }
 
-class JSonScanner
+class JSonScanner : public yyFlexLexer
 {
     public:
         explicit JSonScanner(QIODevice* io);
-        int yylex(YYSTYPE* yylval, yy::location *yylloc);
         void allowSpecialNumbers(bool allow);
 
+        int yylex(YYSTYPE* yylval, yy::location *yylloc);
+        int yylex();
+        int LexerInput(char* buf, int max_size);
     protected:
-        bool m_quotmarkClosed;
         bool m_allowSpecialNumbers;
-        unsigned int m_quotmarkCount;
         QIODevice* m_io;
+
+        YYSTYPE* m_yylval;
+        yy::location* m_yylloc;
+        bool m_criticalError;
+        QStringList m_stringPieces;
 };
 
 #endif
-
