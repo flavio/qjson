@@ -151,7 +151,7 @@ void TestScanner::scanTokens_data() {
 QTEST_MAIN(TestScanner)
 
 #ifdef QMAKE_BUILD
-  #include "TestScanner.moc"
+  #include "testscanner.moc"
 #else
-  #include "moc_TestScanner.cxx"
+  #include "moc_testscanner.cxx"
 #endif
