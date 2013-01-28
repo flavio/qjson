@@ -140,12 +140,9 @@ value: string { $$ = $1; }
         | special_or_number { $$ = $1; }
         | object { $$ = $1; }
         | array { $$ = $1; }
-        | TRUE_VAL { $$ = QVariant (true); }
-        | FALSE_VAL { $$ = QVariant (false); }
-        | NULL_VAL {
-          QVariant null_variant;
-          $$ = null_variant;
-        };
+        | TRUE_VAL { $$ = QVariant(true); }
+        | FALSE_VAL { $$ = QVariant(false); }
+        | NULL_VAL { $$ = QVariant(); };
 
 special_or_number: MINUS INFINITY_VAL { $$ = QVariant(QVariant::Double); $$.setValue( -std::numeric_limits<double>::infinity() ); }
                    | INFINITY_VAL { $$ = QVariant(QVariant::Double); $$.setValue( std::numeric_limits<double>::infinity() ); }
