@@ -73,7 +73,8 @@ void TestScanner::scanTokens() {
   scanner.allowSpecialNumbers(allowSpecialNumbers);
 
   QVariant yylval;
-  yy::location location;
+  yy::position position(YY_NULL, 1, 0);
+  yy::location location(position, position);
   int result = scanner.yylex(&yylval, &location);
   
   if (skipFirstToken) {
@@ -101,13 +102,13 @@ void TestScanner::scanTokens_data() {
   
   QTest::newRow("empty string") << QByteArray("") << true << false << TOKEN(END) << QVariant() << 1 << 0 << 1 << 0;
   
-  QTest::newRow("carriage return") << QByteArray("\r") << true << false << TOKEN(END) << QVariant() << 1 << 0 << 2 << 0;
-  QTest::newRow("new line") << QByteArray("\n") << true << false << TOKEN(END) << QVariant() << 1 << 0 << 2 << 0;
+  QTest::newRow("carriage return") << QByteArray("\r") << true << false << TOKEN(END) << QVariant() << 1 << 0 << 2 << 1;
+  QTest::newRow("new line") << QByteArray("\n") << true << false << TOKEN(END) << QVariant() << 1 << 0 << 2 << 1;
   QTest::newRow("formfeed") << QByteArray("\f") << true << false << TOKEN(END) << QVariant() << 1 << 0 << 1 << 1;
   QTest::newRow("vertical tab") << QByteArray("\v") << true << false << TOKEN(END) << QVariant() << 1 << 0 << 1 << 1;
   QTest::newRow("space") << QByteArray(" ") << true << false << TOKEN(END) << QVariant() << 1 << 0 << 1 << 1;
   QTest::newRow("tab") << QByteArray("\t") << true << false << TOKEN(END) << QVariant() << 1 << 0 << 1 << 1;
-  QTest::newRow("all spaces") << QByteArray("\r\n\f\v \t") << true << false << TOKEN(END) << QVariant() << 1 << 0 << 3 << 4;
+  QTest::newRow("all spaces") << QByteArray("\r\n\f\v \t") << true << false << TOKEN(END) << QVariant() << 1 << 0 << 3 << 5;
   
   QTest::newRow("true") << QByteArray("true") << true << false << TOKEN(TRUE_VAL) << QVariant() << 1 << 0 << 1 << 4;
   QTest::newRow("false") << QByteArray("false") << true << false << TOKEN(FALSE_VAL) << QVariant() << 1 << 0 << 1 << 5;

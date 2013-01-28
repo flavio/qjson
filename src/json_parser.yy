@@ -1,6 +1,7 @@
 /* This file is part of QJSon
   *
   * Copyright (C) 2008 Flavio Castelli <flavio.castelli@gmail.com>
+  * Copyright (C) 2013 Silvio Moioli <silvio@moioli.net>
   *
   * This library is free software; you can redistribute it and/or
   * modify it under the terms of the GNU Lesser General Public
@@ -22,7 +23,7 @@
 %defines
 %define "parser_class_name" "json_parser"
 
-%{
+%code requires{
   #include "parser_p.h"
   #include "json_scanner.h"
   #include "qjson_debug.h"
@@ -41,7 +42,7 @@
   }
 
   #define YYERROR_VERBOSE 1
-%}
+}
 
 %parse-param { QJson::ParserPrivate* driver }
 %lex-param { QJson::ParserPrivate* driver }
