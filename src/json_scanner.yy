@@ -70,7 +70,7 @@ null          {
 [1-9]+0?      |
 [1-9]*0       {
                 m_yylloc->columns(yyleng);
-                *m_yylval = QVariant(QString::fromAscii(yytext).toULongLong());
+                *m_yylval = QVariant(QString::fromLatin1(yytext).toULongLong());
                 return yy::json_parser::token::DIGIT;
               }
 
