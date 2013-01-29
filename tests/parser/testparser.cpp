@@ -50,8 +50,6 @@ class TestParser: public QObject
     void testNumbers_data();
     void testTopLevelValues();
     void testTopLevelValues_data();
-    void testSpecialNumbers();
-    void testSpecialNumbers_data();
     void testReadWrite();
     void testReadWrite_data();
 };
@@ -311,41 +309,6 @@ void TestParser::testNumbers_data() {
   output.setValue(-3.4);
 
   QTest::newRow("negative double") << input << output << QVariant::Double;
-
-  // exp1
-  input = QByteArray("-5e+");
-  output = QVariant(QVariant::ByteArray);
-  output.setValue(input);
-
-  QTest::newRow("exp1") << input << output << QVariant::ByteArray;
-
-  // exp2
-  input = QByteArray("2e");
-  output = QVariant(QVariant::ByteArray);
-  output.setValue(input);
-
-  QTest::newRow("exp2") << input << output << QVariant::ByteArray;
-
-  // exp3
-  input = QByteArray("3e+");
-  output = QVariant(QVariant::ByteArray);
-  output.setValue(input);
-
-  QTest::newRow("exp3") << input << output << QVariant::ByteArray;
-
-  // exp4
-  input = QByteArray("4.3E");
-  output = QVariant(QVariant::ByteArray);
-  output.setValue(input);
-
-  QTest::newRow("exp4") << input << output << QVariant::ByteArray;
-
-  // exp5
-  input = QByteArray("5.4E-");
-  output = QVariant(QVariant::ByteArray);
-  output.setValue(input);
-
-  QTest::newRow("exp5") << input << output << QVariant::ByteArray;
 }
 
 void TestParser::testTopLevelValues() {
@@ -407,57 +370,6 @@ void TestParser::testTopLevelValues_data() {
   output = QVariant(QVariant::Map);
   output.setValue(map);
   QTest::newRow("object") << input << output << QVariant::Map;
-}
-
-void TestParser::testSpecialNumbers() {
-  QFETCH(QByteArray, input);
-  QFETCH(bool, isOk);
-  QFETCH(bool, isInfinity);
-  QFETCH(bool, isNegative);
-  QFETCH(bool, isNan);
-
-  Parser parser;
-  QVERIFY(!parser.specialNumbersAllowed());
-  parser.allowSpecialNumbers(true);
-  QVERIFY(parser.specialNumbersAllowed());
-  bool ok;
-  QVariant value = parser.parse(input, &ok);
-  QCOMPARE(ok, isOk);
-  QVERIFY(value.type() == QVariant::Double);
-  if (ok) {
-    double v = value.toDouble();
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_ANDROID) || defined(Q_OS_BLACKBERRY)
-    QCOMPARE(bool(isinf(v)), isInfinity);
-#else
-// skip this test for MSVC, because there is no "isinf" function.
-#ifndef Q_CC_MSVC
-    QCOMPARE(bool(std::isinf(v)), isInfinity);
-#endif
-#endif
-    QCOMPARE(v<0, isNegative);
-#if defined(Q_OS_SYMBIAN) || defined(Q_OS_ANDROID) || defined(Q_OS_BLACKBERRY)
-    QCOMPARE(bool(isnan(v)), isNan);
-#else
-// skip this test for MSVC, because there is no "isinf" function.
-#ifndef Q_CC_MSVC
-    QCOMPARE(bool(std::isnan(v)), isNan);
-#endif
-#endif
-  }
-}
-void TestParser::testSpecialNumbers_data() {
-  QTest::addColumn<QByteArray>("input");
-  QTest::addColumn<bool>("isOk");
-  QTest::addColumn<bool>("isInfinity");
-  QTest::addColumn<bool>("isNegative");
-  QTest::addColumn<bool>("isNan");
-
-  QTest::newRow("42.0") << QByteArray("42.0") << true << false << false << false;
-  QTest::newRow("0.0") << QByteArray("0.0") << true << false << false << false;
-  QTest::newRow("-42.0") << QByteArray("-42.0") << true << false << true << false;
-  QTest::newRow("Infinity") << QByteArray("Infinity") << true << true << false << false;
-  QTest::newRow("-Infinity") << QByteArray("-Infinity") << true << true << true << false;
-  QTest::newRow("NaN") << QByteArray("NaN") << true << false << false << true;
 }
 
 void TestParser::testReadWrite()

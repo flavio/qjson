@@ -61,19 +61,14 @@
 
 %token COLON 5 ":"
 %token COMMA 6 ","
-%token MINUS 7 "-"
-%token DOT 8 "."
-%token DIGIT 9 "digit"
-%token E 10 "exponential"
-%token TRUE_VAL 11 "true"
-%token FALSE_VAL 12 "false"
-%token NULL_VAL 13 "null"
-%token QUOTMARKOPEN 14 "open quotation mark"
-%token QUOTMARKCLOSE 15 "close quotation mark"
+%token NUMBER 7 "number"
+%token TRUE_VAL 8 "true"
+%token FALSE_VAL 9 "false"
+%token NULL_VAL 10 "null"
+%token QUOTMARKOPEN 11 "open quotation mark"
+%token QUOTMARKCLOSE 12 "close quotation mark"
 
-%token STRING 16 "string"
-%token INFINITY_VAL 17 "Infinity"
-%token NAN_VAL 18 "NaN"
+%token STRING 13 "string"
 
 // define the initial token
 %start start
@@ -137,52 +132,12 @@ r_values: /* empty */ { $$ = QVariant (QVariantList()); }
           };
 
 value: string { $$ = $1; }
-        | special_or_number { $$ = $1; }
+        | NUMBER { $$ = $1; }
         | object { $$ = $1; }
         | array { $$ = $1; }
         | TRUE_VAL { $$ = QVariant(true); }
         | FALSE_VAL { $$ = QVariant(false); }
         | NULL_VAL { $$ = QVariant(); };
-
-special_or_number: MINUS INFINITY_VAL { $$ = QVariant(QVariant::Double); $$.setValue( -std::numeric_limits<double>::infinity() ); }
-                   | INFINITY_VAL { $$ = QVariant(QVariant::Double); $$.setValue( std::numeric_limits<double>::infinity() ); }
-                   | NAN_VAL { $$ = QVariant(QVariant::Double); $$.setValue( std::numeric_limits<double>::quiet_NaN() ); }
-                   | number;
-
-number: int {
-            if ($1.toByteArray().startsWith('-')) {
-              $$ = QVariant (QVariant::LongLong);
-              $$.setValue($1.toLongLong());
-            }
-            else {
-              $$ = QVariant (QVariant::ULongLong);
-              $$.setValue($1.toULongLong());
-            }
-          }
-        | int fract {
-            const QByteArray value = $1.toByteArray() + $2.toByteArray();
-            $$ = QVariant(QVariant::Double);
-            $$.setValue(value.toDouble());
-          }
-        | int exp { $$ = QVariant ($1.toByteArray() + $2.toByteArray()); }
-        | int fract exp {
-            const QByteArray value = $1.toByteArray() + $2.toByteArray() + $3.toByteArray();
-            $$ = QVariant (value);
-          };
-
-int:  DIGIT digits { $$ = QVariant ($1.toByteArray() + $2.toByteArray()); }
-      | MINUS DIGIT digits { $$ = QVariant (QByteArray("-") + $2.toByteArray() + $3.toByteArray()); };
-
-digits: /* empty */ { $$ = QVariant (QByteArray("")); }
-        | DIGIT digits {
-          $$ = QVariant($1.toByteArray() + $2.toByteArray());
-        };
-
-fract: DOT digits {
-          $$ = QVariant(QByteArray(".") + $2.toByteArray());
-        };
-
-exp: E digits { $$ = QVariant($1.toByteArray() + $2.toByteArray()); };
 
 string: QUOTMARKOPEN string_arg QUOTMARKCLOSE { $$ = $2; };
 

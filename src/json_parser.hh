@@ -107,18 +107,13 @@ namespace yy {
      SQUARE_BRACKET_CLOSE = 4,
      COLON = 5,
      COMMA = 6,
-     MINUS = 7,
-     DOT = 8,
-     DIGIT = 9,
-     E = 10,
-     TRUE_VAL = 11,
-     FALSE_VAL = 12,
-     NULL_VAL = 13,
-     QUOTMARKOPEN = 14,
-     QUOTMARKCLOSE = 15,
-     STRING = 16,
-     INFINITY_VAL = 17,
-     NAN_VAL = 18
+     NUMBER = 7,
+     TRUE_VAL = 8,
+     FALSE_VAL = 9,
+     NULL_VAL = 10,
+     QUOTMARKOPEN = 11,
+     QUOTMARKCLOSE = 12,
+     STRING = 13
    };
 
     };
@@ -296,7 +291,7 @@ namespace yy {
 
 } // yy
 /* Line 33 of lalr1.cc  */
-#line 300 "json_parser.hh"
+#line 295 "json_parser.hh"
 
 
 

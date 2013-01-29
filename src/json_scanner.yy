@@ -61,19 +61,26 @@ null          {
                 return yy::json_parser::token::NULL_VAL;
               }
 
-[Ee][+\-]?    {
+[0-9]         |
+[1-9][0-9]+   {
                 m_yylloc->columns(yyleng);
-                *m_yylval = QVariant(QLatin1String(yytext));
-                return yy::json_parser::token::E;
+                *m_yylval = QVariant(strtoull(yytext, NULL, 10));
+                return yy::json_parser::token::NUMBER;
               }
 
-[1-9]+0?      |
-[1-9]*0       {
+-[0-9]        |
+-[1-9][0-9]+  {
                 m_yylloc->columns(yyleng);
-                *m_yylval = QVariant(QString::fromLatin1(yytext).toULongLong());
-                return yy::json_parser::token::DIGIT;
+                *m_yylval = QVariant(strtoll(yytext, NULL, 10));
+                return yy::json_parser::token::NUMBER;
               }
 
+-?(([0-9])|([1-9][0-9]+))(\.[0-9]+)?([Ee][+\-]?[0-9]+)? {
+                m_yylloc->columns(yyleng);
+                *m_yylval = QVariant(strtod(yytext, NULL));
+                return yy::json_parser::token::NUMBER;
+              }
+              
 [A-Za-z]      {
                 m_yylloc->columns(yyleng);
                 *m_yylval = QVariant(QLatin1String(yytext));
@@ -88,16 +95,6 @@ null          {
 ,             {
                 m_yylloc->columns(yyleng);
                 return yy::json_parser::token::COMMA;
-              }
-
-\.            {
-                m_yylloc->columns(yyleng);
-                return yy::json_parser::token::DOT;
-              }
-
--             {
-                m_yylloc->columns(yyleng);
-                return yy::json_parser::token::MINUS;
               }
 
 \[            {
@@ -197,12 +194,20 @@ null          {
 <ALLOW_SPECIAL_NUMBERS>{
   (?i:nan)      {
                   m_yylloc->columns(yyleng);
-                  return yy::json_parser::token::NAN_VAL;
+                  *m_yylval = QVariant(std::numeric_limits<double>::quiet_NaN());
+                  return yy::json_parser::token::NUMBER;
                 }
 
   [Ii]nfinity   {
                     m_yylloc->columns(yyleng);
-                    return yy::json_parser::token::INFINITY_VAL;
+                    *m_yylval = QVariant(std::numeric_limits<double>::infinity());
+                    return yy::json_parser::token::NUMBER;
+                }
+
+  -[Ii]nfinity  {
+                    m_yylloc->columns(yyleng);
+                    *m_yylval = QVariant(-std::numeric_limits<double>::infinity());
+                    return yy::json_parser::token::NUMBER;
                 }
 }
 
