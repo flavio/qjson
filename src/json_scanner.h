@@ -25,7 +25,6 @@
 #include <QtCore/QVariant>
 
 #define YYSTYPE QVariant
-#define ALLOW_SPECIAL_NUMBERS 1
 
 // Only include FlexLexer.h if it hasn't been already included
 #if ! defined(yyFlexLexerOnce)

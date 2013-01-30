@@ -114,8 +114,8 @@ void TestScanner::scanTokens_data() {
   QTest::newRow("tab") << QByteArray("\t") << true << false << TOKEN(END) << QVariant() << 1 << 0 << 1 << 1;
   QTest::newRow("all spaces") << QByteArray("\r\n\f\v \t") << true << false << TOKEN(END) << QVariant() << 1 << 0 << 3 << 5;
   
-  QTest::newRow("true") << QByteArray("true") << true << false << TOKEN(TRUE_VAL) << QVariant() << 1 << 0 << 1 << 4;
-  QTest::newRow("false") << QByteArray("false") << true << false << TOKEN(FALSE_VAL) << QVariant() << 1 << 0 << 1 << 5;
+  QTest::newRow("true") << QByteArray("true") << true << false << TOKEN(TRUE_VAL) << QVariant(true) << 1 << 0 << 1 << 4;
+  QTest::newRow("false") << QByteArray("false") << true << false << TOKEN(FALSE_VAL) << QVariant(false) << 1 << 0 << 1 << 5;
   QTest::newRow("null") << QByteArray("null") << true << false << TOKEN(NULL_VAL) << QVariant() << 1 << 0 << 1 << 4;
   
   QTest::newRow("alphabetic string") << QByteArray("\"abcde\"") << true << false << TOKEN(STRING) << QVariant(QLatin1String("abcde")) << 1 << 0 << 1 << 2;
