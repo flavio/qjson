@@ -62,10 +62,13 @@
   }
 
   #define YYERROR_VERBOSE 1
+  
+  Q_DECLARE_METATYPE(QVector<QVariant>*)
+  Q_DECLARE_METATYPE(QVariantMap*)
 
 
 /* Line 33 of lalr1.cc  */
-#line 69 "json_parser.hh"
+#line 72 "json_parser.hh"
 
 
 #include <string>
@@ -81,7 +84,7 @@
 
 namespace yy {
 /* Line 33 of lalr1.cc  */
-#line 85 "json_parser.hh"
+#line 88 "json_parser.hh"
 
   /// A Bison parser.
   class json_parser
@@ -290,7 +293,7 @@ namespace yy {
 
 } // yy
 /* Line 33 of lalr1.cc  */
-#line 294 "json_parser.hh"
+#line 297 "json_parser.hh"
 
 
 

@@ -42,6 +42,9 @@
   }
 
   #define YYERROR_VERBOSE 1
+  
+  Q_DECLARE_METATYPE(QVector<QVariant>*)
+  Q_DECLARE_METATYPE(QVariantMap*)
 }
 
 %parse-param { QJson::ParserPrivate* driver }
@@ -65,7 +68,6 @@
 %token TRUE_VAL 8 "true"
 %token FALSE_VAL 9 "false"
 %token NULL_VAL 10 "null"
-
 %token STRING 11 "string"
 
 %token INVALID 12 "invalid"
@@ -91,53 +93,49 @@ data: value { $$ = $1; }
           }
       | END;
 
-object: CURLY_BRACKET_OPEN members CURLY_BRACKET_CLOSE { $$ = $2; };
+object: CURLY_BRACKET_OPEN CURLY_BRACKET_CLOSE {
+          $$ = QVariant(QVariantMap());
+        }
+     |  CURLY_BRACKET_OPEN members CURLY_BRACKET_CLOSE {
+          QVariantMap* map = $2.value<QVariantMap*>();
+          $$ = QVariant(*map);
+          delete map;
+     };
 
-members: /* empty */ { $$ = QVariant (QVariantMap()); }
-        | pair r_members {
-            QVariantMap members = $2.toMap();
-            $2 = QVariant(); // Allow reuse of map
-            $$ = QVariant(members.unite ($1.toMap()));
-          };
+members: STRING COLON value {
+          QVariantMap* pair = new QVariantMap();
+          pair->insert($1.toString(), $3);
+          $$.setValue<QVariantMap* >(pair);
+        }
+      |  members COMMA STRING COLON value {
+            $$.value<QVariantMap*>()->insert($3.toString(), $5);
+         };
 
-r_members: /* empty */ { $$ = QVariant (QVariantMap()); }
-        | COMMA pair r_members {
-          QVariantMap members = $3.toMap();
-          $3 = QVariant(); // Allow reuse of map
-          $$ = QVariant(members.unite ($2.toMap()));
-          };
-
-pair:   STRING COLON value {
-            QVariantMap pair;
-            pair.insert ($1.toString(), QVariant($3));
-            $$ = QVariant (pair);
-          };
-
-array: SQUARE_BRACKET_OPEN values SQUARE_BRACKET_CLOSE { $$ = $2; };
-
-values: /* empty */ { $$ = QVariant (QVariantList()); }
-        | value r_values {
-          QVariantList members = $2.toList();
-          $2 = QVariant(); // Allow reuse of list
-          members.prepend ($1);
-          $$ = QVariant(members);
+array:  SQUARE_BRACKET_OPEN SQUARE_BRACKET_CLOSE {
+          $$ = QVariant(QVariantList());
+        }
+    |   SQUARE_BRACKET_OPEN values SQUARE_BRACKET_CLOSE { 
+          QVector<QVariant>* list = $2.value<QVector<QVariant>* >();
+          $$ = QVariant(list->toList());
+          delete list;
         };
 
-r_values: /* empty */ { $$ = QVariant (QVariantList()); }
-          | COMMA value r_values {
-            QVariantList members = $3.toList();
-            $3 = QVariant(); // Allow reuse of list
-            members.prepend ($2);
-            $$ = QVariant(members);
-          };
+values: value {
+          QVector<QVariant>* list = new QVector<QVariant>(1);
+          list->replace(0, $1);
+          $$.setValue(list);
+        }
+     |  values COMMA value {
+          $$.value<QVector<QVariant>* >()->append($3);
+        };
 
-value: STRING { $$ = $1; }
-        | NUMBER { $$ = $1; }
-        | object { $$ = $1; }
-        | array { $$ = $1; }
-        | TRUE_VAL { $$ = QVariant(true); }
-        | FALSE_VAL { $$ = QVariant(false); }
-        | NULL_VAL { $$ = QVariant(); };
+value: STRING
+    |  NUMBER
+    |  TRUE_VAL
+    |  FALSE_VAL
+    |  NULL_VAL
+    |  object
+    |  array;
 
 %%
 
@@ -153,8 +151,7 @@ int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, QJson::ParserPrivate* drive
   return ret;
 }
 
-void yy::json_parser::error (const yy::location& yyloc,
-                                 const std::string& error)
+void yy::json_parser::error (const yy::location& yyloc, const std::string& error)
 {
   /*qjsonDebug() << yyloc.begin.line;
   qjsonDebug() << yyloc.begin.column;

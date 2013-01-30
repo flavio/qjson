@@ -448,7 +448,7 @@ namespace yy {
       {
           case 2:
 /* Line 670 of lalr1.cc  */
-#line 80 "json_parser.yy"
+#line 82 "json_parser.yy"
     {
               driver->m_result = (yysemantic_stack_[(1) - (1)]);
               qjsonDebug() << "json_parser - parsing finished";
@@ -457,13 +457,13 @@ namespace yy {
 
   case 3:
 /* Line 670 of lalr1.cc  */
-#line 85 "json_parser.yy"
+#line 87 "json_parser.yy"
     { (yyval) = (yysemantic_stack_[(1) - (1)]); }
     break;
 
   case 4:
 /* Line 670 of lalr1.cc  */
-#line 87 "json_parser.yy"
+#line 89 "json_parser.yy"
     {
             qCritical()<< "json_parser - syntax error found, "
                     << "forcing abort, Line" << (yyloc).begin.line << "Column" << (yyloc).begin.column;
@@ -473,137 +473,79 @@ namespace yy {
 
   case 6:
 /* Line 670 of lalr1.cc  */
-#line 94 "json_parser.yy"
-    { (yyval) = (yysemantic_stack_[(3) - (2)]); }
+#line 96 "json_parser.yy"
+    {
+          (yyval) = QVariant(QVariantMap());
+        }
     break;
 
   case 7:
 /* Line 670 of lalr1.cc  */
-#line 96 "json_parser.yy"
-    { (yyval) = QVariant (QVariantMap()); }
+#line 99 "json_parser.yy"
+    {
+          QVariantMap* map = (yysemantic_stack_[(3) - (2)]).value<QVariantMap*>();
+          (yyval) = QVariant(*map);
+          delete map;
+     }
     break;
 
   case 8:
 /* Line 670 of lalr1.cc  */
-#line 97 "json_parser.yy"
+#line 105 "json_parser.yy"
     {
-            QVariantMap members = (yysemantic_stack_[(2) - (2)]).toMap();
-            (yysemantic_stack_[(2) - (2)]) = QVariant(); // Allow reuse of map
-            (yyval) = QVariant(members.unite ((yysemantic_stack_[(2) - (1)]).toMap()));
-          }
+          QVariantMap* pair = new QVariantMap();
+          pair->insert((yysemantic_stack_[(3) - (1)]).toString(), (yysemantic_stack_[(3) - (3)]));
+          (yyval).setValue<QVariantMap* >(pair);
+        }
     break;
 
   case 9:
 /* Line 670 of lalr1.cc  */
-#line 103 "json_parser.yy"
-    { (yyval) = QVariant (QVariantMap()); }
+#line 110 "json_parser.yy"
+    {
+            (yyval).value<QVariantMap*>()->insert((yysemantic_stack_[(5) - (3)]).toString(), (yysemantic_stack_[(5) - (5)]));
+         }
     break;
 
   case 10:
 /* Line 670 of lalr1.cc  */
-#line 104 "json_parser.yy"
+#line 114 "json_parser.yy"
     {
-          QVariantMap members = (yysemantic_stack_[(3) - (3)]).toMap();
-          (yysemantic_stack_[(3) - (3)]) = QVariant(); // Allow reuse of map
-          (yyval) = QVariant(members.unite ((yysemantic_stack_[(3) - (2)]).toMap()));
-          }
+          (yyval) = QVariant(QVariantList());
+        }
     break;
 
   case 11:
 /* Line 670 of lalr1.cc  */
-#line 110 "json_parser.yy"
-    {
-            QVariantMap pair;
-            pair.insert ((yysemantic_stack_[(3) - (1)]).toString(), QVariant((yysemantic_stack_[(3) - (3)])));
-            (yyval) = QVariant (pair);
-          }
+#line 117 "json_parser.yy"
+    { 
+          QVector<QVariant>* list = (yysemantic_stack_[(3) - (2)]).value<QVector<QVariant>* >();
+          (yyval) = QVariant(list->toList());
+          delete list;
+        }
     break;
 
   case 12:
 /* Line 670 of lalr1.cc  */
-#line 116 "json_parser.yy"
-    { (yyval) = (yysemantic_stack_[(3) - (2)]); }
+#line 123 "json_parser.yy"
+    {
+          QVector<QVariant>* list = new QVector<QVariant>(1);
+          list->replace(0, (yysemantic_stack_[(1) - (1)]));
+          (yyval).setValue(list);
+        }
     break;
 
   case 13:
 /* Line 670 of lalr1.cc  */
-#line 118 "json_parser.yy"
-    { (yyval) = QVariant (QVariantList()); }
-    break;
-
-  case 14:
-/* Line 670 of lalr1.cc  */
-#line 119 "json_parser.yy"
+#line 128 "json_parser.yy"
     {
-          QVariantList members = (yysemantic_stack_[(2) - (2)]).toList();
-          (yysemantic_stack_[(2) - (2)]) = QVariant(); // Allow reuse of list
-          members.prepend ((yysemantic_stack_[(2) - (1)]));
-          (yyval) = QVariant(members);
+          (yyval).value<QVector<QVariant>* >()->append((yysemantic_stack_[(3) - (3)]));
         }
     break;
 
-  case 15:
-/* Line 670 of lalr1.cc  */
-#line 126 "json_parser.yy"
-    { (yyval) = QVariant (QVariantList()); }
-    break;
-
-  case 16:
-/* Line 670 of lalr1.cc  */
-#line 127 "json_parser.yy"
-    {
-            QVariantList members = (yysemantic_stack_[(3) - (3)]).toList();
-            (yysemantic_stack_[(3) - (3)]) = QVariant(); // Allow reuse of list
-            members.prepend ((yysemantic_stack_[(3) - (2)]));
-            (yyval) = QVariant(members);
-          }
-    break;
-
-  case 17:
-/* Line 670 of lalr1.cc  */
-#line 134 "json_parser.yy"
-    { (yyval) = (yysemantic_stack_[(1) - (1)]); }
-    break;
-
-  case 18:
-/* Line 670 of lalr1.cc  */
-#line 135 "json_parser.yy"
-    { (yyval) = (yysemantic_stack_[(1) - (1)]); }
-    break;
-
-  case 19:
-/* Line 670 of lalr1.cc  */
-#line 136 "json_parser.yy"
-    { (yyval) = (yysemantic_stack_[(1) - (1)]); }
-    break;
-
-  case 20:
-/* Line 670 of lalr1.cc  */
-#line 137 "json_parser.yy"
-    { (yyval) = (yysemantic_stack_[(1) - (1)]); }
-    break;
-
-  case 21:
-/* Line 670 of lalr1.cc  */
-#line 138 "json_parser.yy"
-    { (yyval) = QVariant(true); }
-    break;
-
-  case 22:
-/* Line 670 of lalr1.cc  */
-#line 139 "json_parser.yy"
-    { (yyval) = QVariant(false); }
-    break;
-
-  case 23:
-/* Line 670 of lalr1.cc  */
-#line 140 "json_parser.yy"
-    { (yyval) = QVariant(); }
-    break;
-
 
 /* Line 670 of lalr1.cc  */
-#line 607 "json_parser.cc"
+#line 549 "json_parser.cc"
       default:
         break;
       }
@@ -903,14 +845,14 @@ namespace yy {
 
   /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
      STATE-NUM.  */
-  const signed char json_parser::yypact_ninf_ = -12;
+  const signed char json_parser::yypact_ninf_ = -5;
   const signed char
   json_parser::yypact_[] =
   {
-         1,   -12,   -12,   -10,    15,   -12,   -12,   -12,   -12,   -12,
-       5,   -12,   -12,   -12,   -12,     0,     4,     7,     3,     8,
-     -12,    15,   -12,   -10,   -12,   -12,    15,   -12,   -12,     7,
-       8,   -12,   -12
+         1,    -5,    -5,     3,    18,    -5,    -5,    -5,    -5,    -5,
+       8,    -5,    -5,    -5,    -5,    -5,     2,    11,    -5,    -3,
+      -5,    -5,    29,    -5,     4,    -5,    29,    -5,    13,    -5,
+      29,    -5
   };
 
   /* YYDEFACT[S] -- default reduction number in state S.  Performed when
@@ -919,26 +861,24 @@ namespace yy {
   const unsigned char
   json_parser::yydefact_[] =
   {
-         0,     5,     4,     7,    13,    18,    21,    22,    23,    17,
-       0,     2,    19,    20,     3,     0,     0,     9,     0,    15,
-       1,     0,     6,     0,     8,    12,     0,    14,    11,     9,
-      15,    10,    16
+         0,     5,     4,     0,     0,    15,    16,    17,    18,    14,
+       0,     2,    19,    20,     3,     6,     0,     0,    10,     0,
+      12,     1,     0,     7,     0,    11,     0,     8,     0,    13,
+       0,     9
   };
 
   /* YYPGOTO[NTERM-NUM].  */
   const signed char
   json_parser::yypgoto_[] =
   {
-       -12,   -12,   -12,   -12,   -12,    -8,     6,   -12,   -12,   -11,
-      -4
+        -5,    -5,    -5,    -5,    -5,    -5,    -5,    -4
   };
 
   /* YYDEFGOTO[NTERM-NUM].  */
   const signed char
   json_parser::yydefgoto_[] =
   {
-        -1,    10,    11,    12,    16,    24,    17,    13,    18,    27,
-      14
+        -1,    10,    11,    12,    17,    13,    19,    14
   };
 
   /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -948,18 +888,22 @@ namespace yy {
   const unsigned char
   json_parser::yytable_[] =
   {
-        19,     1,     2,    15,     3,    20,     4,    21,    22,    25,
-       5,     6,     7,     8,     9,    23,    26,    28,     3,    32,
-       4,    31,    30,     0,     5,     6,     7,     8,     9,    29
+        20,     1,     2,    25,     3,    26,     4,    15,    21,    22,
+       5,     6,     7,     8,     9,    23,    16,    28,    27,    24,
+      30,     3,    29,     4,    18,     0,    31,     5,     6,     7,
+       8,     9,     3,     0,     4,     0,     0,     0,     5,     6,
+       7,     8,     9
   };
 
   /* YYCHECK.  */
   const signed char
   json_parser::yycheck_[] =
   {
-         4,     0,     1,    13,     3,     0,     5,     7,     4,     6,
-       9,    10,    11,    12,    13,     8,     8,    21,     3,    30,
-       5,    29,    26,    -1,     9,    10,    11,    12,    13,    23
+         4,     0,     1,     6,     3,     8,     5,     4,     0,     7,
+       9,    10,    11,    12,    13,     4,    13,    13,    22,     8,
+       7,     3,    26,     5,     6,    -1,    30,     9,    10,    11,
+      12,    13,     3,    -1,     5,    -1,    -1,    -1,     9,    10,
+      11,    12,    13
   };
 
   /* STOS_[STATE-NUM] -- The (internal number of the) accessing
@@ -968,9 +912,9 @@ namespace yy {
   json_parser::yystos_[] =
   {
          0,     0,     1,     3,     5,     9,    10,    11,    12,    13,
-      16,    17,    18,    22,    25,    13,    19,    21,    23,    25,
-       0,     7,     4,     8,    20,     6,     8,    24,    25,    21,
-      25,    20,    24
+      16,    17,    18,    20,    22,     4,    13,    19,     6,    21,
+      22,     0,     7,     4,     8,     6,     8,    22,    13,    22,
+       7,    22
   };
 
 #if YYDEBUG
@@ -988,18 +932,18 @@ namespace yy {
   const unsigned char
   json_parser::yyr1_[] =
   {
-         0,    15,    16,    17,    17,    17,    18,    19,    19,    20,
-      20,    21,    22,    23,    23,    24,    24,    25,    25,    25,
-      25,    25,    25,    25
+         0,    15,    16,    17,    17,    17,    18,    18,    19,    19,
+      20,    20,    21,    21,    22,    22,    22,    22,    22,    22,
+      22
   };
 
   /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
   const unsigned char
   json_parser::yyr2_[] =
   {
-         0,     2,     1,     1,     1,     1,     3,     0,     2,     0,
-       3,     3,     3,     0,     2,     0,     3,     1,     1,     1,
-       1,     1,     1,     1
+         0,     2,     1,     1,     1,     1,     2,     3,     3,     5,
+       2,     3,     1,     3,     1,     1,     1,     1,     1,     1,
+       1
   };
 
 
@@ -1011,8 +955,7 @@ namespace yy {
     "\"end of file\"", "error", "$undefined", "\"{\"", "\"}\"", "\"[\"",
   "\"]\"", "\":\"", "\",\"", "\"number\"", "\"true\"", "\"false\"",
   "\"null\"", "\"string\"", "\"invalid\"", "$accept", "start", "data",
-  "object", "members", "r_members", "pair", "array", "values", "r_values",
-  "value", YY_NULL
+  "object", "members", "array", "values", "value", YY_NULL
   };
 
 #if YYDEBUG
@@ -1020,12 +963,12 @@ namespace yy {
   const json_parser::rhs_number_type
   json_parser::yyrhs_[] =
   {
-        16,     0,    -1,    17,    -1,    25,    -1,     1,    -1,     0,
-      -1,     3,    19,     4,    -1,    -1,    21,    20,    -1,    -1,
-       8,    21,    20,    -1,    13,     7,    25,    -1,     5,    23,
-       6,    -1,    -1,    25,    24,    -1,    -1,     8,    25,    24,
-      -1,    13,    -1,     9,    -1,    18,    -1,    22,    -1,    10,
-      -1,    11,    -1,    12,    -1
+        16,     0,    -1,    17,    -1,    22,    -1,     1,    -1,     0,
+      -1,     3,     4,    -1,     3,    19,     4,    -1,    13,     7,
+      22,    -1,    19,     8,    13,     7,    22,    -1,     5,     6,
+      -1,     5,    21,     6,    -1,    22,    -1,    21,     8,    22,
+      -1,    13,    -1,     9,    -1,    10,    -1,    11,    -1,    12,
+      -1,    18,    -1,    20,    -1
   };
 
   /* YYPRHS[YYN] -- Index of the first RHS symbol of rule number YYN in
@@ -1033,18 +976,18 @@ namespace yy {
   const unsigned char
   json_parser::yyprhs_[] =
   {
-         0,     0,     3,     5,     7,     9,    11,    15,    16,    19,
-      20,    24,    28,    32,    33,    36,    37,    41,    43,    45,
-      47,    49,    51,    53
+         0,     0,     3,     5,     7,     9,    11,    14,    18,    22,
+      28,    31,    35,    37,    41,    43,    45,    47,    49,    51,
+      53
   };
 
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
   const unsigned char
   json_parser::yyrline_[] =
   {
-         0,    80,    80,    85,    86,    92,    94,    96,    97,   103,
-     104,   110,   116,   118,   119,   126,   127,   134,   135,   136,
-     137,   138,   139,   140
+         0,    82,    82,    87,    88,    94,    96,    99,   105,   110,
+     114,   117,   123,   128,   132,   133,   134,   135,   136,   137,
+     138
   };
 
   // Print the state stack on the debug stream.
@@ -1118,10 +1061,10 @@ namespace yy {
   }
 
   const int json_parser::yyeof_ = 0;
-  const int json_parser::yylast_ = 29;
-  const int json_parser::yynnts_ = 11;
+  const int json_parser::yylast_ = 42;
+  const int json_parser::yynnts_ = 8;
   const int json_parser::yyempty_ = -2;
-  const int json_parser::yyfinal_ = 20;
+  const int json_parser::yyfinal_ = 21;
   const int json_parser::yyterror_ = 1;
   const int json_parser::yyerrcode_ = 256;
   const int json_parser::yyntokens_ = 15;
@@ -1132,9 +1075,9 @@ namespace yy {
 
 } // yy
 /* Line 1141 of lalr1.cc  */
-#line 1136 "json_parser.cc"
+#line 1079 "json_parser.cc"
 /* Line 1142 of lalr1.cc  */
-#line 142 "json_parser.yy"
+#line 140 "json_parser.yy"
 
 
 int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, QJson::ParserPrivate* driver)
@@ -1149,8 +1092,7 @@ int yy::yylex(YYSTYPE *yylval, yy::location *yylloc, QJson::ParserPrivate* drive
   return ret;
 }
 
-void yy::json_parser::error (const yy::location& yyloc,
-                                 const std::string& error)
+void yy::json_parser::error (const yy::location& yyloc, const std::string& error)
 {
   /*qjsonDebug() << yyloc.begin.line;
   qjsonDebug() << yyloc.begin.column;
