@@ -58,17 +58,17 @@
 %token CURLY_BRACKET_CLOSE 2 "}"
 %token SQUARE_BRACKET_OPEN 3 "["
 %token SQUARE_BRACKET_CLOSE 4 "]"
-
 %token COLON 5 ":"
 %token COMMA 6 ","
+
 %token NUMBER 7 "number"
 %token TRUE_VAL 8 "true"
 %token FALSE_VAL 9 "false"
 %token NULL_VAL 10 "null"
-%token QUOTMARKOPEN 11 "open quotation mark"
-%token QUOTMARKCLOSE 12 "close quotation mark"
 
-%token STRING 13 "string"
+%token STRING 11 "string"
+
+%token INVALID 12 "invalid"
 
 // define the initial token
 %start start
@@ -107,7 +107,7 @@ r_members: /* empty */ { $$ = QVariant (QVariantMap()); }
           $$ = QVariant(members.unite ($2.toMap()));
           };
 
-pair:   string COLON value {
+pair:   STRING COLON value {
             QVariantMap pair;
             pair.insert ($1.toString(), QVariant($3));
             $$ = QVariant (pair);
@@ -131,20 +131,13 @@ r_values: /* empty */ { $$ = QVariant (QVariantList()); }
             $$ = QVariant(members);
           };
 
-value: string { $$ = $1; }
+value: STRING { $$ = $1; }
         | NUMBER { $$ = $1; }
         | object { $$ = $1; }
         | array { $$ = $1; }
         | TRUE_VAL { $$ = QVariant(true); }
         | FALSE_VAL { $$ = QVariant(false); }
         | NULL_VAL { $$ = QVariant(); };
-
-string: QUOTMARKOPEN string_arg QUOTMARKCLOSE { $$ = $2; };
-
-string_arg: /*empty */ { $$ = QVariant (QString(QLatin1String(""))); }
-            | STRING {
-                $$ = $1;
-              };
 
 %%
 

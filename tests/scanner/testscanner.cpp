@@ -118,12 +118,12 @@ void TestScanner::scanTokens_data() {
   QTest::newRow("false") << QByteArray("false") << true << false << TOKEN(FALSE_VAL) << QVariant() << 1 << 0 << 1 << 5;
   QTest::newRow("null") << QByteArray("null") << true << false << TOKEN(NULL_VAL) << QVariant() << 1 << 0 << 1 << 4;
   
-  QTest::newRow("alphabetic string") << QByteArray("\"abcde\"") << true << true << TOKEN(STRING) << QVariant(QLatin1String("abcde")) << 1 << 1 << 1 << 2;
-  QTest::newRow("ecaped string") << QByteArray("\"abcde\\b\\f\\n\\r\\t\"") << true << true << TOKEN(STRING) << QVariant(QLatin1String("abcde\b\f\n\r\t")) << 1 << 1 << 1 << 2;
-  QTest::newRow("invalid ecaped string") << QByteArray("\"\\x\"") << true << true << TOKEN(STRING) << QVariant(QLatin1String("x")) << 1 << 1 << 1 << 2;
-  QTest::newRow("escaped unicode sequence") << QByteArray("\"\\u005A\"") << true << true << TOKEN(STRING) << QVariant(QLatin1String("Z"))  << 1 << 1 << 1 << 2;
-  QTest::newRow("invalid unicode sequence") << QByteArray("\"\\u005Z\"") << true << true << -1 << QVariant(QLatin1String(""))  << 1 << 1 << 1 << 2;
-  QTest::newRow("empty string") << QByteArray("\"") << true << true << TOKEN(END) << QVariant()  << 1 << 1 << 1 << 1;
+  QTest::newRow("alphabetic string") << QByteArray("\"abcde\"") << true << false << TOKEN(STRING) << QVariant(QLatin1String("abcde")) << 1 << 0 << 1 << 2;
+  QTest::newRow("ecaped string") << QByteArray("\"abcde\\b\\f\\n\\r\\t\"") << true << false << TOKEN(STRING) << QVariant(QLatin1String("abcde\b\f\n\r\t")) << 1 << 0 << 1 << 2;
+  QTest::newRow("invalid ecaped string") << QByteArray("\"\\x\"") << true << false << TOKEN(STRING) << QVariant(QLatin1String("x")) << 1 << 0 << 1 << 2;
+  QTest::newRow("escaped unicode sequence") << QByteArray("\"\\u005A\"") << true << false << TOKEN(STRING) << QVariant(QLatin1String("Z"))  << 1 << 0 << 1 << 2;
+  QTest::newRow("invalid unicode sequence") << QByteArray("\"\\u005Z\"") << true << false << TOKEN(INVALID) << QVariant(QLatin1String(""))  << 1 << 0 << 1 << 2;
+  QTest::newRow("empty string") << QByteArray("\"") << true << false << TOKEN(END) << QVariant()  << 1 << 0 << 1 << 1;
   
   QTest::newRow("single digit") << QByteArray("0") << true << false << TOKEN(NUMBER) << QVariant(0u)  << 1 << 0 << 1 << 1;
   QTest::newRow("multiple digits") << QByteArray("123456789") << true << false << TOKEN(NUMBER) << QVariant(123456789u)  << 1 << 0 << 1 << 9;
@@ -149,24 +149,23 @@ void TestScanner::scanTokens_data() {
   
   QTest::newRow("invalid multiple digits") << QByteArray("001") << true << false << TOKEN(NUMBER) << QVariant(0)  << 1 << 0 << 1 << 1;
   QTest::newRow("invalid negative multiple digits") << QByteArray("-001") << true << false << TOKEN(NUMBER) << QVariant(0)  << 1 << 0 << 1 << 2;
-  QTest::newRow("invalid fractional") << QByteArray("12.") << true << true << -1 << QVariant(12)  << 1 << 2 << 1 << 3;
-  QTest::newRow("invalid exponential 1") << QByteArray("-5e+") << true << true << TOKEN(STRING) << QVariant(QLatin1String("e"))  << 1 << 2 << 1 << 3;
-  QTest::newRow("invalid exponential 2") << QByteArray("2e") << true << true << TOKEN(STRING) << QVariant(QLatin1String("e"))  << 1 << 1 << 1 << 2;
-  QTest::newRow("invalid exponential 3") << QByteArray("3e+") << true << true << TOKEN(STRING) << QVariant(QLatin1String("e"))  << 1 << 1 << 1 << 2;
-  QTest::newRow("invalid exponential 4") << QByteArray("4.3E") << true << true << TOKEN(STRING) << QVariant(QLatin1String("E"))  << 1 << 3 << 1 << 4;
-  QTest::newRow("invalid exponential 5") << QByteArray("5.4E-") << true << true << TOKEN(STRING) << QVariant(QLatin1String("E"))  << 1 << 3 << 1 << 4;
+  QTest::newRow("invalid fractional") << QByteArray("12.") << true << true << TOKEN(INVALID) << QVariant(12)  << 1 << 2 << 1 << 3;
+  QTest::newRow("invalid exponential 1") << QByteArray("-5e+") << true << true << TOKEN(INVALID) << QVariant(-5)  << 1 << 2 << 1 << 3;
+  QTest::newRow("invalid exponential 2") << QByteArray("2e") << true << true << TOKEN(INVALID) << QVariant(2)  << 1 << 1 << 1 << 2;
+  QTest::newRow("invalid exponential 3") << QByteArray("3e+") << true << true << TOKEN(INVALID) << QVariant(3)  << 1 << 1 << 1 << 2;
+  QTest::newRow("invalid exponential 4") << QByteArray("4.3E") << true << true << TOKEN(INVALID) << QVariant(4.3)  << 1 << 3 << 1 << 4;
+  QTest::newRow("invalid exponential 5") << QByteArray("5.4E-") << true << true << TOKEN(INVALID) << QVariant(5.4)  << 1 << 3 << 1 << 4;
 
   QTest::newRow("colon") << QByteArray(":") << true << false << TOKEN(COLON) << QVariant()  << 1 << 0 << 1 << 1;
-  QTest::newRow("quote mark open") << QByteArray("\"") << true << false << TOKEN(QUOTMARKOPEN) << QVariant()  << 1 << 0 << 1 << 1;
   QTest::newRow("comma") << QByteArray(",") << true << false << TOKEN(COMMA) << QVariant()  << 1 << 0 << 1 << 1;
   QTest::newRow("square bracket open") << QByteArray("[") << true << false << TOKEN(SQUARE_BRACKET_OPEN) << QVariant()  << 1 << 0 << 1 << 1;
   QTest::newRow("square bracket close") << QByteArray("]") << true << false << TOKEN(SQUARE_BRACKET_CLOSE) << QVariant()  << 1 << 0 << 1 << 1;
   QTest::newRow("curly bracket open") << QByteArray("{") << true << false << TOKEN(CURLY_BRACKET_OPEN) << QVariant()  << 1 << 0 << 1 << 1;
   QTest::newRow("curly bracket close") << QByteArray("}") << true << false << TOKEN(CURLY_BRACKET_CLOSE) << QVariant()  << 1 << 0 << 1 << 1;
 
-  QTest::newRow("not allowed nan") << QByteArray("nan") << false << false << TOKEN(STRING) << QVariant(QLatin1String("n")) << 1 << 0 << 1 << 1;
-  QTest::newRow("not allowed infinity") << QByteArray("Infinity") << false << false << TOKEN(STRING) << QVariant(QLatin1String("I")) << 1 << 0 << 1 << 1;
-  QTest::newRow("unknown") << QByteArray("*") << true << false << -1 << QVariant()  << 1 << 0 << 1 << 1;
+  QTest::newRow("not allowed nan") << QByteArray("nan") << false << false << TOKEN(INVALID) << QVariant() << 1 << 0 << 1 << 1;
+  QTest::newRow("not allowed infinity") << QByteArray("Infinity") << false << false << TOKEN(INVALID) << QVariant() << 1 << 0 << 1 << 1;
+  QTest::newRow("unknown") << QByteArray("*") << true << false << TOKEN(INVALID) << QVariant()  << 1 << 0 << 1 << 1;
 }
 
 

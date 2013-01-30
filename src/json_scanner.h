@@ -23,7 +23,6 @@
 
 #include <QtCore/QIODevice>
 #include <QtCore/QVariant>
-#include <QStringList>
 
 #define YYSTYPE QVariant
 #define ALLOW_SPECIAL_NUMBERS 1
@@ -56,7 +55,7 @@ class JSonScanner : public yyFlexLexer
         YYSTYPE* m_yylval;
         yy::location* m_yylloc;
         bool m_criticalError;
-        QStringList m_stringPieces;
+        QString m_currentString;
 };
 
 #endif

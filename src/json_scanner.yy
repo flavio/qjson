@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA 02110-1301, USA.
+ * Boston, MA 02110yy::json_parser::token::INVALID301, USA.
  */
 
 %option 8bit c++ full warn
@@ -81,12 +81,6 @@ null          {
                 return yy::json_parser::token::NUMBER;
               }
               
-[A-Za-z]      {
-                m_yylloc->columns(yyleng);
-                *m_yylval = QVariant(QLatin1String(yytext));
-                return yy::json_parser::token::STRING;
-              }
-              
 :             {
                 m_yylloc->columns(yyleng);
                 return yy::json_parser::token::COLON;
@@ -121,55 +115,48 @@ null          {
 \"            {
                 m_yylloc->columns(yyleng);
                 BEGIN(QUOTMARK_OPEN);
-                return yy::json_parser::token::QUOTMARKOPEN;
               }
               
 <QUOTMARK_OPEN>{
   \\\"          {
-                  m_stringPieces << QLatin1String("\"");
+                  m_currentString.append(QLatin1String("\""));
                 }
   \\\\          {
-                  m_stringPieces << QLatin1String("\\");
+                  m_currentString.append(QLatin1String("\\"));
                 }
   \\\/          {
-                  m_stringPieces << QLatin1String("/");
+                  m_currentString.append(QLatin1String("/"));
                 }
   \\b           {
-                   m_stringPieces << QLatin1String("\b");
+                   m_currentString.append(QLatin1String("\b"));
                 }
   \\f           {
-                  m_stringPieces << QLatin1String("\f");
+                  m_currentString.append(QLatin1String("\f"));
                 }
   \\n           {
-                  m_stringPieces << QLatin1String("\n");
+                  m_currentString.append(QLatin1String("\n"));
                 }
   \\r           {
-                  m_stringPieces << QLatin1String("\r");
+                  m_currentString.append(QLatin1String("\r"));
                 }
   \\t           {
-                  m_stringPieces << QLatin1String("\t");
+                  m_currentString.append(QLatin1String("\t"));
                 }
   \\u           {
                   BEGIN(HEX_OPEN);
                 }
   [^\"\\]+      {
-                  m_stringPieces << QString::fromUtf8(yytext);
+                  m_currentString.append(QString::fromUtf8(yytext));
                 }              
   \\            {
                   // ignore
                 }
   \"            {
                   m_yylloc->columns(yyleng);
-                  if (m_stringPieces.count() > 0) {
-                    *m_yylval = QVariant(m_stringPieces.join(QLatin1String("")));
-                    m_stringPieces.clear();
-                    unput('\"');
-                    return yy::json_parser::token::STRING;
-                  }
-                  else {
-                    BEGIN(INITIAL);
-                    return yy::json_parser::token::QUOTMARKCLOSE;
-                  }
+                  *m_yylval = QVariant(m_currentString);
+                  m_currentString.clear();
+                  BEGIN(INITIAL);
+                  return yy::json_parser::token::STRING;
                 }
 }
 
@@ -179,7 +166,7 @@ null          {
                     bool ok;
                     ushort hexDigit1 = hexDigits.left(2).toShort(&ok, 16);
                     ushort hexDigit2 = hexDigits.right(2).toShort(&ok, 16);    
-                    m_stringPieces << QChar(hexDigit2, hexDigit1);
+                    m_currentString.append(QChar(hexDigit2, hexDigit1));
                     BEGIN(QUOTMARK_OPEN);
                  }
   .|\n           {
@@ -187,7 +174,7 @@ null          {
                     m_yylloc->columns(yyleng);
                     *m_yylval = QVariant(QLatin1String(""));
                     BEGIN(QUOTMARK_OPEN);
-                    return -1;
+                    return yy::json_parser::token::INVALID;
                  }
 }
 
@@ -213,8 +200,7 @@ null          {
 
 .             {
                 m_yylloc->columns(yyleng);
-                qCritical() << "JSonScanner::yylex - unknown char '" << yytext[0] <<"', returning -1";
-                return -1;
+                return yy::json_parser::token::INVALID;
               }
 
 <<EOF>>       return yy::json_parser::token::END;

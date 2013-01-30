@@ -111,9 +111,8 @@ namespace yy {
      TRUE_VAL = 8,
      FALSE_VAL = 9,
      NULL_VAL = 10,
-     QUOTMARKOPEN = 11,
-     QUOTMARKCLOSE = 12,
-     STRING = 13
+     STRING = 11,
+     INVALID = 12
    };
 
     };
@@ -291,7 +290,7 @@ namespace yy {
 
 } // yy
 /* Line 33 of lalr1.cc  */
-#line 295 "json_parser.hh"
+#line 294 "json_parser.hh"
 
 
 
