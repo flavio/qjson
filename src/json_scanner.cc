@@ -3083,8 +3083,8 @@ static yyconst flex_int16_t yy_nxt[][256] =
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
 
-#define YY_NUM_RULES 34
-#define YY_END_OF_BUFFER 35
+#define YY_NUM_RULES 36
+#define YY_END_OF_BUFFER 37
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -3094,15 +3094,15 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[87] =
     {   0,
-        0,    0,    0,    0,    0,    0,    0,    0,   35,   33,
-        1,    2,    2,   11,   25,   33,    6,    6,   24,   26,
-       27,   33,   33,   33,   28,   29,   21,   34,   34,   23,
-       23,   33,   33,   33,   33,    1,    2,    8,    8,    0,
+        0,    0,    0,    0,    0,    0,    0,    0,   37,   35,
+        1,    2,    2,   11,   27,   35,    6,    6,   26,   28,
+       29,   35,   35,   35,   30,   31,   21,   23,   22,   25,
+       25,   35,   35,   35,   35,    1,    2,    8,    8,    0,
         0,    7,    0,    0,    0,   21,   12,   14,   13,   15,
        16,   17,   18,   19,   20,    0,    0,    0,    0,    9,
-       10,    0,   10,    0,    0,    0,    0,    0,    0,   30,
-        0,    5,    3,   22,    0,    0,    4,    0,    0,    0,
-        0,    0,    0,    0,   31,   32
+       10,    0,   10,    0,    0,    0,    0,    0,    0,   32,
+        0,    5,    3,   24,    0,    0,    4,    0,    0,    0,
+        0,    0,    0,    0,   33,   34
     } ;
 
 static yyconst yy_state_type yy_NUL_trans[87] =
@@ -3491,12 +3491,19 @@ YY_RULE_SETUP
 #line 139 "json_scanner.yy"
 {
                   m_currentString.append(QString::fromUtf8(yytext));
-
-  \\            {
+                }
+	YY_BREAK
+case 22:
+YY_RULE_SETUP
+#line 143 "json_scanner.yy"
+{
                   // ignore
                 }
-                
-  \"            {
+	YY_BREAK
+case 23:
+YY_RULE_SETUP
+#line 147 "json_scanner.yy"
+{
                   m_yylloc->columns(yyleng);
                   *m_yylval = QVariant(m_currentString);
                   m_currentString.clear();
@@ -3506,9 +3513,9 @@ YY_RULE_SETUP
 	YY_BREAK
 
 
-case 22:
+case 24:
 YY_RULE_SETUP
-#line 156 "json_scanner.yy"
+#line 157 "json_scanner.yy"
 {
                     QString hexDigits = QString::fromUtf8(yytext, yyleng);
                     bool ok;
@@ -3518,10 +3525,10 @@ YY_RULE_SETUP
                     BEGIN(QUOTMARK_OPEN);
                  }
 	YY_BREAK
-case 23:
-/* rule 23 can match eol */
+case 25:
+/* rule 25 can match eol */
 YY_RULE_SETUP
-#line 165 "json_scanner.yy"
+#line 166 "json_scanner.yy"
 {
                     qCritical() << "Invalid hex string";
                     m_yylloc->columns(yyleng);
@@ -3532,49 +3539,49 @@ YY_RULE_SETUP
 	YY_BREAK
 
 /* "Compound type" related tokens */              
-case 24:
+case 26:
 YY_RULE_SETUP
-#line 177 "json_scanner.yy"
+#line 178 "json_scanner.yy"
 {
                 m_yylloc->columns(yyleng);
                 return yy::json_parser::token::COLON;
               }
 	YY_BREAK
-case 25:
+case 27:
 YY_RULE_SETUP
-#line 182 "json_scanner.yy"
+#line 183 "json_scanner.yy"
 {
                 m_yylloc->columns(yyleng);
                 return yy::json_parser::token::COMMA;
               }
 	YY_BREAK
-case 26:
+case 28:
 YY_RULE_SETUP
-#line 187 "json_scanner.yy"
+#line 188 "json_scanner.yy"
 {
                 m_yylloc->columns(yyleng);
                 return yy::json_parser::token::SQUARE_BRACKET_OPEN;
               }
 	YY_BREAK
-case 27:
+case 29:
 YY_RULE_SETUP
-#line 192 "json_scanner.yy"
+#line 193 "json_scanner.yy"
 {
                 m_yylloc->columns(yyleng);
                 return yy::json_parser::token::SQUARE_BRACKET_CLOSE;
               }
 	YY_BREAK
-case 28:
+case 30:
 YY_RULE_SETUP
-#line 197 "json_scanner.yy"
+#line 198 "json_scanner.yy"
 {
                 m_yylloc->columns(yyleng);
                 return yy::json_parser::token::CURLY_BRACKET_OPEN;
               }
 	YY_BREAK
-case 29:
+case 31:
 YY_RULE_SETUP
-#line 202 "json_scanner.yy"
+#line 203 "json_scanner.yy"
 {
                 m_yylloc->columns(yyleng);
                 return yy::json_parser::token::CURLY_BRACKET_CLOSE;
@@ -3582,27 +3589,27 @@ YY_RULE_SETUP
 	YY_BREAK
 /* Extra-JSON numbers */
 
-case 30:
+case 32:
 YY_RULE_SETUP
-#line 210 "json_scanner.yy"
+#line 211 "json_scanner.yy"
 {
                   m_yylloc->columns(yyleng);
                   *m_yylval = QVariant(std::numeric_limits<double>::quiet_NaN());
                   return yy::json_parser::token::NUMBER;
                 }
 	YY_BREAK
-case 31:
+case 33:
 YY_RULE_SETUP
-#line 216 "json_scanner.yy"
+#line 217 "json_scanner.yy"
 {
                     m_yylloc->columns(yyleng);
                     *m_yylval = QVariant(std::numeric_limits<double>::infinity());
                     return yy::json_parser::token::NUMBER;
                 }
 	YY_BREAK
-case 32:
+case 34:
 YY_RULE_SETUP
-#line 222 "json_scanner.yy"
+#line 223 "json_scanner.yy"
 {
                     m_yylloc->columns(yyleng);
                     *m_yylval = QVariant(-std::numeric_limits<double>::infinity());
@@ -3611,9 +3618,9 @@ YY_RULE_SETUP
 	YY_BREAK
 
 /* If all else fails */
-case 33:
+case 35:
 YY_RULE_SETUP
-#line 230 "json_scanner.yy"
+#line 231 "json_scanner.yy"
 {
                 m_yylloc->columns(yyleng);
                 return yy::json_parser::token::INVALID;
@@ -3623,15 +3630,15 @@ case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(QUOTMARK_OPEN):
 case YY_STATE_EOF(HEX_OPEN):
 case YY_STATE_EOF(ALLOW_SPECIAL_NUMBERS):
-#line 235 "json_scanner.yy"
+#line 236 "json_scanner.yy"
 return yy::json_parser::token::END;
 	YY_BREAK
-case 34:
+case 36:
 YY_RULE_SETUP
-#line 236 "json_scanner.yy"
+#line 237 "json_scanner.yy"
 ECHO;
 	YY_BREAK
-#line 3635 "json_scanner.cc"
+#line 3642 "json_scanner.cc"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -4485,4 +4492,4 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 236 "json_scanner.yy"
+#line 237 "json_scanner.yy"

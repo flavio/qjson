@@ -138,6 +138,7 @@ null          {
                 
   [^\"\\]+      {
                   m_currentString.append(QString::fromUtf8(yytext));
+                }
 
   \\            {
                   // ignore
