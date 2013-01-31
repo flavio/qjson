@@ -26,7 +26,9 @@
 #include <QtCore/QObject>
 #include <QtCore/QRunnable>
 
+QT_BEGIN_NAMESPACE
 class QVariant;
+QT_END_NAMESPACE
 
 namespace QJson {
   /**

@@ -26,9 +26,11 @@
 #include <QtCore/QObject>
 #include <QtCore/QRunnable>
 
+QT_BEGIN_NAMESPACE
 class QByteArray;
 class QString;
 class QVariant;
+QT_END_NAMESPACE
 
 namespace QJson {
   /**

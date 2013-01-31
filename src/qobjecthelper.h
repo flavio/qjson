@@ -27,7 +27,9 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariantMap>
 
+QT_BEGIN_NAMESPACE
 class QObject;
+QT_END_NAMESPACE
 
 namespace QJson {
   /**

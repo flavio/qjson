@@ -23,8 +23,10 @@
 
 #include "qjson_export.h"
 
+QT_BEGIN_NAMESPACE
 class QIODevice;
 class QVariant;
+QT_END_NAMESPACE
 
 /**
  * Namespace used by QJson
