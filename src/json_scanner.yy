@@ -77,6 +77,10 @@ null          {
 [1-9][0-9]+   {
                 m_yylloc->columns(yyleng);
                 *m_yylval = QVariant(strtoull(yytext, NULL, 10));
+                if (errno == ERANGE) {
+                    qCritical() << "Number is out of range: " << yytext;
+                    return yy::json_parser::token::INVALID;
+                }
                 return yy::json_parser::token::NUMBER;
               }
 
@@ -84,12 +88,20 @@ null          {
 -[1-9][0-9]+  {
                 m_yylloc->columns(yyleng);
                 *m_yylval = QVariant(strtoll(yytext, NULL, 10));
+                if (errno == ERANGE) {
+                    qCritical() << "Number is out of range: " << yytext;
+                    return yy::json_parser::token::INVALID;
+                }
                 return yy::json_parser::token::NUMBER;
               }
 
 -?(([0-9])|([1-9][0-9]+))(\.[0-9]+)?([Ee][+\-]?[0-9]+)? {
                 m_yylloc->columns(yyleng);
                 *m_yylval = QVariant(strtod(yytext, NULL));
+                if (errno == ERANGE) {
+                    qCritical() << "Number is out of range: " << yytext;
+                    return yy::json_parser::token::INVALID;
+                }
                 return yy::json_parser::token::NUMBER;
               }
 
