@@ -199,7 +199,7 @@ void TestScanner::scanSpecialNumbers() {
 
   double doubleResult = yylval.toDouble();
 
-  #ifdef Q_OS_SYMBIAN
+  #if defined(Q_OS_SYMBIAN) || defined(Q_OS_ANDROID) || defined(Q_OS_BLACKBERRY)
     QCOMPARE(bool(isinf(doubleResult)), isInfinity);
   #else
     // skip this test for MSVC, because there is no "isinf" function.
@@ -210,7 +210,7 @@ void TestScanner::scanSpecialNumbers() {
 
   QCOMPARE(doubleResult<0, isNegative);
 
-  #ifdef Q_OS_SYMBIAN
+  #if defined(Q_OS_SYMBIAN) || defined(Q_OS_ANDROID) || defined(Q_OS_BLACKBERRY)
       QCOMPARE(bool(isnan(doubleResult)), isNan);
   #else
     // skip this test for MSVC, because there is no "isinf" function.
