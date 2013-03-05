@@ -1,6 +1,7 @@
 /* This file is part of qjson
   *
   * Copyright (C) 2009 Michael Leupold <lemma@confuego.org>
+  * Copyright (C) 2013 Silvio Moioli <silvio@moioli.net>
   *
   * This library is free software; you can redistribute it and/or
   * modify it under the terms of the GNU Lesser General Public
@@ -27,7 +28,7 @@
 #ifdef QJSON_VERBOSE_DEBUG_OUTPUT
   inline QDebug qjsonDebug() { return QDebug(QtDebugMsg); }
 #else
-  inline QNoDebug qjsonDebug() { return QNoDebug(); }
+  #define qjsonDebug() if(false) QDebug(QtDebugMsg)
 #endif
 
 #endif
