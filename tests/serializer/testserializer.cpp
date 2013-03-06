@@ -104,7 +104,7 @@ void TestSerializer::testReadWrite_data()
     QTest::newRow( "basic array" ) << QByteArray("[\"person\",\"bar\"]");
     QTest::newRow( "single int array" ) << QByteArray("[6]");
     QTest::newRow( "int array" ) << QByteArray("[6,5,6,7]");
-    const QByteArray json = "[1,2.4, -100, -3.4, -5e+, 2e,3e+,4.3E,5.4E-]";
+    const QByteArray json = "[1,2.4, -100, -3.4, -5e+0, 2e0,3e+0,4.3E0,5.4E-0]";
     QTest::newRow( QByteArray("array of various numbers") ) << json;
 
     // document tests
