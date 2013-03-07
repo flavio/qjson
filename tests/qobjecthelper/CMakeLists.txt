@@ -2,8 +2,10 @@
 
 SET( QT_USE_QTTEST TRUE )
 
-# Use it
-INCLUDE( ${QT_USE_FILE} )
+IF (NOT Qt5Core_FOUND)
+  # Use it
+  INCLUDE( ${QT_USE_FILE} )
+ENDIF()
 
 INCLUDE(AddFileDependencies)
 
@@ -14,7 +16,9 @@ INCLUDE_DIRECTORIES(
 )
 
 SET (qjson_test_support_SRCS person.cpp)
-QT4_WRAP_CPP(qjson_test_support_MOC_SRCS person.h)
+IF (NOT Qt5Core_FOUND)
+  QT4_WRAP_CPP(qjson_test_support_MOC_SRCS person.h)
+ENDIF()
 
 ADD_LIBRARY (qjson_test_support STATIC ${qjson_test_support_SRCS}
                                        ${qjson_test_support_MOC_SRCS})
@@ -26,7 +30,9 @@ SET( UNIT_TESTS
 # Build the tests
 FOREACH(test ${UNIT_TESTS})
   MESSAGE(STATUS "Building ${test}")
-  QT4_WRAP_CPP(MOC_SOURCE ${test}.cpp)
+  IF (NOT Qt5Core_FOUND)
+    QT4_WRAP_CPP(MOC_SOURCE ${test}.cpp)
+  ENDIF()
   ADD_EXECUTABLE(
     ${test}
     ${test}.cpp
@@ -36,6 +42,7 @@ FOREACH(test ${UNIT_TESTS})
   TARGET_LINK_LIBRARIES(
     ${test}
     ${QT_LIBRARIES}
+    ${TEST_LIBRARIES}
     qjson
     qjson_test_support
   )

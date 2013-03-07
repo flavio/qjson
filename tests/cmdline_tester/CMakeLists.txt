@@ -1,7 +1,17 @@
 ##### Probably don't want to edit below this line #####
 
-# Use it
-INCLUDE( ${QT_USE_FILE} )
+IF (WIN32 AND Qt5Core_FOUND)
+  FIND_PACKAGE( Qt5Widgets REQUIRED )
+
+  INCLUDE_DIRECTORIES(${Qt5Widgets_INCLUDE_DIRS})
+  ADD_DEFINITIONS(${Qt5Widgets_DEFINITIONS})
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
+ENDIF()
+
+IF (NOT Qt5Core_FOUND)
+  # Use it
+  INCLUDE( ${QT_USE_FILE} )
+ENDIF()
 
 INCLUDE(AddFileDependencies)
 
@@ -20,5 +30,6 @@ ADD_EXECUTABLE(
 TARGET_LINK_LIBRARIES(
   cmdline_tester
   ${QT_LIBRARIES}
+  ${Qt5Widgets_LIBRARIES}
   qjson
 )

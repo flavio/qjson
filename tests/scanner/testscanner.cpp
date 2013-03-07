@@ -249,8 +249,9 @@ void TestScanner::scanSpecialNumbers_data() {
 
 QTEST_MAIN(TestScanner)
 
-#ifdef QMAKE_BUILD
-  #include "testscanner.moc"
+#if !defined(USING_QT5)
+// using Qt4 rather then Qt5
+#include "moc_testscanner.cxx"
 #else
-  #include "moc_testscanner.cxx"
+#include "testscanner.moc"
 #endif

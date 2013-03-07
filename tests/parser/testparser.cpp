@@ -393,7 +393,7 @@ void TestParser::testReadWrite_data()
 
     // array tests
     QTest::newRow( "empty array" ) << QVariant(QVariantList());
-    
+
     // basic array
     QVariantList list;
     list << QString(QLatin1String("hello"));
@@ -408,8 +408,9 @@ void TestParser::testReadWrite_data()
 
 QTEST_MAIN(TestParser)
 
-#ifdef QMAKE_BUILD
-  #include "testparser.moc"
+#if !defined(USING_QT5)
+// using Qt4 rather then Qt5
+#include "moc_testparser.cxx"
 #else
-  #include "moc_testparser.cxx"
+#include "testparser.moc"
 #endif

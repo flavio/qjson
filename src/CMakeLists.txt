@@ -13,7 +13,9 @@ set(qjson_MOC_HDRS
   serializerrunnable.h
 )
 
-qt4_wrap_cpp(qjson_MOC_SRCS ${qjson_MOC_HDRS})
+IF (NOT Qt5Core_FOUND)
+  qt4_wrap_cpp(qjson_MOC_SRCS ${qjson_MOC_HDRS})
+ENDIF()
 
 set (qjson_SRCS parser.cpp qobjecthelper.cpp json_scanner.cpp json_parser.cc parserrunnable.cpp serializer.cpp serializerrunnable.cpp)
 set (qjson_HEADERS parser.h parserrunnable.h qobjecthelper.h serializer.h serializerrunnable.h qjson_export.h)
@@ -22,7 +24,11 @@ set (qjson_HEADERS parser.h parserrunnable.h qobjecthelper.h serializer.h serial
 INCLUDE_DIRECTORIES(.)
 
 add_library (qjson SHARED ${qjson_SRCS} ${qjson_MOC_SRCS} ${qjson_HEADERS})
-target_link_libraries( qjson ${QT_LIBRARIES})
+IF (Qt5Core_FOUND)
+  target_link_libraries( qjson ${Qt5Core_LIBRARIES})
+ELSE()
+  target_link_libraries( qjson ${QT_LIBRARIES})
+ENDIF()
 
 if(NOT android)
 	set_target_properties(qjson PROPERTIES

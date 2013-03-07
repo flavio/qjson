@@ -2,8 +2,8 @@ PROJECT(qjson)
 
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQT_NO_CAST_FROM_ASCII -DQT_NO_CAST_TO_ASCII" )
 
-# Stop cmake 2.6 from whining
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+# Force cmake 2.8.8 in order to have a decent support of Qt5
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8)
 CMAKE_POLICY(SET CMP0003 NEW)
 
 set(CMAKE_INSTALL_NAME_DIR ${LIB_INSTALL_DIR})
@@ -31,15 +31,36 @@ SET(FRAMEWORK_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/Library/Frameworks"
 # (This will have no effect with CMake < 2.8)
 SET(QT_USE_IMPORTED_TARGETS TRUE)
 
-# Find Qt4
-FIND_PACKAGE( Qt4 REQUIRED )
+FIND_PACKAGE( Qt5Core QUIET )
+
+IF (Qt5Core_FOUND)
+  MESSAGE ("Qt5 found")
+
+  INCLUDE_DIRECTORIES(${Qt5Core_INCLUDE_DIRS})
+  ADD_DEFINITIONS(${Qt5Core_DEFINITIONS})
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
+
+  # Tell CMake to run moc when necessary:
+  set(CMAKE_AUTOMOC ON)
+  # As moc files are generated in the binary dir, tell CMake
+  # to always look for includes there:
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+  ADD_DEFINITIONS( -DUSING_QT5 )
+ELSE()
+  MESSAGE ("Qt5 not found, searching for Qt4")
+  # Find Qt4
+  FIND_PACKAGE( Qt4 REQUIRED )
+
+  # Include the cmake file needed to use qt4
+  INCLUDE( ${QT_USE_FILE} )
+
+ENDIF()
 
 IF (NOT WIN32)
   SET( QT_DONT_USE_QTGUI TRUE )
 ENDIF()
 
-# Include the cmake file needed to use qt4
-INCLUDE( ${QT_USE_FILE} )
 
 #add extra search paths for libraries and includes
 SET (LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)" )

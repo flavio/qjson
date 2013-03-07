@@ -117,8 +117,9 @@ void TestQObjectHelper::testQVariant2QObject()
 }
 
 QTEST_MAIN(TestQObjectHelper)
-#ifdef QMAKE_BUILD
-  #include "testqobjecthelper.moc"
-#else
+#if !defined(USING_QT5)
+// using Qt4 rather then Qt5
   #include "moc_testqobjecthelper.cxx"
+#else
+  #include "testqobjecthelper.moc"
 #endif

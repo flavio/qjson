@@ -2,8 +2,10 @@
 
 SET( QT_USE_QTTEST TRUE )
 
-# Use it
-INCLUDE( ${QT_USE_FILE} )
+IF (NOT Qt5Core_FOUND)
+  # Use it
+  INCLUDE( ${QT_USE_FILE} )
+ENDIF()
 
 INCLUDE(AddFileDependencies)
 
@@ -20,7 +22,9 @@ SET( UNIT_TESTS
 # Build the tests
 FOREACH(test ${UNIT_TESTS})
   MESSAGE(STATUS "Building ${test}")
-  QT4_WRAP_CPP(MOC_SOURCE ${test}.cpp)
+  IF (NOT Qt5Core_FOUND)
+    QT4_WRAP_CPP(MOC_SOURCE ${test}.cpp)
+  ENDIF()
   ADD_EXECUTABLE(
     ${test}
     ${test}.cpp
@@ -30,6 +34,7 @@ FOREACH(test ${UNIT_TESTS})
   TARGET_LINK_LIBRARIES(
     ${test}
     ${QT_LIBRARIES}
+    ${TEST_LIBRARIES}
     qjson
   )
   if (QJSON_TEST_OUTPUT STREQUAL "xml")

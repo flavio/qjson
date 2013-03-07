@@ -405,7 +405,7 @@ void TestSerializer::testValueFloat()
 
 void TestSerializer::testValueFloat_data()
 {
-  QVariant v (QMetaType::Float);
+  QVariant v;
   float value;
 
   QTest::addColumn<QVariant>( "value" );
@@ -534,8 +534,9 @@ void TestSerializer::testValueHashMap()
 
 QTEST_MAIN(TestSerializer)
 
-#ifdef QMAKE_BUILD
-  #include "testserializer.moc"
+#if !defined(USING_QT5)
+// using Qt4 rather then Qt5
+#include "moc_testserializer.cxx"
 #else
-  #include "moc_testserializer.cxx"
+#include "testserializer.moc"
 #endif

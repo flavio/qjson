@@ -21,7 +21,15 @@
 #include <stdio.h>
 
 #include <QtCore/QStringBuilder>
+#ifdef Q_OS_WIN
+//using Qt5
+#ifdef QT_WIDGETS_LIB
+#include <QtWidgets/QMessageBox>
+#else
+//using Qt4
 #include <QtGui/QMessageBox>
+#endif
+#endif
 
 #include "cmdlineparser.h"
 
