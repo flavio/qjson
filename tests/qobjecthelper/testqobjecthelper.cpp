@@ -117,7 +117,7 @@ void TestQObjectHelper::testQVariant2QObject()
 }
 
 QTEST_MAIN(TestQObjectHelper)
-#if !defined(USING_QT5)
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 // using Qt4 rather then Qt5
   #include "moc_testqobjecthelper.cxx"
 #else
