@@ -18,6 +18,8 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+#include "json_scanner.cc"
+
 
 #include "qjson_debug.h"
 #include "json_scanner.h"
@@ -70,3 +72,5 @@ int JSonScanner::LexerInput(char* buf, int max_size) {
   
   return readBytes;
 }
+
+
