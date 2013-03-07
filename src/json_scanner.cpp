@@ -20,7 +20,6 @@
  */
 #include "json_scanner.cc"
 
-
 #include "qjson_debug.h"
 #include "json_scanner.h"
 #include "json_parser.hh"
