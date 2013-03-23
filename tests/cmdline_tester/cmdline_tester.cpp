@@ -23,6 +23,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
+#include <QtCore/QTextCodec>
 #include <QtCore/QTime>
 
 #include <QJson/Parser>
@@ -34,6 +35,10 @@ using namespace QJson;
 
 int main(int argc, char *argv[]) {
   QCoreApplication app (argc, argv);
+
+  QTextCodec *codec = QTextCodec::codecForName("UTF-8");
+  QTextCodec::setCodecForCStrings(codec);
+
   QTime time;
   int   duration;
 
