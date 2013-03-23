@@ -36,8 +36,10 @@ using namespace QJson;
 int main(int argc, char *argv[]) {
   QCoreApplication app (argc, argv);
 
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
   QTextCodec *codec = QTextCodec::codecForName("UTF-8");
   QTextCodec::setCodecForCStrings(codec);
+#endif
 
   QTime time;
   int   duration;
