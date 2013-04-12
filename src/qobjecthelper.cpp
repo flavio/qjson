@@ -32,6 +32,7 @@ class QObjectHelper::QObjectHelperPrivate {
   public:
     QObjectHelperPrivate() {
       convertEnumToString = false;
+      flags = Flag_All;
     }
 
     QVariantMap qobject2qvariant(const QObject* object);
@@ -40,6 +41,7 @@ class QObjectHelper::QObjectHelperPrivate {
 
     QStringList ignoredProperties;
     bool convertEnumToString;
+    QObjectHelper::Flags flags;
 };
 
 QVariantMap QObjectHelper::QObjectHelperPrivate::qobject2qvariant(const QObject* object)
@@ -65,6 +67,11 @@ QVariantMap QObjectHelper::QObjectHelperPrivate::qobject2qvariant(const QObject*
     } else {
       value = object->property(name);
     }
+
+    if (value.isValid() && value.isNull() && !flags.testFlag(Flag_StoreNullVariants))
+        continue;
+    if (!value.isValid() && !flags.testFlag(Flag_StoreInvalidVariants))
+        continue;
     result[latinName] = value;
  }
   return result;
@@ -111,7 +118,7 @@ QObjectHelper::QObjectHelper()
 
 QObjectHelper::~QObjectHelper()
 {
-  delete d;
+    delete d;
 }
 
 QVariantMap QObjectHelper::qobject2qvariant(const QObject* object)
@@ -142,5 +149,15 @@ void QObjectHelper::convertEnumToString(bool toggle)
 bool QObjectHelper::enumConvertedToString() const
 {
   return d->convertEnumToString;
+}
+
+void QObjectHelper::setFlags(QObjectHelper::Flags flags)
+{
+  d->flags = flags;
+}
+
+QObjectHelper::Flags QObjectHelper::flags() const
+{
+  return d->flags;
 }
 

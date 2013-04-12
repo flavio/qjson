@@ -123,6 +123,44 @@ namespace QJson {
       ~QObjectHelper();
 
       /**
+       * Flag controlling qobject2qvariant() behavior.
+       */
+      enum Flag {
+        /**
+         * No flag.
+         */
+        Flag_None,
+
+        /**
+         * Generate entries for NULL fields (QVariant::isNull() == true).
+         */
+        Flag_StoreNullVariants,
+
+        /**
+         * Generate entries for INVALID fields (QVariant::isValid() == false).
+         */
+        Flag_StoreInvalidVariants,
+
+        /**
+         * Generate entries for all fields.
+         */
+        Flag_All = Flag_StoreNullVariants | Flag_StoreInvalidVariants
+      };
+      Q_DECLARE_FLAGS(Flags, Flag)
+
+      /**
+       * Set flags affecting the serialization process.
+       * @param flags The flags to use.
+       */
+      void setFlags(Flags flags);
+
+      /**
+       * Retrieve the current flags used for the serialization.
+       * @return
+       */
+      Flags flags() const;
+
+      /**
        * Set a list of properties to ignore during the serialization process.
        * Note well: the `objectName` property is always going to be ignored.
        * @param QStringList properties: list of properties to ignore.
