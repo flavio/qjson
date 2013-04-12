@@ -38,6 +38,10 @@ class TestQObjectHelper: public QObject
   private slots:
     void testQObject2QVariant();
     void testQVariant2QObject();
+    void testQObject2QVariant_flagNone();
+    void testQObject2QVariant_flagStoreInvalid();
+    void testQObject2QVariant_flagStoreNull();
+    void testQObject2QVariant_flagAll();
 };
 
 using namespace QJson;
@@ -114,6 +118,116 @@ void TestQObjectHelper::testQVariant2QObject()
   QCOMPARE(person.dob(), dob);
   QCOMPARE(person.customField(), QVariant(nicknames));
   QCOMPARE(person.luckyNumber(), luckyNumber);
+}
+
+void TestQObjectHelper::testQObject2QVariant_flagNone()
+{
+  QString name;             //NULL variant
+  int phoneNumber = 123456;
+  Person::Gender gender = Person::Male;
+  QDate dob;                //NULL variant
+  QVariant nicknames;       //INVALID variant
+  quint16 luckyNumber = 123;
+
+  Person person;
+  person.setName(name);
+  person.setPhoneNumber(phoneNumber);
+  person.setGender(gender);
+  person.setDob(dob);
+  person.setCustomField(nicknames);
+  person.setLuckyNumber(luckyNumber);
+
+  QVariantMap expected;
+  expected[QLatin1String("phoneNumber")] = QVariant(phoneNumber);
+  expected[QLatin1String("gender")] = QVariant(gender);
+  expected[QLatin1String("luckyNumber")] = luckyNumber;
+
+  QVariantMap result = QObjectHelper::qobject2qvariant(&person, QObjectHelper::Flag_None);
+  QCOMPARE(result, expected);
+}
+
+void TestQObjectHelper::testQObject2QVariant_flagStoreInvalid()
+{
+  QString name;             //NULL variant
+  int phoneNumber = 123456;
+  Person::Gender gender = Person::Male;
+  QDate dob;                //NULL variant
+  QVariant nicknames;       //INVALID variant
+  quint16 luckyNumber = 123;
+
+  Person person;
+  person.setName(name);
+  person.setPhoneNumber(phoneNumber);
+  person.setGender(gender);
+  person.setDob(dob);
+  person.setCustomField(nicknames);
+  person.setLuckyNumber(luckyNumber);
+
+  QVariantMap expected;
+  expected[QLatin1String("phoneNumber")] = QVariant(phoneNumber);
+  expected[QLatin1String("gender")] = QVariant(gender);
+  expected[QLatin1String("customField")] = nicknames;
+  expected[QLatin1String("luckyNumber")] = luckyNumber;
+
+  QVariantMap result = QObjectHelper::qobject2qvariant(&person, QObjectHelper::Flag_StoreInvalidVariants);
+  QCOMPARE(result, expected);
+}
+
+void TestQObjectHelper::testQObject2QVariant_flagStoreNull()
+{
+  QString name;             //NULL variant
+  int phoneNumber = 123456;
+  Person::Gender gender = Person::Male;
+  QDate dob;                //NULL variant
+  QVariant nicknames;       //INVALID variant
+  quint16 luckyNumber = 123;
+
+  Person person;
+  person.setName(name);
+  person.setPhoneNumber(phoneNumber);
+  person.setGender(gender);
+  person.setDob(dob);
+  person.setCustomField(nicknames);
+  person.setLuckyNumber(luckyNumber);
+
+  QVariantMap expected;
+  expected[QLatin1String("name")] = QVariant(name);
+  expected[QLatin1String("phoneNumber")] = QVariant(phoneNumber);
+  expected[QLatin1String("gender")] = QVariant(gender);
+  expected[QLatin1String("dob")] = QVariant(dob);
+  expected[QLatin1String("luckyNumber")] = luckyNumber;
+
+  QVariantMap result = QObjectHelper::qobject2qvariant(&person, QObjectHelper::Flag_StoreNullVariants);
+  QCOMPARE(result, expected);
+}
+
+void TestQObjectHelper::testQObject2QVariant_flagAll()
+{
+  QString name;             //NULL variant
+  int phoneNumber = 123456;
+  Person::Gender gender = Person::Male;
+  QDate dob;                //NULL variant
+  QVariant nicknames;       //INVALID variant
+  quint16 luckyNumber = 123;
+
+  Person person;
+  person.setName(name);
+  person.setPhoneNumber(phoneNumber);
+  person.setGender(gender);
+  person.setDob(dob);
+  person.setCustomField(nicknames);
+  person.setLuckyNumber(luckyNumber);
+
+  QVariantMap expected;
+  expected[QLatin1String("name")] = QVariant(name);
+  expected[QLatin1String("phoneNumber")] = QVariant(phoneNumber);
+  expected[QLatin1String("gender")] = QVariant(gender);
+  expected[QLatin1String("dob")] = QVariant(dob);
+  expected[QLatin1String("customField")] = nicknames;
+  expected[QLatin1String("luckyNumber")] = luckyNumber;
+
+  QVariantMap result = QObjectHelper::qobject2qvariant(&person, QObjectHelper::Flag_All);
+  QCOMPARE(result, expected);
 }
 
 QTEST_MAIN(TestQObjectHelper)

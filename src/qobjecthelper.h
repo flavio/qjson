@@ -121,13 +121,49 @@ namespace QJson {
       ~QObjectHelper();
 
     /**
+     * Flag controlling qobject2qvariant() behavior.
+     */
+    enum Flag {
+        /**
+         * No flag.
+         */
+        Flag_None,
+
+        /**
+         * Generate entries for NULL fields (QVariant::isNull() == true).
+         */
+        Flag_StoreNullVariants,
+
+        /**
+         * Generate entries for INVALID fields (QVariant::isValid() == false).
+         */
+        Flag_StoreInvalidVariants,
+
+        /**
+         * Generate entries for all fields.
+         */
+        Flag_All = Flag_StoreNullVariants | Flag_StoreInvalidVariants
+    };
+    Q_DECLARE_FLAGS(Flags, Flag)
+
+    /**
     * This method converts a QObject instance into a QVariantMap.
     *
     * @param object The QObject instance to be converted.
     * @param ignoredProperties Properties that won't be converted.
     */
-    static QVariantMap qobject2qvariant( const QObject* object,
-                                  const QStringList& ignoredProperties = QStringList(QString(QLatin1String("objectName"))));
+    static QVariantMap qobject2qvariant(const QObject* object,
+                                        const QStringList& ignoredProperties);
+
+    /**
+    * This method converts a QObject instance into a QVariantMap.
+    *
+    * @param object The QObject instance to be converted.
+    * @param flags Generation flags.
+    * @param ignoredProperties Properties that won't be converted.
+    */
+    static QVariantMap qobject2qvariant(const QObject* object, Flags flags = Flag_All,
+                                        const QStringList& ignoredProperties = QStringList(QString(QLatin1String("objectName"))));
 
     /**
     * This method converts a QVariantMap instance into a QObject
