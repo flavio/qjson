@@ -36,7 +36,10 @@ namespace QJson {
   * @brief Class used to convert QObject into QVariant and vivce-versa.
   * During these operations only the class attributes defined as properties will
   * be considered.
+  *
   * Properties marked as 'non-stored' will be ignored.
+  *
+  * By default all the QVariants are converted (either invalid and null ones).
   *
   * Suppose the declaration of the Person class looks like this:
   * \code
@@ -125,40 +128,40 @@ namespace QJson {
       /**
        * Flag controlling qobject2qvariant() behavior.
        */
-      enum Flag {
+      enum VariantConversionRule {
         /**
-         * No flag.
+         * Do not convert either null or invalid QVariants
          */
-        Flag_None,
+        Strict,
 
         /**
          * Generate entries for NULL fields (QVariant::isNull() == true).
          */
-        Flag_StoreNullVariants,
+        AcceptNullVariants,
 
         /**
          * Generate entries for INVALID fields (QVariant::isValid() == false).
          */
-        Flag_StoreInvalidVariants,
+        AcceptInvalidVariants,
 
         /**
-         * Generate entries for all fields.
+         * Generate entries for all fields. This is the default flag used.
          */
-        Flag_All = Flag_StoreNullVariants | Flag_StoreInvalidVariants
+        AcceptAllVariants = AcceptNullVariants | AcceptInvalidVariants
       };
-      Q_DECLARE_FLAGS(Flags, Flag)
+      Q_DECLARE_FLAGS(VariantConversionRules, VariantConversionRule)
 
       /**
-       * Set flags affecting the serialization process.
-       * @param flags The flags to use.
+       * Set QVariant conversion rules affecting the serialization process.
+       * @param VariantConversionRules rules The rules to use.
        */
-      void setFlags(Flags flags);
+      void setVariantConversionRules(VariantConversionRules rules);
 
       /**
-       * Retrieve the current flags used for the serialization.
+       * Retrieve the current QVariant conversion rules used for the serialization.
        * @return
        */
-      Flags flags() const;
+      VariantConversionRules variantConversionRules() const;
 
       /**
        * Set a list of properties to ignore during the serialization process.

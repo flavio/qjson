@@ -32,7 +32,7 @@ class QObjectHelper::QObjectHelperPrivate {
   public:
     QObjectHelperPrivate() {
       convertEnumToString = false;
-      flags = Flag_All;
+      variantConversionRules = AcceptAllVariants;
     }
 
     QVariantMap qobject2qvariant(const QObject* object);
@@ -41,7 +41,7 @@ class QObjectHelper::QObjectHelperPrivate {
 
     QStringList ignoredProperties;
     bool convertEnumToString;
-    QObjectHelper::Flags flags;
+    QObjectHelper::VariantConversionRules variantConversionRules;
 };
 
 QVariantMap QObjectHelper::QObjectHelperPrivate::qobject2qvariant(const QObject* object)
@@ -68,9 +68,9 @@ QVariantMap QObjectHelper::QObjectHelperPrivate::qobject2qvariant(const QObject*
       value = object->property(name);
     }
 
-    if (value.isValid() && value.isNull() && !flags.testFlag(Flag_StoreNullVariants))
+    if (value.isValid() && value.isNull() && !variantConversionRules.testFlag(AcceptNullVariants))
         continue;
-    if (!value.isValid() && !flags.testFlag(Flag_StoreInvalidVariants))
+    if (!value.isValid() && !variantConversionRules.testFlag(AcceptInvalidVariants))
         continue;
     result[latinName] = value;
  }
@@ -118,7 +118,7 @@ QObjectHelper::QObjectHelper()
 
 QObjectHelper::~QObjectHelper()
 {
-    delete d;
+  delete d;
 }
 
 QVariantMap QObjectHelper::qobject2qvariant(const QObject* object)
@@ -151,13 +151,13 @@ bool QObjectHelper::enumConvertedToString() const
   return d->convertEnumToString;
 }
 
-void QObjectHelper::setFlags(QObjectHelper::Flags flags)
+void QObjectHelper::setVariantConversionRules(QObjectHelper::VariantConversionRules rules)
 {
-  d->flags = flags;
+  d->variantConversionRules = rules;
 }
 
-QObjectHelper::Flags QObjectHelper::flags() const
+QObjectHelper::VariantConversionRules QObjectHelper::variantConversionRules() const
 {
-  return d->flags;
+  return d->variantConversionRules;
 }
 

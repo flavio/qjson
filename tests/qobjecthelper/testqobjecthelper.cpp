@@ -41,10 +41,10 @@ class TestQObjectHelper: public QObject
     void testIgnorePropertiesDuringQVariantConversion();
     void testEnumToStringConversionDuringQObject2QVariantConversion();
     void testQVariant2QObjectWithEnumConvertedToString();
-    void testQObject2QVariant_flagNone();
-    void testQObject2QVariant_flagStoreInvalid();
-    void testQObject2QVariant_flagStoreNull();
-    void testQObject2QVariant_flagAll();
+    void testQObject2QVariantStrictVariantConversionRule();
+    void testQObject2QVariantAllowInvalidVariantsRule();
+    void testQObject2QVariantAllowNullVariantsRule();
+    void testQObject2QVariantAllowAllVariantsRule();
 };
 
 using namespace QJson;
@@ -231,7 +231,7 @@ void TestQObjectHelper::testQVariant2QObjectWithEnumConvertedToString()
   QCOMPARE(person.luckyNumber(), luckyNumber);
 }
 
-void TestQObjectHelper::testQObject2QVariant_flagNone()
+void TestQObjectHelper::testQObject2QVariantStrictVariantConversionRule()
 {
   QString name;             //NULL variant
   int phoneNumber = 123456;
@@ -254,12 +254,12 @@ void TestQObjectHelper::testQObject2QVariant_flagNone()
   expected[QLatin1String("luckyNumber")] = luckyNumber;
 
   QObjectHelper helper;
-  helper.setFlags(QObjectHelper::Flag_None);
+  helper.setVariantConversionRules(QObjectHelper::Strict);
   QVariantMap result = helper.qobject2qvariant(&person);
   QCOMPARE(result, expected);
 }
 
-void TestQObjectHelper::testQObject2QVariant_flagStoreInvalid()
+void TestQObjectHelper::testQObject2QVariantAllowInvalidVariantsRule()
 {
   QString name;             //NULL variant
   int phoneNumber = 123456;
@@ -283,12 +283,13 @@ void TestQObjectHelper::testQObject2QVariant_flagStoreInvalid()
   expected[QLatin1String("luckyNumber")] = luckyNumber;
 
   QObjectHelper helper;
-  helper.setFlags(QObjectHelper::Flag_StoreInvalidVariants);
+  helper.setVariantConversionRules(QObjectHelper::AcceptInvalidVariants);
   QVariantMap result = helper.qobject2qvariant(&person);
+  qDebug() << "merda" << result;
   QCOMPARE(result, expected);
 }
 
-void TestQObjectHelper::testQObject2QVariant_flagStoreNull()
+void TestQObjectHelper::testQObject2QVariantAllowNullVariantsRule()
 {
   QString name;             //NULL variant
   int phoneNumber = 123456;
@@ -313,12 +314,12 @@ void TestQObjectHelper::testQObject2QVariant_flagStoreNull()
   expected[QLatin1String("luckyNumber")] = luckyNumber;
 
   QObjectHelper helper;
-  helper.setFlags(QObjectHelper::Flag_StoreNullVariants);
+  helper.setVariantConversionRules(QObjectHelper::AcceptNullVariants);
   QVariantMap result = helper.qobject2qvariant(&person);
   QCOMPARE(result, expected);
 }
 
-void TestQObjectHelper::testQObject2QVariant_flagAll()
+void TestQObjectHelper::testQObject2QVariantAllowAllVariantsRule()
 {
   QString name;             //NULL variant
   int phoneNumber = 123456;
@@ -344,7 +345,7 @@ void TestQObjectHelper::testQObject2QVariant_flagAll()
   expected[QLatin1String("luckyNumber")] = luckyNumber;
 
   QObjectHelper helper;
-  helper.setFlags(QObjectHelper::Flag_All);
+  helper.setVariantConversionRules(QObjectHelper::AcceptAllVariants);
   QVariantMap result = helper.qobject2qvariant(&person);
   QCOMPARE(result, expected);
 }
