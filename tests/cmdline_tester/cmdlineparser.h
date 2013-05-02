@@ -37,6 +37,7 @@ namespace QJson {
 
       void setIndentationMode(const IndentMode &mode);
       IndentMode indentationMode() const;
+      int indentationWidth() const;
       QString helpFile() const;
       QString file() const;
       bool serialize();
@@ -47,11 +48,13 @@ namespace QJson {
     private:
       bool hasMoreArgs() const;
       const QString &nextArg();
+      void handleSetIndentationWidth();
       void handleSetIndentationMode();
 
       QStringList m_arguments;
       int m_pos;
       IndentMode m_indentationMode;
+      int m_indentationWidth;
       QString m_file;
       bool m_serialize;
       bool m_quiet;

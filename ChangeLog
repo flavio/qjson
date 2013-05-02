@@ -9,7 +9,11 @@
 				serialization
 			- make possible to convert Enum values to strings (rather then int)
 				during QObject -> QVariant conversion.
-		- Serializer: drop deprecated "serialize(QVariant)" API
+		- Serializer:
+			- drop deprecated "serialize(QVariant)" API.
+			- cleanup indentation modes.
+			- make possible to specify the number of white spaces used at
+			indentation time.
 
 ----------------------------------------------------------------------
 Mon Jan 28 23:01:40 CET 2013  Flavio Castelli <flavio@castelli.name>

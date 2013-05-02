@@ -78,6 +78,7 @@ int main(int argc, char *argv[]) {
     qDebug() << "Serializing... ";
     QJson::Serializer serializer;
     serializer.setIndentMode(cmd.indentationMode());
+    serializer.setTabWidth(cmd.indentationWidth());
     time.start();
     QByteArray b = serializer.serialize(data, &ok);
     if (!ok) {

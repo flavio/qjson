@@ -33,39 +33,22 @@ namespace QJson {
   /**
    @brief How the indentation should work.
    \verbatim
-   none (default) : { "foo" : 0, "foo1" : 1, "foo2" : [ { "foo3" : 3, "foo4" : 4 } ] }
-  
-   compact : {"foo":0,"foo1":1,"foo2":[{"foo3":3,"foo4":4}]}
-  
-   minimum : { "foo" : 0, "foo1" : 1, "foo2" : [
-               { "foo3" : 3, "foo4" : 4 }
-             ] }
-  
-   medium : {
-             "foo" : 0, "foo1" : 1, "foo2" : [
-              {
-               "foo3" : 3, "foo4" : 4
-              }
-             ]
-            }
+   none (default) : {"foo":0,"foo1":1,"foo2":[{"foo3":3,"foo4":4}]}
    full : {
-           "foo" : 0,
-           "foo1" : 1,
-           "foo2" : [
-            {
-             "foo3" : 3,
-             "foo4" : 4
-            }
-           ]
+            "foo" : 0,
+            "foo1" : 1,
+            "foo2" : [
+              {
+                "foo3" : 3,
+                "foo4" : 4
+              }
+            ]
           }
   
    \endverbatim
   */
   enum IndentMode {
     IndentNone,
-    IndentCompact,
-    IndentMinimum,
-    IndentMedium,
     IndentFull
   };
   /**
@@ -162,6 +145,17 @@ namespace QJson {
      * Returns one of the indentation modes defined in QJson::IndentMode
      */
     IndentMode indentMode() const;
+
+
+    /**
+     *  @param width indent with width spaces. Valid only when indentation mode is set to IndentFull.
+     */
+    void setTabWidth(const int width);
+
+    /**
+    *  @param number of white spaces used when indentation mode is set to IndentFull
+    */
+    int tabWidth() const;
 
     /**
      * Returns the error message

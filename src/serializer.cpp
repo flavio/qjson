@@ -37,6 +37,7 @@ class Serializer::SerializerPrivate {
     SerializerPrivate() :
       specialNumbersAllowed(false),
       indentMode(QJson::IndentNone),
+      indentWidth(2),
       doublePrecision(6) {
         errorMessage.clear();
     }
@@ -44,18 +45,19 @@ class Serializer::SerializerPrivate {
     bool specialNumbersAllowed;
     IndentMode indentMode;
     int doublePrecision;
+    int indentWidth;
     QByteArray buildIndent(int spaces);
     QByteArray serialize( const QVariant &v, bool *ok, int indentLevel = 0);
     QString sanitizeString( QString str );
-    QByteArray join( const QList<QByteArray>& list, const QByteArray& sep );
+    QByteArray join( const QList<QByteArray>& list, const QByteArray& sep, const QByteArray& indent = "");
 };
 
-QByteArray Serializer::SerializerPrivate::join( const QList<QByteArray>& list, const QByteArray& sep ) {
+QByteArray Serializer::SerializerPrivate::join( const QList<QByteArray>& list, const QByteArray& sep, const QByteArray& indent ) {
   QByteArray res;
   Q_FOREACH( const QByteArray& i, list ) {
     if ( !res.isEmpty() )
       res += sep;
-    res += i;
+    res += indent + i;
   }
   return res;
 }
@@ -80,40 +82,22 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
       values << serializedValue;
     }
 
-    if (indentMode == QJson::IndentMinimum) {
-      QByteArray indent = buildIndent(indentLevel - 1);
-      str = "[\n" + join( values, ",\n" ) + "\n" + indent + "]";
-    }
-    else if (indentMode == QJson::IndentMedium || indentMode == QJson::IndentFull) {
+    if (indentMode == QJson::IndentFull) {
       QByteArray indent = buildIndent(indentLevel);
-      str = "[\n" + join( values, ",\n" ) + "\n" + indent + "]";
-    }
-    else if (indentMode == QJson::IndentCompact) {
+      str = "[\n" + join( values, ",\n", buildIndent(indentLevel + 1) ) + "\n" + indent + "]";
+    } else
       str = "[" + join( values, "," ) + "]";
-    }
-    else {
-      str = "[ " + join( values, ", " ) + " ]";
-    }
 
   } else if ( v.type() == QVariant::Map ) { // variant is a map?
     const QVariantMap vmap = v.toMap();
     QMapIterator<QString, QVariant> it( vmap );
 
-    if (indentMode == QJson::IndentMinimum) {
-      QByteArray indent = buildIndent(indentLevel);
-      str = indent + "{ ";
-    }
-    else if (indentMode == QJson::IndentMedium || indentMode == QJson::IndentFull) {
+    if (indentMode == QJson::IndentFull) {
       QByteArray indent = buildIndent(indentLevel);
       QByteArray nextindent = buildIndent(indentLevel + 1);
-      str = indent + "{\n" + nextindent;
-    }
-    else if (indentMode == QJson::IndentCompact) {
+      str = "{\n" + nextindent;
+    } else
       str = "{";
-    }
-    else {
-      str = "{ ";
-    }
 
     QList<QByteArray> pairs;
     while ( it.hasNext() ) {
@@ -126,54 +110,34 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
       }
       QByteArray key   = sanitizeString( it.key() ).toUtf8();
       QByteArray value = serializedValue;
-      if (indentMode == QJson::IndentCompact) {
+      if (indentMode == QJson::IndentNone)
         pairs << key + ":" + value;
-      } else {
+      else
         pairs << key + " : " + value;
-      }
     }
 
     if (indentMode == QJson::IndentFull) {
       QByteArray indent = buildIndent(indentLevel + 1);
       str += join( pairs, ",\n" + indent);
-    }
-    else if (indentMode == QJson::IndentCompact) {
+    } else
       str += join( pairs, "," );
-    }
-    else {
-      str += join( pairs, ", " );
-    }
 
-    if (indentMode == QJson::IndentMedium || indentMode == QJson::IndentFull) {
+    if (indentMode == QJson::IndentFull) {
       QByteArray indent = buildIndent(indentLevel);
       str += "\n" + indent + "}";
-    }
-    else if (indentMode == QJson::IndentCompact) {
+    } else
       str += "}";
-    }
-    else {
-      str += " }";
-    }
 
   } else if ( v.type() == QVariant::Hash ) { // variant is a hash?
     const QVariantHash vhash = v.toHash();
     QHashIterator<QString, QVariant> it( vhash );
 
-    if (indentMode == QJson::IndentMinimum) {
-      QByteArray indent = buildIndent(indentLevel);
-      str = indent + "{ ";
-    }
-    else if (indentMode == QJson::IndentMedium || indentMode == QJson::IndentFull) {
+    if (indentMode == QJson::IndentFull) {
       QByteArray indent = buildIndent(indentLevel);
       QByteArray nextindent = buildIndent(indentLevel + 1);
       str = indent + "{\n" + nextindent;
-    }
-    else if (indentMode == QJson::IndentCompact) {
+    } else
       str = "{";
-    }
-    else {
-      str = "{ ";
-    }
 
     QList<QByteArray> pairs;
     while ( it.hasNext() ) {
@@ -186,34 +150,23 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
       }
       QByteArray key   = sanitizeString( it.key() ).toUtf8();
       QByteArray value = serializedValue;
-      if (indentMode == QJson::IndentCompact) {
+      if (indentMode == QJson::IndentNone)
         pairs << key + ":" + value;
-      } else {
+      else
         pairs << key + " : " + value;
-      }
     }
 
     if (indentMode == QJson::IndentFull) {
       QByteArray indent = buildIndent(indentLevel + 1);
       str += join( pairs, ",\n" + indent);
-    }
-    else if (indentMode == QJson::IndentCompact) {
+    } else
       str += join( pairs, "," );
-    }
-    else {
-      str += join( pairs, ", " );
-    }
 
-    if (indentMode == QJson::IndentMedium || indentMode == QJson::IndentFull) {
+    if (indentMode == QJson::IndentFull) {
       QByteArray indent = buildIndent(indentLevel);
       str += "\n" + indent + "}";
-    }
-    else if (indentMode == QJson::IndentCompact) {
+    } else
       str += "}";
-    }
-    else {
-      str += " }";
-    }
 
   } else if (( v.type() == QVariant::String ) ||  ( v.type() == QVariant::ByteArray )) { // a string or a byte array?
     str = sanitizeString( v.toString() ).toUtf8();
@@ -288,7 +241,7 @@ QByteArray Serializer::SerializerPrivate::buildIndent(int spaces)
    if (spaces < 0) {
      spaces = 0;
    }
-   for (int i = 0; i < spaces; i++ ) {
+   for (int i = 0; i < spaces * indentWidth; i++ ) {
      indent += " ";
    }
    return indent;
@@ -387,6 +340,15 @@ bool QJson::Serializer::specialNumbersAllowed() const {
 
 void QJson::Serializer::setIndentMode(IndentMode mode) {
   d->indentMode = mode;
+}
+
+void QJson::Serializer::setTabWidth(const int width) {
+  if (width >= 0)
+    d->indentWidth = width;
+}
+
+int QJson::Serializer::tabWidth() const {
+  return d->indentWidth;
 }
 
 void QJson::Serializer::setDoublePrecision(int precision) {

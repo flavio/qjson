@@ -122,9 +122,7 @@ void TestSerializer::testReadWrite_data()
 void TestSerializer::testIndentation()
 {
   QFETCH( QByteArray, json );
-  QFETCH( QByteArray, expected_compact );
-  QFETCH( QByteArray, expected_min );
-  QFETCH( QByteArray, expected_med );
+  QFETCH( QByteArray, expected_none );
   QFETCH( QByteArray, expected_full );
 
   // parse
@@ -137,30 +135,12 @@ void TestSerializer::testIndentation()
   QVariant reparsed;
   QByteArray serialized;
 
-  // serialize with indent compact and reparse
-  serializer.setIndentMode(QJson::IndentCompact);
+  // serialize with indent none and reparse
+  serializer.setIndentMode(QJson::IndentNone);
   serialized = serializer.serialize( parsed, &ok);
   QVERIFY(ok);
-  QCOMPARE( serialized, expected_compact);
+  QCOMPARE( serialized, expected_none);
   reparsed = parser.parse( serialized, &ok);
-  QVERIFY(ok);
-  QCOMPARE( parsed, reparsed);
-
-  // serialize with indent minimum and reparse
-  serializer.setIndentMode(QJson::IndentMinimum);
-  serialized = serializer.serialize( parsed, &ok);
-  QVERIFY(ok);
-  QCOMPARE( serialized, expected_min);
-  reparsed = parser.parse( serialized, &ok);
-  QVERIFY(ok);
-  QCOMPARE( parsed, reparsed);
-
-  // serialize with indent medium and reparse
-  serializer.setIndentMode(QJson::IndentMedium);
-  serialized = serializer.serialize( parsed, &ok);
-  QVERIFY(ok);
-  QCOMPARE( serialized, expected_med);
-  reparsed = parser.parse( serialized, &ok );
   QVERIFY(ok);
   QCOMPARE( parsed, reparsed);
 
@@ -177,16 +157,12 @@ void TestSerializer::testIndentation()
 void TestSerializer::testIndentation_data()
 {
     QTest::addColumn<QByteArray>( "json" );
-    QTest::addColumn<QByteArray>( "expected_compact" );
-    QTest::addColumn<QByteArray>( "expected_min" );
-    QTest::addColumn<QByteArray>( "expected_med" );
+    QTest::addColumn<QByteArray>( "expected_none" );
     QTest::addColumn<QByteArray>( "expected_full" );
     const QByteArray json = " { \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [ { \"foo3\" : 3, \"foo4\" : 4 } ] }";
-    const QByteArray ex_compact = "{\"foo\":0,\"foo1\":1,\"foo2\":[{\"foo3\":3,\"foo4\":4}]}";
-    const QByteArray ex_min = "{ \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [\n  { \"foo3\" : 3, \"foo4\" : 4 }\n] }";
-    const QByteArray ex_med = "{\n \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [\n  {\n   \"foo3\" : 3, \"foo4\" : 4\n  }\n ]\n}";
-    const QByteArray ex_full = "{\n \"foo\" : 0,\n \"foo1\" : 1,\n \"foo2\" : [\n  {\n   \"foo3\" : 3,\n   \"foo4\" : 4\n  }\n ]\n}";
-    QTest::newRow( "test indents" ) << json << ex_compact << ex_min << ex_med << ex_full;
+    const QByteArray ex_none = "{\"foo\":0,\"foo1\":1,\"foo2\":[{\"foo3\":3,\"foo4\":4}]}";
+    const QByteArray ex_full = "{\n  \"foo\" : 0,\n  \"foo1\" : 1,\n  \"foo2\" : [\n    {\n      \"foo3\" : 3,\n      \"foo4\" : 4\n    }\n  ]\n}";
+    QTest::newRow( "test indents" ) << json << ex_none << ex_full;
 }
 
 void TestSerializer::valueTest( const QVariant& value, const QString& expectedRegExp, bool errorExpected )
@@ -479,7 +455,7 @@ void TestSerializer::testSerializetoQIODevice() {
   serializer.serialize(variant, &buffer, &ok);
 
   QCOMPARE(QString(QLatin1String(buffer.data())),
-           QString(QLatin1String("[ \"Hello\", \"world!\" ]")));
+           QString(QLatin1String("[\"Hello\",\"world!\"]")));
   QVERIFY(ok);
 }
 
@@ -492,7 +468,7 @@ void TestSerializer::testSerializeWithoutOkParam() {
   Serializer serializer;
 
   const QByteArray serialized = serializer.serialize(variant);
-  const QByteArray expected = "[ \"Hello\", \"world!\" ]";
+  const QByteArray expected = "[\"Hello\",\"world!\"]";
   QCOMPARE(expected, serialized);
 
 
