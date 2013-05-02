@@ -28,7 +28,12 @@
 %{
   #include "json_scanner.h"
   #include "json_parser.hh"
-  
+
+  #ifdef _WIN32
+  #define strtoll _strtoi64
+  #define strtoull _strtoui64
+  #endif
+
   #define YY_USER_INIT if(m_allowSpecialNumbers) { \
     BEGIN(ALLOW_SPECIAL_NUMBERS); \
   }
