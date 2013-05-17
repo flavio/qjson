@@ -38,6 +38,7 @@ class TestParser: public QObject
     void parseEmptyValue();
     void parseUrl();
     void parseMultipleObject();
+    void reuseSameParserMultipleTimes();
 
     void parseSimpleArray();
     void parseInvalidObject();
@@ -100,6 +101,32 @@ void TestParser::parseEmptyValue() {
 
   QString value = result.toMap().value(QLatin1String("value")).toString();
   QVERIFY (value.isEmpty());
+}
+
+void TestParser::reuseSameParserMultipleTimes() {
+  QStringList files;
+  files << QLatin1String(":/fixtures/url1.json");
+  files << QLatin1String(":/fixtures/url2.json");
+  files << QLatin1String(":/fixtures/url3.json");
+  files << QLatin1String(":/fixtures/url4.json");
+  files << QLatin1String(":/fixtures/url5.json");
+  files << QLatin1String(":/fixtures/url6.json");
+  files << QLatin1String(":/fixtures/url7.json");
+
+  QList<QByteArray> contents;
+  foreach(QString filename, files) {
+    QFile file(filename);
+    contents  << file.readAll();
+  }
+
+  Parser parser;
+  bool ok;
+  for(int i = 0; i < 10; i++) {
+    foreach(QByteArray data, contents) {
+      QVariant result = parser.parse (data, &ok);
+      QVERIFY(ok);
+    }
+  }
 }
 
 void TestParser::parseInvalidObject() {

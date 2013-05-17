@@ -19,15 +19,19 @@ SET( UNIT_TESTS
   testparser
 )
 
+SET(testparser_RESOURCES fixtures.qrc)
+
 # Build the tests
 FOREACH(test ${UNIT_TESTS})
   MESSAGE(STATUS "Building ${test}")
   IF (NOT Qt5Core_FOUND)
+    QT4_ADD_RESOURCES(testparser_RESOURCES_RCC ${testparser_RESOURCES})
     QT4_WRAP_CPP(MOC_SOURCE ${test}.cpp)
   ENDIF()
   ADD_EXECUTABLE(
     ${test}
     ${test}.cpp
+    ${testparser_RESOURCES_RCC}
   )
 
   ADD_FILE_DEPENDENCIES(${test}.cpp ${MOC_SOURCE})

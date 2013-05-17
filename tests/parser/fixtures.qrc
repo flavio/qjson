@@ -1,0 +1,11 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+  <file>fixtures/url1.json</file>
+  <file>fixtures/url2.json</file>
+  <file>fixtures/url3.json</file>
+  <file>fixtures/url4.json</file>
+  <file>fixtures/url5.json</file>
+  <file>fixtures/url6.json</file>
+  <file>fixtures/url7.json</file>
+</qresource>
+</RCC>
