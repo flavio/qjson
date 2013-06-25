@@ -3152,7 +3152,7 @@ static yyconst yy_state_type yy_NUL_trans[87] =
   #include "json_scanner.h"
   #include "json_parser.hh"
 
-  #ifdef _WIN32
+  #if defined(_WIN32) && !defined(__MINGW32__)
   #define strtoll _strtoi64
   #define strtoull _strtoui64
   #endif
