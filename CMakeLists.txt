@@ -31,7 +31,10 @@ SET(FRAMEWORK_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/Library/Frameworks"
 # (This will have no effect with CMake < 2.8)
 SET(QT_USE_IMPORTED_TARGETS TRUE)
 
-FIND_PACKAGE( Qt5Core QUIET )
+option(QT4_BUILD "Force building with Qt4 even if Qt5 is found")
+IF (NOT QT4_BUILD)
+  FIND_PACKAGE( Qt5Core QUIET )
+ENDIF()
 
 IF (Qt5Core_FOUND)
   MESSAGE ("Qt5 found")
