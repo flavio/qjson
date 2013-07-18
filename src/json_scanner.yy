@@ -103,7 +103,12 @@ null          {
 
 -?(([0-9])|([1-9][0-9]+))(\.[0-9]+)?([Ee][+\-]?[0-9]+)? {
                 m_yylloc->columns(yyleng);
-                *m_yylval = QVariant(strtod_l(yytext, NULL, m_C_locale));
+				// Get the old locale
+				char *old_locale = strdup (setlocale(LC_NUMERIC, NULL));
+				// Change locale to match JSON doubles
+				setlocale(LC_NUMERIC,"en_US");
+                *m_yylval = QVariant(strtod_l(yytext, NULL));
+				setlocale(LC_NUMERIC, old_locale);
                 if (errno == ERANGE) {
                     qCritical() << "Number is out of range: " << yytext;
                     return yy::json_parser::token::INVALID;
