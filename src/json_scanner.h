@@ -57,7 +57,6 @@ class JSonScanner : public yyFlexLexer
         yy::location* m_yylloc;
         bool m_criticalError;
         QString m_currentString;
-        locale_t m_C_locale;
 };
 
 #endif

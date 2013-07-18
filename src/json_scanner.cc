@@ -3394,7 +3394,12 @@ YY_RULE_SETUP
 #line 83 "json_scanner.yy"
 {
                 m_yylloc->columns(yyleng);
-                *m_yylval = QVariant(strtoull(yytext, NULL, 10));
+                // Get the old locale
+                char *old_locale = strdup (setlocale(LC_NUMERIC, NULL));
+                // Change locale to match JSON doubles
+                setlocale(LC_NUMERIC,"en_US");
+                *m_yylval = QVariant(strtod(yytext, NULL));
+                setlocale(LC_NUMERIC, old_locale);
                 if (errno == ERANGE) {
                     qCritical() << "Number is out of range: " << yytext;
                     return yy::json_parser::token::INVALID;
@@ -3422,7 +3427,13 @@ YY_RULE_SETUP
 #line 104 "json_scanner.yy"
 {
                 m_yylloc->columns(yyleng);
-                *m_yylval = QVariant(strtod_l(yytext, NULL, m_C_locale));
+                // Get the old locale
+                char *old_locale = strdup (setlocale(LC_NUMERIC, NULL));
+                // Change locale to match JSON doubles
+                setlocale(LC_NUMERIC,"en_US");
+                *m_yylval = QVariant(strtod(yytext, NULL));
+                setlocale(LC_NUMERIC, old_locale);
+
                 if (errno == ERANGE) {
                     qCritical() << "Number is out of range: " << yytext;
                     return yy::json_parser::token::INVALID;
