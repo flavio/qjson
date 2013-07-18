@@ -32,6 +32,7 @@
   #if defined(_WIN32) && !defined(__MINGW32__)
   #define strtoll _strtoi64
   #define strtoull _strtoui64
+  #define strtod_l _strtod_l
   #endif
 
   #define YY_USER_INIT if(m_allowSpecialNumbers) { \
@@ -102,7 +103,7 @@ null          {
 
 -?(([0-9])|([1-9][0-9]+))(\.[0-9]+)?([Ee][+\-]?[0-9]+)? {
                 m_yylloc->columns(yyleng);
-                *m_yylval = QVariant(strtod(yytext, NULL));
+                *m_yylval = QVariant(strtod_l(yytext, NULL, m_C_locale));
                 if (errno == ERANGE) {
                     qCritical() << "Number is out of range: " << yytext;
                     return yy::json_parser::token::INVALID;

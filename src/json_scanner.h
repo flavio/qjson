@@ -42,6 +42,8 @@ class JSonScanner : public yyFlexLexer
 {
     public:
         explicit JSonScanner(QIODevice* io);
+        ~JSonScanner();
+
         void allowSpecialNumbers(bool allow);
 
         int yylex(YYSTYPE* yylval, yy::location *yylloc);
@@ -55,6 +57,7 @@ class JSonScanner : public yyFlexLexer
         yy::location* m_yylloc;
         bool m_criticalError;
         QString m_currentString;
+        locale_t m_C_locale;
 };
 
 #endif

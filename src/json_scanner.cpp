@@ -31,11 +31,20 @@
 
 #include <cassert>
 
+#include <locale.h>
+#include <xlocale.h>
+
 JSonScanner::JSonScanner(QIODevice* io)
   : m_allowSpecialNumbers(false),
     m_io (io),
     m_criticalError(false)
 {
+  m_C_locale = newlocale(LC_NUMERIC_MASK, "C", NULL);
+}
+
+JSonScanner::~JSonScanner()
+{
+  freelocale(m_C_locale);
 }
 
 void JSonScanner::allowSpecialNumbers(bool allow) {
