@@ -46,6 +46,8 @@ class TestParser: public QObject
     void parseInvalidObject_data();
     void parseMultipleArray();
 
+    void reuseSameParser();
+
     void testTrueFalseNullValues();
     void testEscapeChars();
     void testNumbers();
@@ -428,6 +430,21 @@ void TestParser::testReadWrite_data()
     QVariantMap map;
     map[QString(QLatin1String("Name"))] = 32;
     QTest::newRow( "complicated array" ) << QVariant(map);
+}
+
+void TestParser::reuseSameParser()
+{
+  Parser parser;
+  bool ok;
+
+  parser.parse ("12.3", &ok);
+  QVERIFY (ok);
+
+  parser.parse ("wrong entry", &ok);
+  QVERIFY (!ok);
+
+  parser.parse ("12.3", &ok);
+  QVERIFY (ok);
 }
 
 QTEST_MAIN(TestParser)

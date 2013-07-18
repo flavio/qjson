@@ -31,23 +31,33 @@
 using namespace QJson;
 
 ParserPrivate::ParserPrivate() :
-    m_scanner(0)
-  , m_negate(false)
-  , m_error(false)
-  , m_errorLine(0)
-  , m_specialNumbersAllowed(false)
+  m_scanner(0)
 {
+  m_specialNumbersAllowed = false;
+  reset();
 }
 
 ParserPrivate::~ParserPrivate()
 {
-  delete m_scanner;
+  if (m_scanner)
+    delete m_scanner;
 }
 
 void ParserPrivate::setError(QString errorMsg, int errorLine) {
   m_error = true;
   m_errorMsg = errorMsg;
   m_errorLine = errorLine;
+}
+
+void ParserPrivate::reset()
+{
+  m_error = false;
+  m_errorLine = 0;
+  m_errorMsg.clear();
+  if (m_scanner) {
+    delete m_scanner;
+    m_scanner = 0;
+  }
 }
 
 Parser::Parser() :
@@ -62,9 +72,7 @@ Parser::~Parser()
 
 QVariant Parser::parse (QIODevice* io, bool* ok)
 {
-  d->m_errorMsg.clear();
-  delete d->m_scanner;
-  d->m_scanner = 0;
+  d->reset();
 
   if (!io->isOpen()) {
     if (!io->open(QIODevice::ReadOnly)) {
