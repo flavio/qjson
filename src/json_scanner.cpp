@@ -31,8 +31,6 @@
 
 #include <cassert>
 
-#include <locale.h>
-#include <xlocale.h>
 
 JSonScanner::JSonScanner(QIODevice* io)
   : m_allowSpecialNumbers(false),

@@ -33,6 +33,9 @@
 
 #include "parser_p.h"
 
+#include <locale.h>
+#include <xlocale.h>
+
 namespace yy {
   class location;
   int yylex(YYSTYPE *yylval, yy::location *yylloc, QJson::ParserPrivate* driver);
