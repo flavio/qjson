@@ -26,6 +26,13 @@
 
 #include <cmath>
 
+#ifdef Q_OS_SOLARIS
+# ifndef isinf
+#  include <ieeefp.h>
+#  define isinf(x) (!finite((x)) && (x)==(x))
+# endif
+#endif
+
 #ifdef _MSC_VER  // using MSVC compiler
 #include <float.h>
 #endif
@@ -221,7 +228,7 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
     const double value = v.toDouble();
 #if defined _WIN32 && !defined(Q_OS_SYMBIAN)
     const bool special = _isnan(value) || !_finite(value);
-#elif defined(Q_OS_SYMBIAN) || defined(Q_OS_ANDROID) || defined(Q_OS_BLACKBERRY)
+#elif defined(Q_OS_SYMBIAN) || defined(Q_OS_ANDROID) || defined(Q_OS_BLACKBERRY) || defined(Q_OS_SOLARIS)
     const bool special = isnan(value) || isinf(value);
 #else
     const bool special = std::isnan(value) || std::isinf(value);
@@ -230,7 +237,7 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
       if (specialNumbersAllowed) {
 #if defined _WIN32 && !defined(Q_OS_SYMBIAN)
         if (_isnan(value)) {
-#elif defined(Q_OS_SYMBIAN) || defined(Q_OS_ANDROID) || defined(Q_OS_BLACKBERRY)
+#elif defined(Q_OS_SYMBIAN) || defined(Q_OS_ANDROID) || defined(Q_OS_BLACKBERRY) || defined(Q_OS_SOLARIS)
         if (isnan(value)) {
 #else
         if (std::isnan(value)) {
