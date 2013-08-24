@@ -34,7 +34,12 @@
 #include "parser_p.h"
 
 #include <locale.h>
+
+#ifdef Q_OS_WIN
+#include <xlocale>
+#else
 #include <xlocale.h>
+#endif
 
 namespace yy {
   class location;
@@ -60,7 +65,11 @@ class JSonScanner : public yyFlexLexer
         yy::location* m_yylloc;
         bool m_criticalError;
         QString m_currentString;
+#ifdef Q_OS_WIN
+        _locale_t m_C_locale;
+#else
         locale_t m_C_locale;
+#endif
 };
 
 #endif
