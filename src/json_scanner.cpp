@@ -46,11 +46,7 @@ JSonScanner::JSonScanner(QIODevice* io)
 
 JSonScanner::~JSonScanner()
 {
-#ifdef Q_OS_WIN
-  _free_locale(m_C_locale);
-#else
-  free_locale(m_C_locale);
-#endif
+  freelocale(m_C_locale);
 }
 
 void JSonScanner::allowSpecialNumbers(bool allow) {

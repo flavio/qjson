@@ -37,6 +37,8 @@
 
 #ifdef Q_OS_WIN
 #include <xlocale>
+#define locale_t _locale_t
+#define freelocale _free_locale
 #else
 #include <xlocale.h>
 #endif
@@ -65,11 +67,7 @@ class JSonScanner : public yyFlexLexer
         yy::location* m_yylloc;
         bool m_criticalError;
         QString m_currentString;
-#ifdef Q_OS_WIN
-        _locale_t m_C_locale;
-#else
         locale_t m_C_locale;
-#endif
 };
 
 #endif
