@@ -23,6 +23,11 @@ IF(QJSON_VERBOSE_DEBUG_OUTPUT)
   ADD_DEFINITIONS("-DQJSON_VERBOSE_DEBUG_OUTPUT")
 endif(QJSON_VERBOSE_DEBUG_OUTPUT)
 
+# On Windows debug library should have 'd' postfix.
+IF (WIN32)
+  SET(CMAKE_DEBUG_POSTFIX "d")
+ENDIF (WIN32)
+
 OPTION(OSX_FRAMEWORK "Build a Mac OS X Framework")
 SET(FRAMEWORK_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/Library/Frameworks"
     CACHE PATH "Where to place qjson.framework if OSX_FRAMEWORK is selected")
