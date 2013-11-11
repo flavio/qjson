@@ -103,7 +103,7 @@ null          {
 
 -?(([0-9])|([1-9][0-9]+))(\.[0-9]+)?([Ee][+\-]?[0-9]+)? {
                 m_yylloc->columns(yyleng);
-                *m_yylval = QVariant(strtod_l(yytext, NULL, m_C_locale));
+                *m_yylval = QVariant(m_C_locale.toDouble(QLatin1String(yytext)));
                 if (errno == ERANGE) {
                     qCritical() << "Number is out of range: " << yytext;
                     return yy::json_parser::token::INVALID;

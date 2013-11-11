@@ -32,16 +32,8 @@
 #endif
 
 #include "parser_p.h"
+#include <QtCore/QLocale>
 
-#include <locale.h>
-
-#ifdef Q_OS_WIN
-#include <xlocale>
-#define locale_t _locale_t
-#define freelocale _free_locale
-#else
-#include <xlocale.h>
-#endif
 
 namespace yy {
   class location;
@@ -67,7 +59,7 @@ class JSonScanner : public yyFlexLexer
         yy::location* m_yylloc;
         bool m_criticalError;
         QString m_currentString;
-        locale_t m_C_locale;
+        QLocale m_C_locale;
 };
 
 #endif

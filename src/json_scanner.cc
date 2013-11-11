@@ -3422,7 +3422,7 @@ YY_RULE_SETUP
 #line 104 "json_scanner.yy"
 {
                 m_yylloc->columns(yyleng);
-                *m_yylval = QVariant(strtod_l(yytext, NULL, m_C_locale));
+                *m_yylval = QVariant(m_C_locale.toDouble(QLatin1String(yytext)));
                 if (errno == ERANGE) {
                     qCritical() << "Number is out of range: " << yytext;
                     return yy::json_parser::token::INVALID;
