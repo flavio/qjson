@@ -43,6 +43,7 @@ const QString CmdLineParser::m_helpMessage = QLatin1String(
         "--indent    Sets the indentation level used by the 'serialize' option.\n"
         "            Allowed values:\n"
         "            - none [default]\n"
+        "            - compact\n"
         "            - minimum\n"
         "            - medium\n"
         "            - full\n"
@@ -113,6 +114,8 @@ void CmdLineParser::handleSetIndentationMode()
         const QString &indentationMode = nextArg();
         if (indentationMode.compare(QLatin1String("none"), Qt::CaseInsensitive) == 0)
           m_indentationMode = IndentNone;
+        else if (indentationMode.compare(QLatin1String("compact"), Qt::CaseInsensitive) == 0)
+          m_indentationMode = IndentCompact;
         else if (indentationMode.compare(QLatin1String("minimum"), Qt::CaseInsensitive) == 0)
           m_indentationMode = IndentMinimum;
         else if (indentationMode.compare(QLatin1String("medium"), Qt::CaseInsensitive) == 0)
