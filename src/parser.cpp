@@ -91,6 +91,14 @@ QVariant Parser::parse (QIODevice* io, bool* ok)
     return QVariant();
   }
 
+  if (io->atEnd()) {
+    if (ok != 0)
+      *ok = false;
+    d->setError(QLatin1String("No data"), 0);
+    io->close();
+    return QVariant();
+  }
+
   d->m_scanner = new JSonScanner (io);
   d->m_scanner->allowSpecialNumbers(d->m_specialNumbersAllowed);
   yy::json_parser parser(d);

@@ -71,7 +71,7 @@ void TestSerializer::testReadWriteEmptyDocument()
   Parser parser;
   bool ok;
   QVariant result = parser.parse( json, &ok );
-  QVERIFY(ok);
+  QVERIFY(!ok);
   QVERIFY( ! result.isValid() );
   Serializer serializer;
   const QByteArray serialized = serializer.serialize( result, &ok);

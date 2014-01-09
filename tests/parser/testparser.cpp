@@ -114,6 +114,7 @@ void TestParser::parseInvalidObject() {
   bool ok;
   parser.parse (json, &ok);
   QVERIFY (!ok);
+  QVERIFY(!parser.errorString().isEmpty());
 }
 
 void TestParser::parseInvalidObject_data() {
@@ -122,6 +123,7 @@ void TestParser::parseInvalidObject_data() {
   QTest::newRow("unclosed object") <<  QByteArray("{\"foo\":\"bar\"");
   QTest::newRow("infinum (disallow") << QByteArray("Infinum");
   QTest::newRow("Nan (disallow") << QByteArray("NaN");
+  QTest::newRow("no data") << QByteArray("");
 }
 
 
