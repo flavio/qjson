@@ -5,7 +5,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License version 2.1, as published by the Free Software Foundation.
- * 
+ *
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -181,11 +181,11 @@ void TestSerializer::testIndentation_data()
     QTest::addColumn<QByteArray>( "expected_min" );
     QTest::addColumn<QByteArray>( "expected_med" );
     QTest::addColumn<QByteArray>( "expected_full" );
-    const QByteArray json = " { \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [ { \"foo3\" : 3, \"foo4\" : 4 } ] }";
-    const QByteArray ex_compact = "{\"foo\":0,\"foo1\":1,\"foo2\":[{\"foo3\":3,\"foo4\":4}]}";
-    const QByteArray ex_min = "{ \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [\n  { \"foo3\" : 3, \"foo4\" : 4 }\n] }";
-    const QByteArray ex_med = "{\n \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [\n  {\n   \"foo3\" : 3, \"foo4\" : 4\n  }\n ]\n}";
-    const QByteArray ex_full = "{\n \"foo\" : 0,\n \"foo1\" : 1,\n \"foo2\" : [\n  {\n   \"foo3\" : 3,\n   \"foo4\" : 4\n  }\n ]\n}";
+    const QByteArray json = " { \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [ { \"bar\" : 1, \"foo\" : 0, \"foobar\" : 0 }, { \"bar\" : 1, \"foo\" : 1, \"foobar\" : 1 } ], \"foo3\" : [ 1, 2, 3, 4, 5, 6 ] }";
+    const QByteArray ex_compact = "{\"foo\":0,\"foo1\":1,\"foo2\":[{\"bar\":1,\"foo\":0,\"foobar\":0},{\"bar\":1,\"foo\":1,\"foobar\":1}],\"foo3\":[1,2,3,4,5,6]}";
+    const QByteArray ex_min = "{ \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [\n  { \"bar\" : 1, \"foo\" : 0, \"foobar\" : 0 },\n  { \"bar\" : 1, \"foo\" : 1, \"foobar\" : 1 }\n ], \"foo3\" : [\n  1,\n  2,\n  3,\n  4,\n  5,\n  6\n ] }";
+    const QByteArray ex_med = "{\n \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [\n  {\n   \"bar\" : 1, \"foo\" : 0, \"foobar\" : 0\n  },\n  {\n   \"bar\" : 1, \"foo\" : 1, \"foobar\" : 1\n  }\n ], \"foo3\" : [\n  1,\n  2,\n  3,\n  4,\n  5,\n  6\n ]\n}";
+    const QByteArray ex_full = "{\n \"foo\" : 0,\n \"foo1\" : 1,\n \"foo2\" : [\n  {\n   \"bar\" : 1,\n   \"foo\" : 0,\n   \"foobar\" : 0\n  },\n  {\n   \"bar\" : 1,\n   \"foo\" : 1,\n   \"foobar\" : 1\n  }\n ],\n \"foo3\" : [\n  1,\n  2,\n  3,\n  4,\n  5,\n  6\n ]\n}";
     QTest::newRow( "test indents" ) << json << ex_compact << ex_min << ex_med << ex_full;
 }
 
