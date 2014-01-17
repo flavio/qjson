@@ -165,7 +165,7 @@ void TestScanner::scanTokens_data() {
 
   QTest::newRow("too large unsinged number") << QByteArray("18446744073709551616") << false << false << TOKEN(INVALID) << QVariant(ULLONG_MAX) << 1 << 0 << 1 << 20;
   QTest::newRow("too large signed number") << QByteArray("-9223372036854775808") << false << false << TOKEN(INVALID) << QVariant(LLONG_MIN) << 1 << 0 << 1 << 20;
-  QTest::newRow("too large exponential") << QByteArray("1.7976931348623157e309") << false << false << TOKEN(INVALID) << QVariant(HUGE_VAL) << 1 << 0 << 1 << 22;
+  QTest::newRow("too large exponential") << QByteArray("1.7976931348623157e309") << false << false << TOKEN(INVALID) << QVariant(0) << 1 << 0 << 1 << 22;
   QTest::newRow("not allowed nan") << QByteArray("nan") << false << false << TOKEN(INVALID) << QVariant() << 1 << 0 << 1 << 1;
   QTest::newRow("not allowed infinity") << QByteArray("Infinity") << false << false << TOKEN(INVALID) << QVariant() << 1 << 0 << 1 << 1;
   QTest::newRow("unknown") << QByteArray("*") << true << false << TOKEN(INVALID) << QVariant()  << 1 << 0 << 1 << 1;

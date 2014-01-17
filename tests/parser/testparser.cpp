@@ -27,8 +27,7 @@
 #include <QJson/Parser>
 #include <QJson/Serializer>
 
-#include <locale.h>
-#include <xlocale.h>
+#include <QLocale>
 
 class TestParser: public QObject
 {
@@ -380,13 +379,13 @@ void TestParser::testTopLevelValues_data() {
 }
 
 void TestParser::testDoubleParsingWithDifferentLocale() {
-  locale_t oldLocale = duplocale(LC_GLOBAL_LOCALE);
-  locale_t itLocale  = newlocale(LC_NUMERIC_MASK, "it_IT.utf8", NULL);
+  QLocale oldLocale;
+  QLocale itLocale(QLatin1String("it_IT.utf8"));
 
-  QVERIFY(itLocale != NULL);
+  QCOMPARE(itLocale.name(), QLatin1String("it_IT") );
 
   // the Italian locale uses ',' as digit separator.
-  uselocale(itLocale);
+  QLocale::setDefault(itLocale);
 
   Parser parser;
   bool ok;
@@ -395,9 +394,7 @@ void TestParser::testDoubleParsingWithDifferentLocale() {
 
   QCOMPARE(result.toDouble(), 12.3);
 
-  uselocale(oldLocale);
-
-  freelocale(itLocale);
+  QLocale::setDefault(oldLocale);
 }
 
 void TestParser::testReadWrite()

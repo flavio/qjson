@@ -35,18 +35,14 @@
 JSonScanner::JSonScanner(QIODevice* io)
   : m_allowSpecialNumbers(false),
     m_io (io),
-    m_criticalError(false)
+    m_criticalError(false),
+    m_C_locale(QLocale::C)
 {
-#ifdef Q_OS_WIN
-  m_C_locale = _create_locale(LC_NUMERIC, "C");
-#else
-  m_C_locale = newlocale(LC_NUMERIC_MASK, "C", NULL);
-#endif
+
 }
 
 JSonScanner::~JSonScanner()
 {
-  freelocale(m_C_locale);
 }
 
 void JSonScanner::allowSpecialNumbers(bool allow) {
