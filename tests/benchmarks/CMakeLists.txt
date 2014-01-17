@@ -12,6 +12,7 @@ INCLUDE_DIRECTORIES(
 
 SET( UNIT_TESTS
   parsingbenchmark
+  qlocalevsstrtod_l
 )
 
 # Build the tests
