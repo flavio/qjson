@@ -43,7 +43,7 @@ IF (Qt5Core_FOUND)
 
   INCLUDE_DIRECTORIES(${Qt5Core_INCLUDE_DIRS})
   ADD_DEFINITIONS(${Qt5Core_DEFINITIONS})
-
+  SET(PC_Requires "Qt5Core")
   # Tell CMake to run moc when necessary:
   set(CMAKE_AUTOMOC ON)
   # As moc files are generated in the binary dir, tell CMake
@@ -56,7 +56,7 @@ ELSE()
 
   # Include the cmake file needed to use qt4
   INCLUDE( ${QT_USE_FILE} )
-
+  SET(PC_Requires "QtCore")
 ENDIF()
 
 IF (NOT WIN32)
