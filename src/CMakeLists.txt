@@ -30,7 +30,7 @@ ELSE()
   target_link_libraries( qjson ${QT_LIBRARIES})
 ENDIF()
 
-if(NOT android)
+if(NOT ANDROID)
 	set_target_properties(qjson PROPERTIES
 	                      VERSION ${QJSON_LIB_MAJOR_VERSION}.${QJSON_LIB_MINOR_VERSION}.${QJSON_LIB_PATCH_VERSION}
                               SOVERSION ${QJSON_LIB_MAJOR_VERSION}
