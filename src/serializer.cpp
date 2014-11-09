@@ -24,7 +24,12 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 
-#include <cmath>
+// cmath does #undef for isnan and isinf macroses what can be defined in math.h
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_ANDROID) || defined(Q_OS_BLACKBERRY) || defined(Q_OS_SOLARIS)
+# include <math.h>
+#else
+# include <cmath>
+#endif
 
 #ifdef Q_OS_SOLARIS
 # ifndef isinf

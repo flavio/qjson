@@ -18,12 +18,15 @@
  * Boston, MA 02110-1301, USA.
  */
  
-#include <cmath>
-
 #include <QtCore/QVariant>
-#include <QtCore/QVariant>
-
 #include <QtTest/QtTest>
+
+// cmath does #undef for isnan and isinf macroses what can be defined in math.h
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_ANDROID) || defined(Q_OS_BLACKBERRY) || defined(Q_OS_SOLARIS)
+# include <math.h>
+#else
+# include <cmath>
+#endif
 
 #include "json_scanner.h"
 #include "json_parser.hh"
