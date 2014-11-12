@@ -181,8 +181,9 @@ void TestSerializer::testIndentation_data()
     QTest::addColumn<QByteArray>( "expected_min" );
     QTest::addColumn<QByteArray>( "expected_med" );
     QTest::addColumn<QByteArray>( "expected_full" );
-    const QByteArray json = " { \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [ { \"bar\" : 1, \"foo\" : 0, \"foobar\" : 0 }, { \"bar\" : 1, \"foo\" : 1, \"foobar\" : 1 } ], \"foo3\" : [ 1, 2, 3, 4, 5, 6 ] }";
-    const QByteArray ex_compact = "{\"foo\":0,\"foo1\":1,\"foo2\":[{\"bar\":1,\"foo\":0,\"foobar\":0},{\"bar\":1,\"foo\":1,\"foobar\":1}],\"foo3\":[1,2,3,4,5,6]}";
+    const QByteArray json = " { \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [ { \"bar\" : 1, \"foo\" : 0, \"foobar\" : 0 }, { \"bar\" : 1, \"foo\" : 1, \"foobar\" : 1 } ], \"foo3\" : [ 1, 2, 3, 4, 5, 6 ], \"foobaz\" : [ \"one\", \"two\", \"three\", \"four\" ] }";
+    const QByteArray ex_compact =
+    "{\"foo\":0,\"foo1\":1,\"foo2\":[{\"bar\":1,\"foo\":0,\"foobar\":0},{\"bar\":1,\"foo\":1,\"foobar\":1}],\"foo3\":[1,2,3,4,5,6],\"foobaz\":[\"one\",\"two\",\"three\",\"four\"]}";
 
     const QByteArray ex_min =
     "{ \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [\n"
@@ -195,6 +196,11 @@ void TestSerializer::testIndentation_data()
     "  4,\n"
     "  5,\n"
     "  6\n"
+    " ], \"foobaz\" : [\n"
+    "  \"one\",\n"
+    "  \"two\",\n"
+    "  \"three\",\n"
+    "  \"four\"\n"
     " ] }";
 
     const QByteArray ex_med =
@@ -213,6 +219,11 @@ void TestSerializer::testIndentation_data()
     "  4,\n"
     "  5,\n"
     "  6\n"
+    " ], \"foobaz\" : [\n"
+    "  \"one\",\n"
+    "  \"two\",\n"
+    "  \"three\",\n"
+    "  \"four\"\n"
     " ]\n}";
 
     const QByteArray ex_full =
@@ -238,6 +249,12 @@ void TestSerializer::testIndentation_data()
     "  4,\n"
     "  5,\n"
     "  6\n"
+    " ],\n"
+    " \"foobaz\" : [\n"
+    "  \"one\",\n"
+    "  \"two\",\n"
+    "  \"three\",\n"
+    "  \"four\"\n"
     " ]\n"
     "}";
 
