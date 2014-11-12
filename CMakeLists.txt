@@ -25,6 +25,9 @@ IF (WIN32)
   SET(CMAKE_DEBUG_POSTFIX "d")
 ENDIF (WIN32)
 
+# BUILD_SHARED_LIBS is cmake variable. Need to change default value.
+option(BUILD_SHARED_LIBS "Build shared library" ON)
+
 OPTION(OSX_FRAMEWORK "Build a Mac OS X Framework")
 SET(FRAMEWORK_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/Library/Frameworks"
     CACHE PATH "Where to place qjson.framework if OSX_FRAMEWORK is selected")
