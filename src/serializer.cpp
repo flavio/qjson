@@ -254,7 +254,7 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
     }
 
     if (( v.type() == QVariant::String ) ||  ( v.type() == QVariant::ByteArray )) { // a string or a byte array?
-      str = sanitizeString( v.toString() ).toUtf8();
+      str += sanitizeString( v.toString() ).toUtf8();
     } else if (( v.type() == QVariant::Double) || ((QMetaType::Type)v.type() == QMetaType::Float)) { // a double or a float?
       const double value = v.toDouble();
   #if defined _WIN32 && !defined(Q_OS_SYMBIAN)
