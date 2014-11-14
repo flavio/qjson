@@ -23,7 +23,9 @@ endif(QJSON_VERBOSE_DEBUG_OUTPUT)
 # On Windows debug library should have 'd' postfix.
 IF (WIN32)
   SET(CMAKE_DEBUG_POSTFIX "d")
-ENDIF (WIN32)
+elseif (APPLE)
+  set(CMAKE_DEBUG_POSTFIX "_debug")
+endif (WIN32)
 
 # BUILD_SHARED_LIBS is cmake variable. Need to change default value.
 option(BUILD_SHARED_LIBS "Build shared library" ON)
