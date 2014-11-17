@@ -43,6 +43,11 @@ if(NOT ANDROID)
                               SOVERSION ${QJSON_LIB_MAJOR_VERSION}
 	                      )
 endif()
+
+if(NOT BUILD_SHARED_LIBS)
+  target_compile_definitions(qjson PUBLIC QJSON_STATIC)
+endif()
+
 set_target_properties(qjson PROPERTIES
                       DEFINE_SYMBOL QJSON_MAKEDLL
                       PUBLIC_HEADER "${qjson_HEADERS}"
