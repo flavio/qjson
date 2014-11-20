@@ -23,6 +23,13 @@ set (qjson_HEADERS parser.h parserrunnable.h qobjecthelper.h serializer.h serial
 # Required to use the intree copy of FlexLexer.h
 INCLUDE_DIRECTORIES(.)
 
+# Special hack to fix scanner test compilation on Windows
+# JsonScanner class is not for export. So need to make static
+# lib what can be compiled against scanner test.
+if(WIN32 AND QJSON_BUILD_TESTS AND BUILD_SHARED_LIBS)
+  add_library(qjson_scanner STATIC json_scanner.cpp)
+endif()
+
 add_library (qjson ${qjson_SRCS} ${qjson_MOC_SRCS} ${qjson_HEADERS})
 IF (Qt5Core_FOUND)
   target_link_libraries( qjson ${Qt5Core_LIBRARIES})
