@@ -169,6 +169,13 @@ null          {
                   BEGIN(INITIAL);
                   return yy::json_parser::token::STRING;
                 }
+
+  <<EOF>>       {
+                  qCritical() << "Unterminated string";
+                  m_yylloc->columns(yyleng);
+                  return yy::json_parser::token::INVALID;
+                }
+
 }
 
 <HEX_OPEN>{

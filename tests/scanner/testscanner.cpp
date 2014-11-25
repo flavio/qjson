@@ -107,7 +107,7 @@ void TestScanner::scanTokens_data() {
   QTest::addColumn<int>("expectedLocationEndLine");
   QTest::addColumn<int>("expectedLocationEndColumn");
   
-  QTest::newRow("empty string") << QByteArray("") << true << false << TOKEN(END) << QVariant() << 1 << 0 << 1 << 0;
+  QTest::newRow("empty json") << QByteArray("") << true << false << TOKEN(END) << QVariant() << 1 << 0 << 1 << 0;
   
   QTest::newRow("carriage return") << QByteArray("\r") << true << false << TOKEN(END) << QVariant() << 1 << 0 << 2 << 1;
   QTest::newRow("new line") << QByteArray("\n") << true << false << TOKEN(END) << QVariant() << 1 << 0 << 2 << 1;
@@ -126,7 +126,10 @@ void TestScanner::scanTokens_data() {
   QTest::newRow("invalid ecaped string") << QByteArray("\"\\x\"") << true << false << TOKEN(STRING) << QVariant(QLatin1String("x")) << 1 << 0 << 1 << 2;
   QTest::newRow("escaped unicode sequence") << QByteArray("\"\\u005A\"") << true << false << TOKEN(STRING) << QVariant(QLatin1String("Z"))  << 1 << 0 << 1 << 2;
   QTest::newRow("invalid unicode sequence") << QByteArray("\"\\u005Z\"") << true << false << TOKEN(INVALID) << QVariant(QLatin1String(""))  << 1 << 0 << 1 << 2;
-  QTest::newRow("empty string") << QByteArray("\"") << true << false << TOKEN(END) << QVariant()  << 1 << 0 << 1 << 1;
+  QTest::newRow("empty string") << QByteArray("\"\"") << true << false << TOKEN(STRING) << QVariant(QLatin1String(""))  << 1 << 0 << 1 << 2;
+  QTest::newRow("unterminated empty string") << QByteArray("\"") << true << false << TOKEN(INVALID) << QVariant()  << 1 << 0 << 1 << 2;
+  QTest::newRow("unterminated string") << QByteArray("\"abcde") << true << false << TOKEN(INVALID) << QVariant()  << 1 << 0 << 1 << 2;
+  QTest::newRow("unterminated unicode sequence") << QByteArray("\"\\u005A") << true << false << TOKEN(INVALID) << QVariant()  << 1 << 0 << 1 << 2;
   
   QTest::newRow("single digit") << QByteArray("0") << true << false << TOKEN(NUMBER) << QVariant(0u)  << 1 << 0 << 1 << 1;
   QTest::newRow("multiple digits") << QByteArray("123456789") << true << false << TOKEN(NUMBER) << QVariant(123456789u)  << 1 << 0 << 1 << 9;
