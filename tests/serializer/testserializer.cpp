@@ -55,6 +55,8 @@ class TestSerializer: public QObject
     void testIndentation_data();
     void testSerializetoQIODevice();
     void testSerializeWithoutOkParam();
+    void testEscapeChars();
+    void testEscapeChars_data();
 
   private:
     void valueTest( const QVariant& value, const QString& expectedRegExp, bool errorExpected = false );
@@ -602,6 +604,39 @@ void TestSerializer::testValueHashMap()
     QCOMPARE(mIt.value(), value);
   }
 
+}
+
+void TestSerializer::testEscapeChars()
+{
+    QFETCH(QString, input);
+    QFETCH(QString, escaped);
+
+    Serializer serializer;
+    bool ok;
+
+    QVariantHash hash;
+    hash.insert(QLatin1String("key"), input);
+    QByteArray json = serializer.serialize(hash, &ok);
+    QVERIFY(ok);
+
+    QString expected = QString(QLatin1String("{ \"key\" : \"%1\" }")).arg(escaped);
+    QString actual = QString::fromUtf8(json.data(), json.length());
+    QCOMPARE(actual, expected);
+}
+
+void TestSerializer::testEscapeChars_data()
+{
+    QTest::addColumn<QString>("input");
+    QTest::addColumn<QString>("escaped");
+
+    QTest::newRow("simple ASCII string") << "input" << "input";
+    QTest::newRow("ASCII new lines and tabs") << "line1\nline2\rline\t3" << "line1\\nline2\\rline\\t3";
+    QTest::newRow("backspace, backslash and quotes") << "one\\two\bthree\"four" << "one\\\\two\\bthree\\\"four";
+
+    QChar unicodeSnowman(0x2603);
+    QTest::newRow("non-ASCII unicode char") << QString(unicodeSnowman) << "\\u2603";
+
+    QTest::newRow("control chars") << QString(QChar(0x06)) << "\\u0006";
 }
 
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
