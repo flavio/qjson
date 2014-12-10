@@ -369,7 +369,7 @@ QByteArray Serializer::SerializerPrivate::escapeString( const QString& str )
           result.append(static_cast<char>(unicode));
         } else {
           char escaped[7];
-          snprintf(escaped, sizeof(escaped)/sizeof(char), "\\u%04x", unicode);
+          qsnprintf(escaped, sizeof(escaped)/sizeof(char), "\\u%04x", unicode);
           result.append(escaped);
         }
     }
