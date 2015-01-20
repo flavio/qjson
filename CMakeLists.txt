@@ -7,7 +7,9 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8)
 CMAKE_POLICY(SET CMP0003 NEW)
 
 # Do not link against qtmain on Windows
-cmake_policy(SET CMP0020 OLD)
+if(POLICY CMP0020)
+	cmake_policy(SET CMP0020 OLD)
+endif()
 
 set(CMAKE_INSTALL_NAME_DIR ${LIB_INSTALL_DIR})
 

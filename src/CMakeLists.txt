@@ -45,7 +45,7 @@ if(NOT ANDROID)
 endif()
 
 if(NOT BUILD_SHARED_LIBS)
-  target_compile_definitions(qjson PUBLIC QJSON_STATIC)
+	set_target_properties( qjson PROPERTIES COMPILE_DEFINITIONS "QJSON_STATIC")
 endif()
 
 set_target_properties(qjson PROPERTIES
