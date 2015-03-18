@@ -8,7 +8,7 @@ JSON arrays will be mapped to QVariantList instances, while JSON's objects will 
 # Install
 
 QJson requires:
-  - Qt 4.4 or greater
+  - Qt 4.5 or greater
   - cmake 2.6 or greater
 
 Some possible cmake options:

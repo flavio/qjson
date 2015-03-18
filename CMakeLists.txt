@@ -59,7 +59,7 @@ IF (Qt5Core_FOUND)
 ELSE()
   MESSAGE ("Qt5 not found, searching for Qt4")
   # Find Qt4
-  FIND_PACKAGE( Qt4 REQUIRED )
+  FIND_PACKAGE( Qt4 4.5 REQUIRED )
 
   # Include the cmake file needed to use qt4
   INCLUDE( ${QT_USE_FILE} )
