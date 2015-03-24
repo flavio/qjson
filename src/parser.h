@@ -53,6 +53,15 @@ namespace QJson {
       QVariant parse(QIODevice* io, bool* ok = 0);
 
       /**
+      * Read JSON string from the I/O Device and converts it to a QVariant object
+      * @param io Input output device
+      * @param alwaysCloseDevice if false, io is kept in the same open state, otherwise io is left closed 
+      * @param ok if a conversion error occurs, *ok is set to false; otherwise *ok is set to true.
+      * @returns a QVariant object generated from the JSON string
+      */
+      QVariant parse(QIODevice* io,bool alwaysCloseDevice, bool* ok = 0);
+
+      /**
       * This is a method provided for convenience.
       * @param jsonData data containing the JSON object representation
       * @param ok if a conversion error occurs, *ok is set to false; otherwise *ok is set to true.
