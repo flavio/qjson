@@ -30,36 +30,36 @@ if(WIN32 AND QJSON_BUILD_TESTS AND BUILD_SHARED_LIBS)
   add_library(qjson_scanner STATIC json_scanner.cpp)
 endif()
 
-add_library (qjson ${qjson_SRCS} ${qjson_MOC_SRCS} ${qjson_HEADERS})
+add_library (qjson${QJSON_SUFFIX} ${qjson_SRCS} ${qjson_MOC_SRCS} ${qjson_HEADERS})
 IF (Qt5Core_FOUND)
-  target_link_libraries( qjson ${Qt5Core_LIBRARIES})
+  target_link_libraries( qjson${QJSON_SUFFIX} ${Qt5Core_LIBRARIES})
 ELSE()
-  target_link_libraries( qjson ${QT_LIBRARIES})
+  target_link_libraries( qjson${QJSON_SUFFIX} ${QT_LIBRARIES})
 ENDIF()
 
 if(NOT ANDROID)
-	set_target_properties(qjson PROPERTIES
+	set_target_properties(qjson${QJSON_SUFFIX} PROPERTIES
 	                      VERSION ${QJSON_LIB_MAJOR_VERSION}.${QJSON_LIB_MINOR_VERSION}.${QJSON_LIB_PATCH_VERSION}
                               SOVERSION ${QJSON_LIB_MAJOR_VERSION}
 	                      )
 endif()
 
 if(NOT BUILD_SHARED_LIBS)
-	set_target_properties( qjson PROPERTIES COMPILE_DEFINITIONS "QJSON_STATIC")
+	set_target_properties( qjson${QJSON_SUFFIX} PROPERTIES COMPILE_DEFINITIONS "QJSON_STATIC")
 endif()
 
-set_target_properties(qjson PROPERTIES
+set_target_properties(qjson${QJSON_SUFFIX} PROPERTIES
                       DEFINE_SYMBOL QJSON_MAKEDLL
                       PUBLIC_HEADER "${qjson_HEADERS}"
                       FRAMEWORK ${OSX_FRAMEWORK}
                       )
 
-INSTALL(TARGETS qjson EXPORT qjson-export
+INSTALL(TARGETS qjson${QJSON_SUFFIX} EXPORT qjson-export
    LIBRARY DESTINATION ${LIB_INSTALL_DIR}
    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
    ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
    FRAMEWORK DESTINATION ${FRAMEWORK_INSTALL_DIR}
-   PUBLIC_HEADER DESTINATION ${INCLUDE_INSTALL_DIR}/qjson
+   PUBLIC_HEADER DESTINATION ${INCLUDE_INSTALL_DIR}/qjson${QJSON_SUFFIX}
 )
 
 if(MSVC)
