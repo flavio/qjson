@@ -31,5 +31,5 @@ TARGET_LINK_LIBRARIES(
   cmdline_tester
   ${QT_LIBRARIES}
   ${Qt5Widgets_LIBRARIES}
-  qjson
+  qjson${QJSON_SUFFIX}
 )

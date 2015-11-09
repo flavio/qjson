@@ -51,6 +51,7 @@ IF (Qt5Core_FOUND)
   INCLUDE_DIRECTORIES(${Qt5Core_INCLUDE_DIRS})
   ADD_DEFINITIONS(${Qt5Core_DEFINITIONS})
   SET(PC_Requires "Qt5Core")
+  set(QJSON_SUFFIX "-qt5")
   # Tell CMake to run moc when necessary:
   set(CMAKE_AUTOMOC ON)
   # As moc files are generated in the binary dir, tell CMake
@@ -75,7 +76,7 @@ ENDIF()
 SET (LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)" )
 SET (LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Directory where lib will install")
 SET (INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
-SET (CMAKECONFIG_INSTALL_DIR "${LIB_INSTALL_DIR}/cmake/${CMAKE_PROJECT_NAME}" CACHE PATH "Directory where to install QJSONConfig.cmake")
+SET (CMAKECONFIG_INSTALL_DIR "${LIB_INSTALL_DIR}/cmake/${CMAKE_PROJECT_NAME}${QJSON_SUFFIX}" CACHE PATH "Directory where to install QJSONConfig.cmake")
 
 set(QJSON_LIB_MAJOR_VERSION "0")
 set(QJSON_LIB_MINOR_VERSION "8")
@@ -88,9 +89,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" )
 # pkg-config
 IF (NOT WIN32)
   CONFIGURE_FILE (${CMAKE_CURRENT_SOURCE_DIR}/QJson.pc.in
-                  ${CMAKE_CURRENT_BINARY_DIR}/QJson.pc
+                  ${CMAKE_CURRENT_BINARY_DIR}/QJson${QJSON_SUFFIX}.pc
                   @ONLY)
-  INSTALL (FILES ${CMAKE_CURRENT_BINARY_DIR}/QJson.pc
+  INSTALL (FILES ${CMAKE_CURRENT_BINARY_DIR}/QJson${QJSON_SUFFIX}.pc
            DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
 ENDIF (NOT WIN32)
 
@@ -106,7 +107,7 @@ CONFIGURE_FILE(
   "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
   IMMEDIATE @ONLY)
 
-INSTALL(EXPORT qjson-export DESTINATION ${CMAKECONFIG_INSTALL_DIR} FILE QJSONTargets.cmake)
+INSTALL(EXPORT qjson-export DESTINATION ${CMAKECONFIG_INSTALL_DIR} FILE QJSON${QJSON_SUFFIX}Targets.cmake)
 
 # figure out the relative path from the installed Config.cmake file to the install prefix (which may be at
 # runtime different from the chosen CMAKE_INSTALL_PREFIX if under Windows the package was installed anywhere)
@@ -115,13 +116,13 @@ file(RELATIVE_PATH relInstallDir ${CMAKE_INSTALL_PREFIX}/${CMAKECONFIG_INSTALL_D
 
 # cmake-modules
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/QJSONConfig.cmake.in
-               ${CMAKE_CURRENT_BINARY_DIR}/QJSONConfig.cmake
+               ${CMAKE_CURRENT_BINARY_DIR}/QJSON${QJSON_SUFFIX}Config.cmake
                @ONLY)
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/QJSONConfigVersion.cmake.in
-               ${CMAKE_CURRENT_BINARY_DIR}/QJSONConfigVersion.cmake
+               ${CMAKE_CURRENT_BINARY_DIR}/QJSON${QJSON_SUFFIX}ConfigVersion.cmake
                @ONLY)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/QJSONConfig.cmake
-              ${CMAKE_CURRENT_BINARY_DIR}/QJSONConfigVersion.cmake
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/QJSON${QJSON_SUFFIX}Config.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/QJSON${QJSON_SUFFIX}ConfigVersion.cmake
         DESTINATION "${CMAKECONFIG_INSTALL_DIR}")
 
 ADD_CUSTOM_TARGET(uninstall

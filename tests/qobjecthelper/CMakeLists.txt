@@ -43,7 +43,7 @@ FOREACH(test ${UNIT_TESTS})
     ${test}
     ${QT_LIBRARIES}
     ${TEST_LIBRARIES}
-    qjson
+    qjson${QJSON_SUFFIX}
     qjson_test_support
   )
   if (QJSON_TEST_OUTPUT STREQUAL "xml")
