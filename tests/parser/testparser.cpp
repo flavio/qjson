@@ -33,6 +33,8 @@ class TestParser: public QObject
 {
   Q_OBJECT
   private slots:
+    void parseInvalidEmptyJson();
+    void parseInvalidEmptyJson_data();
     void parseNonAsciiString();
     void parseSimpleObject();
     void parseEmptyObject();
@@ -62,6 +64,25 @@ Q_DECLARE_METATYPE(QVariant)
 Q_DECLARE_METATYPE(QVariant::Type)
 
 using namespace QJson;
+
+void TestParser::parseInvalidEmptyJson()
+{
+    QFETCH(QByteArray, json);
+
+    Parser parser;
+    bool ok;
+    QVariant result = parser.parse(json, &ok);
+    QVERIFY(!ok);
+    QVERIFY(!parser.errorString().isEmpty());
+}
+
+void TestParser::parseInvalidEmptyJson_data()
+{
+    QTest::addColumn<QByteArray>("json");
+
+    QTest::newRow("empty") << QByteArray("");
+    QTest::newRow("empty with spaces") << QByteArray(" \n");
+}
 
 void TestParser::parseSimpleObject() {
   QByteArray json = "{\"foo\":\"bar\"}";

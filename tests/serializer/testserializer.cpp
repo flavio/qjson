@@ -55,6 +55,8 @@ class TestSerializer: public QObject
     void testIndentation_data();
     void testSerializetoQIODevice();
     void testSerializeWithoutOkParam();
+    void testEscapeChars();
+    void testEscapeChars_data();
 
   private:
     void valueTest( const QVariant& value, const QString& expectedRegExp, bool errorExpected = false );
@@ -181,11 +183,83 @@ void TestSerializer::testIndentation_data()
     QTest::addColumn<QByteArray>( "expected_min" );
     QTest::addColumn<QByteArray>( "expected_med" );
     QTest::addColumn<QByteArray>( "expected_full" );
-    const QByteArray json = " { \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [ { \"bar\" : 1, \"foo\" : 0, \"foobar\" : 0 }, { \"bar\" : 1, \"foo\" : 1, \"foobar\" : 1 } ], \"foo3\" : [ 1, 2, 3, 4, 5, 6 ] }";
-    const QByteArray ex_compact = "{\"foo\":0,\"foo1\":1,\"foo2\":[{\"bar\":1,\"foo\":0,\"foobar\":0},{\"bar\":1,\"foo\":1,\"foobar\":1}],\"foo3\":[1,2,3,4,5,6]}";
-    const QByteArray ex_min = "{ \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [\n  { \"bar\" : 1, \"foo\" : 0, \"foobar\" : 0 },\n  { \"bar\" : 1, \"foo\" : 1, \"foobar\" : 1 }\n ], \"foo3\" : [\n  1,\n  2,\n  3,\n  4,\n  5,\n  6\n ] }";
-    const QByteArray ex_med = "{\n \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [\n  {\n   \"bar\" : 1, \"foo\" : 0, \"foobar\" : 0\n  },\n  {\n   \"bar\" : 1, \"foo\" : 1, \"foobar\" : 1\n  }\n ], \"foo3\" : [\n  1,\n  2,\n  3,\n  4,\n  5,\n  6\n ]\n}";
-    const QByteArray ex_full = "{\n \"foo\" : 0,\n \"foo1\" : 1,\n \"foo2\" : [\n  {\n   \"bar\" : 1,\n   \"foo\" : 0,\n   \"foobar\" : 0\n  },\n  {\n   \"bar\" : 1,\n   \"foo\" : 1,\n   \"foobar\" : 1\n  }\n ],\n \"foo3\" : [\n  1,\n  2,\n  3,\n  4,\n  5,\n  6\n ]\n}";
+    const QByteArray json = " { \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [ { \"bar\" : 1, \"foo\" : 0, \"foobar\" : 0 }, { \"bar\" : 1, \"foo\" : 1, \"foobar\" : 1 } ], \"foo3\" : [ 1, 2, 3, 4, 5, 6 ], \"foobaz\" : [ \"one\", \"two\", \"three\", \"four\" ] }";
+    const QByteArray ex_compact =
+    "{\"foo\":0,\"foo1\":1,\"foo2\":[{\"bar\":1,\"foo\":0,\"foobar\":0},{\"bar\":1,\"foo\":1,\"foobar\":1}],\"foo3\":[1,2,3,4,5,6],\"foobaz\":[\"one\",\"two\",\"three\",\"four\"]}";
+
+    const QByteArray ex_min =
+    "{ \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [\n"
+    "  { \"bar\" : 1, \"foo\" : 0, \"foobar\" : 0 },\n"
+    "  { \"bar\" : 1, \"foo\" : 1, \"foobar\" : 1 }\n"
+    " ], \"foo3\" : [\n"
+    "  1,\n"
+    "  2,\n"
+    "  3,\n"
+    "  4,\n"
+    "  5,\n"
+    "  6\n"
+    " ], \"foobaz\" : [\n"
+    "  \"one\",\n"
+    "  \"two\",\n"
+    "  \"three\",\n"
+    "  \"four\"\n"
+    " ] }";
+
+    const QByteArray ex_med =
+    "{\n"
+    " \"foo\" : 0, \"foo1\" : 1, \"foo2\" : [\n"
+    "  {\n"
+    "   \"bar\" : 1, \"foo\" : 0, \"foobar\" : 0\n"
+    "  },\n"
+    "  {\n"
+    "   \"bar\" : 1, \"foo\" : 1, \"foobar\" : 1\n"
+    "  }\n"
+    " ], \"foo3\" : [\n"
+    "  1,\n"
+    "  2,\n"
+    "  3,\n"
+    "  4,\n"
+    "  5,\n"
+    "  6\n"
+    " ], \"foobaz\" : [\n"
+    "  \"one\",\n"
+    "  \"two\",\n"
+    "  \"three\",\n"
+    "  \"four\"\n"
+    " ]\n}";
+
+    const QByteArray ex_full =
+    "{\n"
+    " \"foo\" : 0,\n"
+    " \"foo1\" : 1,\n"
+    " \"foo2\" : [\n"
+    "  {\n"
+    "   \"bar\" : 1,\n"
+    "   \"foo\" : 0,\n"
+    "   \"foobar\" : 0\n"
+    "  },\n"
+    "  {\n"
+    "   \"bar\" : 1,\n"
+    "   \"foo\" : 1,\n"
+    "   \"foobar\" : 1\n"
+    "  }\n"
+    " ],\n"
+    " \"foo3\" : [\n"
+    "  1,\n"
+    "  2,\n"
+    "  3,\n"
+    "  4,\n"
+    "  5,\n"
+    "  6\n"
+    " ],\n"
+    " \"foobaz\" : [\n"
+    "  \"one\",\n"
+    "  \"two\",\n"
+    "  \"three\",\n"
+    "  \"four\"\n"
+    " ]\n"
+    "}";
+
     QTest::newRow( "test indents" ) << json << ex_compact << ex_min << ex_med << ex_full;
 }
 
@@ -530,6 +604,39 @@ void TestSerializer::testValueHashMap()
     QCOMPARE(mIt.value(), value);
   }
 
+}
+
+void TestSerializer::testEscapeChars()
+{
+    QFETCH(QString, input);
+    QFETCH(QString, escaped);
+
+    Serializer serializer;
+    bool ok;
+
+    QVariantHash hash;
+    hash.insert(QLatin1String("key"), input);
+    QByteArray json = serializer.serialize(hash, &ok);
+    QVERIFY(ok);
+
+    QString expected = QString(QLatin1String("{ \"key\" : \"%1\" }")).arg(escaped);
+    QString actual = QString::fromUtf8(json.data(), json.length());
+    QCOMPARE(actual, expected);
+}
+
+void TestSerializer::testEscapeChars_data()
+{
+    QTest::addColumn<QString>("input");
+    QTest::addColumn<QString>("escaped");
+
+    QTest::newRow("simple ASCII string") << "input" << "input";
+    QTest::newRow("ASCII new lines and tabs") << "line1\nline2\rline\t3" << "line1\\nline2\\rline\\t3";
+    QTest::newRow("backspace, backslash and quotes") << "one\\two\bthree\"four" << "one\\\\two\\bthree\\\"four";
+
+    QChar unicodeSnowman(0x2603);
+    QTest::newRow("non-ASCII unicode char") << QString(unicodeSnowman) << "\\u2603";
+
+    QTest::newRow("control chars") << QString(QChar(0x06)) << "\\u0006";
 }
 
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)

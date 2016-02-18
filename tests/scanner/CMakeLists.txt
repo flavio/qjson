@@ -31,12 +31,17 @@ FOREACH(test ${UNIT_TESTS})
     ${test}.cpp
   )
 
+  if(WIN32 AND BUILD_SHARED_LIBS)
+    set(QJSON_SCANNER qjson_scanner)
+  endif()
+
   ADD_FILE_DEPENDENCIES(${test}.cpp ${MOC_SOURCE})
   TARGET_LINK_LIBRARIES(
     ${test}
     ${QT_LIBRARIES}
     ${TEST_LIBRARIES}
-    qjson
+    qjson${QJSON_SUFFIX}
+    ${QJSON_SCANNER}
   )
   if (QJSON_TEST_OUTPUT STREQUAL "xml")
     # produce XML output

@@ -6,6 +6,11 @@ set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQT_NO_CAST_FROM_ASCII -DQT_NO_CAST_TO
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.8)
 CMAKE_POLICY(SET CMP0003 NEW)
 
+# Do not link against qtmain on Windows
+if(POLICY CMP0020)
+	cmake_policy(SET CMP0020 OLD)
+endif()
+
 set(CMAKE_INSTALL_NAME_DIR ${LIB_INSTALL_DIR})
 
 IF("${CMAKE_BUILD_TYPE}" MATCHES "^Rel.*")
@@ -20,7 +25,12 @@ endif(QJSON_VERBOSE_DEBUG_OUTPUT)
 # On Windows debug library should have 'd' postfix.
 IF (WIN32)
   SET(CMAKE_DEBUG_POSTFIX "d")
-ENDIF (WIN32)
+elseif (APPLE)
+  set(CMAKE_DEBUG_POSTFIX "_debug")
+endif (WIN32)
+
+# BUILD_SHARED_LIBS is cmake variable. Need to change default value.
+option(BUILD_SHARED_LIBS "Build shared library" ON)
 
 OPTION(OSX_FRAMEWORK "Build a Mac OS X Framework")
 SET(FRAMEWORK_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/Library/Frameworks"
@@ -40,7 +50,8 @@ IF (Qt5Core_FOUND)
 
   INCLUDE_DIRECTORIES(${Qt5Core_INCLUDE_DIRS})
   ADD_DEFINITIONS(${Qt5Core_DEFINITIONS})
-
+  SET(PC_Requires "Qt5Core")
+  set(QJSON_SUFFIX "-qt5")
   # Tell CMake to run moc when necessary:
   set(CMAKE_AUTOMOC ON)
   # As moc files are generated in the binary dir, tell CMake
@@ -49,11 +60,11 @@ IF (Qt5Core_FOUND)
 ELSE()
   MESSAGE ("Qt5 not found, searching for Qt4")
   # Find Qt4
-  FIND_PACKAGE( Qt4 REQUIRED )
+  FIND_PACKAGE( Qt4 4.5 REQUIRED )
 
   # Include the cmake file needed to use qt4
   INCLUDE( ${QT_USE_FILE} )
-
+  SET(PC_Requires "QtCore")
 ENDIF()
 
 IF (NOT WIN32)
@@ -65,7 +76,7 @@ ENDIF()
 SET (LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)" )
 SET (LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Directory where lib will install")
 SET (INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
-SET (CMAKECONFIG_INSTALL_DIR "${LIB_INSTALL_DIR}/cmake/${CMAKE_PROJECT_NAME}" CACHE PATH "Directory where to install QJSONConfig.cmake")
+SET (CMAKECONFIG_INSTALL_DIR "${LIB_INSTALL_DIR}/cmake/${CMAKE_PROJECT_NAME}${QJSON_SUFFIX}" CACHE PATH "Directory where to install QJSONConfig.cmake")
 
 set(QJSON_LIB_MAJOR_VERSION "0")
 set(QJSON_LIB_MINOR_VERSION "8")
@@ -78,9 +89,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" )
 # pkg-config
 IF (NOT WIN32)
   CONFIGURE_FILE (${CMAKE_CURRENT_SOURCE_DIR}/QJson.pc.in
-                  ${CMAKE_CURRENT_BINARY_DIR}/QJson.pc
+                  ${CMAKE_CURRENT_BINARY_DIR}/QJson${QJSON_SUFFIX}.pc
                   @ONLY)
-  INSTALL (FILES ${CMAKE_CURRENT_BINARY_DIR}/QJson.pc
+  INSTALL (FILES ${CMAKE_CURRENT_BINARY_DIR}/QJson${QJSON_SUFFIX}.pc
            DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
 ENDIF (NOT WIN32)
 
@@ -96,7 +107,7 @@ CONFIGURE_FILE(
   "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
   IMMEDIATE @ONLY)
 
-INSTALL(EXPORT qjson-export DESTINATION ${CMAKECONFIG_INSTALL_DIR} FILE QJSONTargets.cmake)
+INSTALL(EXPORT qjson-export DESTINATION ${CMAKECONFIG_INSTALL_DIR} FILE QJSON${QJSON_SUFFIX}Targets.cmake)
 
 # figure out the relative path from the installed Config.cmake file to the install prefix (which may be at
 # runtime different from the chosen CMAKE_INSTALL_PREFIX if under Windows the package was installed anywhere)
@@ -105,13 +116,13 @@ file(RELATIVE_PATH relInstallDir ${CMAKE_INSTALL_PREFIX}/${CMAKECONFIG_INSTALL_D
 
 # cmake-modules
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/QJSONConfig.cmake.in
-               ${CMAKE_CURRENT_BINARY_DIR}/QJSONConfig.cmake
+               ${CMAKE_CURRENT_BINARY_DIR}/QJSON${QJSON_SUFFIX}Config.cmake
                @ONLY)
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/QJSONConfigVersion.cmake.in
-               ${CMAKE_CURRENT_BINARY_DIR}/QJSONConfigVersion.cmake
+               ${CMAKE_CURRENT_BINARY_DIR}/QJSON${QJSON_SUFFIX}ConfigVersion.cmake
                @ONLY)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/QJSONConfig.cmake
-              ${CMAKE_CURRENT_BINARY_DIR}/QJSONConfigVersion.cmake
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/QJSON${QJSON_SUFFIX}Config.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/QJSON${QJSON_SUFFIX}ConfigVersion.cmake
         DESTINATION "${CMAKECONFIG_INSTALL_DIR}")
 
 ADD_CUSTOM_TARGET(uninstall

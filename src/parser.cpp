@@ -116,7 +116,7 @@ QVariant Parser::parse (QIODevice* io, bool* ok)
 
 QVariant Parser::parse(const QByteArray& jsonString, bool* ok) {
   QBuffer buffer;
-  buffer.open(QBuffer::ReadWrite);
+  buffer.open(QBuffer::ReadWrite | QBuffer::Text);
   buffer.write(jsonString);
   buffer.seek(0);
   return parse (&buffer, ok);
