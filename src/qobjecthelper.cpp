@@ -2,6 +2,7 @@
   *
   * Copyright (C) 2009 Till Adam <adam@kde.org>
   * Copyright (C) 2009 Flavio Castelli <flavio@castelli.name>
+  * Copyright (C) 2016 Anton Kudryavtsev <a.kudryavtsev@netris.ru>
   *
   * This library is free software; you can redistribute it and/or
   * modify it under the terms of the GNU Lesser General Public
@@ -51,7 +52,7 @@ QVariantMap QObjectHelper::qobject2qvariant( const QObject* object,
     QMetaProperty metaproperty = metaobject->property(i);
     const char *name = metaproperty.name();
 
-    if (ignoredProperties.contains(QLatin1String(name)) || (!metaproperty.isReadable()))
+    if (!metaproperty.isReadable() || ignoredProperties.contains(QLatin1String(name)))
       continue;
 
     QVariant value = object->property(name);
@@ -64,8 +65,8 @@ void QObjectHelper::qvariant2qobject(const QVariantMap& variant, QObject* object
 {
   const QMetaObject *metaobject = object->metaObject();
 
-  QVariantMap::const_iterator iter;
-  for (iter = variant.constBegin(); iter != variant.constEnd(); ++iter) {
+  for (QVariantMap::const_iterator iter = variant.constBegin(),
+       end = variant.constEnd(); iter != end; ++iter) {
     int pIdx = metaobject->indexOfProperty( iter.key().toLatin1() );
 
     if ( pIdx < 0 ) {
@@ -78,7 +79,7 @@ void QObjectHelper::qvariant2qobject(const QVariantMap& variant, QObject* object
     if ( v.canConvert( type ) ) {
       v.convert( type );
       metaproperty.write( object, v );
-    } else if (QString(QLatin1String("QVariant")).compare(QLatin1String(metaproperty.typeName())) == 0) {
+    } else if (QLatin1String("QVariant") == QLatin1String(metaproperty.typeName())) {
      metaproperty.write( object, v );
     }
   }
