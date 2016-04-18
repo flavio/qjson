@@ -2,6 +2,7 @@
   *
   * Copyright (C) 2009 Till Adam <adam@kde.org>
   * Copyright (C) 2009 Flavio Castelli <flavio@castelli.name>
+  * Copyright (C) 2016 Anton Kudryavtsev <a.kudryavtsev@netris.ru>
   *
   * This library is free software; you can redistribute it and/or
   * modify it under the terms of the GNU Lesser General Public
@@ -123,7 +124,6 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
 
   } else if ( v.type() == QVariant::Map ) { // variant is a map?
     const QVariantMap vmap = v.toMap();
-    QMapIterator<QString, QVariant> it( vmap );
 
     if (indentMode == QJson::IndentMinimum) {
       QByteArray indent = buildIndent(indentLevel);
@@ -142,8 +142,7 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
     }
 
     QList<QByteArray> pairs;
-    while ( it.hasNext() ) {
-      it.next();
+    for (QVariantMap::const_iterator it = vmap.begin(), end = vmap.end(); it != end; ++it) {
       indentLevel++;
       QByteArray serializedValue = serialize( it.value(), ok, indentLevel);
       indentLevel--;
@@ -183,7 +182,6 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
 
   } else if ( v.type() == QVariant::Hash ) { // variant is a hash?
     const QVariantHash vhash = v.toHash();
-    QHashIterator<QString, QVariant> it( vhash );
 
     if (indentMode == QJson::IndentMinimum) {
       QByteArray indent = buildIndent(indentLevel);
@@ -202,9 +200,7 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
     }
 
     QList<QByteArray> pairs;
-    while ( it.hasNext() ) {
-      it.next();
-
+    for (QVariantHash::const_iterator it = vhash.begin(), end = vhash.end(); it != end; ++it) {
       QByteArray serializedValue = serialize( it.value(), ok, indentLevel + 1);
 
       if ( !*ok ) {
@@ -340,7 +336,7 @@ QByteArray Serializer::SerializerPrivate::escapeString( const QString& str )
   QByteArray result;
   result.reserve(str.size() + 2);
   result.append('\"');
-  for (QString::const_iterator it = str.begin(); it != str.end(); it++) {
+  for (QString::const_iterator it = str.begin(), end = str.end(); it != end; ++it) {
     ushort unicode = it->unicode();
     switch ( unicode ) {
       case '\"':
