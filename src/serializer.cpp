@@ -2,6 +2,7 @@
   *
   * Copyright (C) 2009 Till Adam <adam@kde.org>
   * Copyright (C) 2009 Flavio Castelli <flavio@castelli.name>
+  * Copyright (C) 2016 Anton Kudryavtsev <a.kudryavtsev@netris.ru>
   *
   * This library is free software; you can redistribute it and/or
   * modify it under the terms of the GNU Lesser General Public
@@ -62,6 +63,7 @@ class Serializer::SerializerPrivate {
     static QByteArray buildIndent(int spaces);
     static QByteArray escapeString( const QString& str );
     static QByteArray join( const QList<QByteArray>& list, const QByteArray& sep );
+    static QByteArray join( const QList<QByteArray>& list, char sep );
 };
 
 QByteArray Serializer::SerializerPrivate::join( const QList<QByteArray>& list, const QByteArray& sep ) {
@@ -74,13 +76,24 @@ QByteArray Serializer::SerializerPrivate::join( const QList<QByteArray>& list, c
   return res;
 }
 
+QByteArray Serializer::SerializerPrivate::join( const QList<QByteArray>& list, char sep ) {
+  QByteArray res;
+  Q_FOREACH( const QByteArray& i, list ) {
+    if ( !res.isEmpty() )
+      res += sep;
+    res += i;
+  }
+  return res;
+}
+
 QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok, int indentLevel)
 {
   QByteArray str;
+  const QVariant::Type type = v.type();
 
   if ( ! v.isValid() ) { // invalid or null?
     str = "null";
-  } else if (( v.type() == QVariant::List ) || ( v.type() == QVariant::StringList )){ // an array or a stringlist?
+  } else if (( type == QVariant::List ) || ( type == QVariant::StringList )) { // an array or a stringlist?
     const QVariantList list = v.toList();
     QList<QByteArray> values;
     Q_FOREACH( const QVariant& var, list )
@@ -108,22 +121,21 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
 
     if (indentMode == QJson::IndentMedium || indentMode == QJson::IndentFull ) {
       QByteArray indent = buildIndent(indentLevel);
-      str = indent + "[\n" + join( values, ",\n" ) + "\n" + indent + "]";
+      str = indent + "[\n" + join( values, ",\n" ) + '\n' + indent + ']';
     }
     else if (indentMode == QJson::IndentMinimum) {
       QByteArray indent = buildIndent(indentLevel);
-      str = indent + "[\n" + join( values, ",\n" ) + "\n" + indent + "]";
+      str = indent + "[\n" + join( values, ",\n" ) + '\n' + indent + ']';
     }
     else if (indentMode == QJson::IndentCompact) {
-      str = "[" + join( values, "," ) + "]";
+      str = '[' + join( values, "," ) + ']';
     }
     else {
       str = "[ " + join( values, ", " ) + " ]";
     }
 
-  } else if ( v.type() == QVariant::Map ) { // variant is a map?
+  } else if ( type == QVariant::Map ) { // variant is a map?
     const QVariantMap vmap = v.toMap();
-    QMapIterator<QString, QVariant> it( vmap );
 
     if (indentMode == QJson::IndentMinimum) {
       QByteArray indent = buildIndent(indentLevel);
@@ -142,8 +154,7 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
     }
 
     QList<QByteArray> pairs;
-    while ( it.hasNext() ) {
-      it.next();
+    for (QVariantMap::const_iterator it = vmap.begin(), end = vmap.end(); it != end; ++it) {
       indentLevel++;
       QByteArray serializedValue = serialize( it.value(), ok, indentLevel);
       indentLevel--;
@@ -153,7 +164,7 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
       QByteArray key   = escapeString( it.key() );
       QByteArray value = serializedValue.trimmed();
       if (indentMode == QJson::IndentCompact) {
-        pairs << key + ":" + value;
+        pairs << key + ':' + value;
       } else {
         pairs << key + " : " + value;
       }
@@ -164,7 +175,7 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
       str += join( pairs, ",\n" + indent);
     }
     else if (indentMode == QJson::IndentCompact) {
-      str += join( pairs, "," );
+      str += join( pairs, ',' );
     }
     else {
       str += join( pairs, ", " );
@@ -172,18 +183,17 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
 
     if (indentMode == QJson::IndentMedium || indentMode == QJson::IndentFull) {
       QByteArray indent = buildIndent(indentLevel);
-      str += "\n" + indent + "}";
+      str += '\n' + indent + '}';
     }
     else if (indentMode == QJson::IndentCompact) {
-      str += "}";
+      str += '}';
     }
     else {
       str += " }";
     }
 
-  } else if ( v.type() == QVariant::Hash ) { // variant is a hash?
+  } else if ( type == QVariant::Hash ) { // variant is a hash?
     const QVariantHash vhash = v.toHash();
-    QHashIterator<QString, QVariant> it( vhash );
 
     if (indentMode == QJson::IndentMinimum) {
       QByteArray indent = buildIndent(indentLevel);
@@ -202,9 +212,7 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
     }
 
     QList<QByteArray> pairs;
-    while ( it.hasNext() ) {
-      it.next();
-
+    for (QVariantHash::const_iterator it = vhash.begin(), end = vhash.end(); it != end; ++it) {
       QByteArray serializedValue = serialize( it.value(), ok, indentLevel + 1);
 
       if ( !*ok ) {
@@ -213,7 +221,7 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
       QByteArray key   = escapeString( it.key() );
       QByteArray value = serializedValue.trimmed();
       if (indentMode == QJson::IndentCompact) {
-        pairs << key + ":" + value;
+        pairs << key + ':' + value;
       } else {
         pairs << key + " : " + value;
       }
@@ -224,7 +232,7 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
       str += join( pairs, ",\n" + indent);
     }
     else if (indentMode == QJson::IndentCompact) {
-      str += join( pairs, "," );
+      str += join( pairs, ',' );
     }
     else {
       str += join( pairs, ", " );
@@ -232,10 +240,10 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
 
     if (indentMode == QJson::IndentMedium || indentMode == QJson::IndentFull) {
       QByteArray indent = buildIndent(indentLevel);
-      str += "\n" + indent + "}";
+      str += '\n' + indent + '}';
     }
     else if (indentMode == QJson::IndentCompact) {
-      str += "}";
+      str += '}';
     }
     else {
       str += " }";
@@ -255,9 +263,9 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
         break;
     }
 
-    if (( v.type() == QVariant::String ) ||  ( v.type() == QVariant::ByteArray )) { // a string or a byte array?
+    if (( type == QVariant::String ) ||  ( type == QVariant::ByteArray )) { // a string or a byte array?
       str += escapeString( v.toString() );
-    } else if (( v.type() == QVariant::Double) || ((QMetaType::Type)v.type() == QMetaType::Float)) { // a double or a float?
+    } else if (( type == QVariant::Double) || ((QMetaType::Type)type == QMetaType::Float)) { // a double or a float?
       const double value = v.toDouble();
   #if defined _WIN32 && !defined(Q_OS_SYMBIAN)
       const bool special = _isnan(value) || !_finite(value);
@@ -288,15 +296,15 @@ QByteArray Serializer::SerializerPrivate::serialize( const QVariant &v, bool *ok
       }
       } else {
         str = QByteArray::number( value , 'g', doublePrecision);
-        if( ! str.contains( "." ) && ! str.contains( "e" ) ) {
+        if( !str.contains( '.' ) && !str.contains( 'e' ) ) {
           str += ".0";
         }
       }
-    } else if ( v.type() == QVariant::Bool ) { // boolean value?
+    } else if ( type == QVariant::Bool ) { // boolean value?
       str += ( v.toBool() ? "true" : "false" );
-    } else if ( v.type() == QVariant::ULongLong ) { // large unsigned number?
+    } else if ( type == QVariant::ULongLong ) { // large unsigned number?
       str += QByteArray::number( v.value<qulonglong>() );
-    } else if ( v.type() == QVariant::UInt ) { // unsigned int number?
+    } else if ( type == QVariant::UInt ) { // unsigned int number?
       str += QByteArray::number( v.value<quint32>() );
     } else if ( v.canConvert<qlonglong>() ) { // any signed number?
       str += QByteArray::number( v.value<qlonglong>() );
@@ -330,7 +338,7 @@ QByteArray Serializer::SerializerPrivate::buildIndent(int spaces)
      spaces = 0;
    }
    for (int i = 0; i < spaces; i++ ) {
-     indent += " ";
+     indent += ' ';
    }
    return indent;
 }
@@ -340,7 +348,7 @@ QByteArray Serializer::SerializerPrivate::escapeString( const QString& str )
   QByteArray result;
   result.reserve(str.size() + 2);
   result.append('\"');
-  for (QString::const_iterator it = str.begin(); it != str.end(); it++) {
+  for (QString::const_iterator it = str.begin(), end = str.end(); it != end; ++it) {
     ushort unicode = it->unicode();
     switch ( unicode ) {
       case '\"':
