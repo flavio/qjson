@@ -330,7 +330,7 @@ void TestSerializer::testValueString_data()
   QTest::newRow( "string with backslash" ) << QVariant( QString( QLatin1String( "string\\string" ) ) ) << QString( QLatin1String( "\\s*\"string\\\\\\\\string\"\\s*" ) );
   QString testStringWithUnicode = QString( QLatin1String( "string" ) ) + QChar( 0x2665 ) + QLatin1String( "string" );
   QString testEscapedString = QString( QLatin1String( "string" ) ) + QLatin1String("\\\\u2665") + QLatin1String( "string" );
-  QTest::newRow( "string with unicode" ) << QVariant( testStringWithUnicode ) << QLatin1String( "\\s*\"" ) + testEscapedString + QLatin1String( "\"\\s*" );
+  QTest::newRow( "string with unicode" ) << QVariant( testStringWithUnicode ) << QString( QLatin1String( "\\s*\"" ) + testEscapedString + QLatin1String( "\"\\s*" ) );
 }
 
 void TestSerializer::testValueStringList()
