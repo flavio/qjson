@@ -57,10 +57,19 @@ IF (Qt5Core_FOUND)
   # As moc files are generated in the binary dir, tell CMake
   # to always look for includes there:
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQT_USE_QSTRINGBUILDER" )
+  MESSAGE ("Enable QStringBuilder")
 ELSE()
   MESSAGE ("Qt5 not found, searching for Qt4")
   # Find Qt4
   FIND_PACKAGE( Qt4 4.5 REQUIRED )
+  # QStringBuilder is supported since Qt 4.8 for both QString and QByteArray
+  IF (NOT (${QT_VERSION_MINOR} STRLESS "8"))
+    MESSAGE ("Enable QStringBuilder")
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DQT_USE_QSTRINGBUILDER" )
+  ELSE()
+    MESSAGE ("Disable QStringBuilder")
+  ENDIF()
 
   # Include the cmake file needed to use qt4
   INCLUDE( ${QT_USE_FILE} )
