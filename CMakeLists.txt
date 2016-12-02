@@ -62,7 +62,7 @@ IF (Qt5Core_FOUND)
 ELSE()
   MESSAGE ("Qt5 not found, searching for Qt4")
   # Find Qt4
-  FIND_PACKAGE( Qt4 4.5 REQUIRED )
+  FIND_PACKAGE( Qt4 4.5 REQUIRED QtCore)
   # QStringBuilder is supported since Qt 4.8 for both QString and QByteArray
   IF (NOT (${QT_VERSION_MINOR} STRLESS "8"))
     MESSAGE ("Enable QStringBuilder")
