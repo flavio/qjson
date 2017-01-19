@@ -44,6 +44,23 @@ ParserPrivate::~ParserPrivate()
     delete m_scanner;
 }
 
+QVariant ParserPrivate::parse(QIODevice* io, bool* ok)
+{
+  m_scanner = new JSonScanner (io);
+  m_scanner->allowSpecialNumbers(m_specialNumbersAllowed);
+  yy::json_parser parser(this);
+  parser.parse();
+
+  delete m_scanner;
+  m_scanner = 0;
+
+  if (ok != 0)
+    *ok = !m_error;
+
+  io->close();
+  return m_result;
+}
+
 void ParserPrivate::setError(const QString &errorMsg, int errorLine) {
   m_error = true;
   m_errorMsg = errorMsg;
@@ -71,7 +88,7 @@ Parser::~Parser()
   delete d;
 }
 
-QVariant Parser::parse (QIODevice* io, bool* ok)
+QVariant Parser::parse(QIODevice* io, bool* ok)
 {
   d->reset();
 
@@ -100,27 +117,19 @@ QVariant Parser::parse (QIODevice* io, bool* ok)
     return QVariant();
   }
 
-  d->m_scanner = new JSonScanner (io);
-  d->m_scanner->allowSpecialNumbers(d->m_specialNumbersAllowed);
-  yy::json_parser parser(d);
-  parser.parse();
-
-  delete d->m_scanner;
-  d->m_scanner = 0;
-
-  if (ok != 0)
-    *ok = !d->m_error;
-
-  io->close();
-  return d->m_result;
+  QByteArray buffer = io->readAll();
+  return parse(buffer, ok);
 }
 
-QVariant Parser::parse(const QByteArray& jsonString, bool* ok) {
+QVariant Parser::parse(const QByteArray& jsonString, bool* ok)
+{
+  d->reset();
+
   QBuffer buffer;
   buffer.open(QBuffer::ReadWrite | QBuffer::Text);
   buffer.write(jsonString);
   buffer.seek(0);
-  return parse (&buffer, ok);
+  return d->parse(&buffer, ok);
 }
 
 QString Parser::errorString() const
