@@ -41,6 +41,8 @@ namespace QJson {
       ParserPrivate();
       ~ParserPrivate();
 
+      QVariant parse(QIODevice* io, bool* ok);
+
       void reset();
 
       void setError(const QString &errorMsg, int line);
