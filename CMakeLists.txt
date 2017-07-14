@@ -71,6 +71,12 @@ ELSE()
     MESSAGE ("Disable QStringBuilder")
   ENDIF()
 
+  # Ensure to be linked with static Qt library on Widnows
+  IF(WIN32 AND NOT BUILD_SHARED_LIBS)
+    STRING(REPLACE "-DQT_DLL" "" QT_DEFINITIONS "${QT_DEFINITIONS}")
+    SET(QT_DEFINITIONS ${QT_DEFINITIONS} "-DQT_NODLL")
+  ENDIF()
+
   # Include the cmake file needed to use qt4
   INCLUDE( ${QT_USE_FILE} )
   SET(PC_Requires "QtCore")
