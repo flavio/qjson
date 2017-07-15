@@ -95,8 +95,9 @@ More options are available via cli options, just checkout the `--help` output.
 has some limitations, like being unable to print utf8 chars.
 
 # License
-  This library is licensed under the Lesser GNU General Public License version 2.1.
-  See the COPYING.lib file for more information.
+
+This library is licensed under the Lesser GNU General Public License version 2.1.
+See the COPYING.lib file for more information.
 
 # Resources
 
