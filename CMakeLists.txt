@@ -36,10 +36,6 @@ OPTION(OSX_FRAMEWORK "Build a Mac OS X Framework")
 SET(FRAMEWORK_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/Library/Frameworks"
     CACHE PATH "Where to place qjson.framework if OSX_FRAMEWORK is selected")
 
-# Don't use absolute path in qjson-targets-*.cmake
-# (This will have no effect with CMake < 2.8)
-SET(QT_USE_IMPORTED_TARGETS TRUE)
-
 option(QT4_BUILD "Force building with Qt4 even if Qt5 is found")
 IF (NOT QT4_BUILD)
   FIND_PACKAGE( Qt5Core QUIET )
@@ -61,6 +57,15 @@ IF (Qt5Core_FOUND)
   MESSAGE ("Enable QStringBuilder")
 ELSE()
   MESSAGE ("Qt5 not found, searching for Qt4")
+
+  # Don't use absolute path in qjson-targets-*.cmake
+  # (This will have no effect with CMake < 2.8)
+  # Workaround for no stdlib.h error. In this case it must be used with
+  # -DQT_INCLUDE_DIRS_NO_SYSTEM=ON. So cmake must be invoked with
+  # -DQT_USE_IMPORTED_TARGETS=OFF -DQT_INCLUDE_DIRS_NO_SYSTEM=ON
+  # See https://bugzilla.redhat.com/show_bug.cgi?id=1470809 for details
+  OPTION(QT_USE_IMPORTED_TARGETS "Use imported targets" ON)
+
   # Find Qt4
   FIND_PACKAGE( Qt4 4.5 REQUIRED QtCore)
   # QStringBuilder is supported since Qt 4.8 for both QString and QByteArray
