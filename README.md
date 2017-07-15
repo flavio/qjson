@@ -33,6 +33,67 @@ For Unix/Linux/Mac:
     make install
     /sbin/ldconfig #if necessary
 
+# Contribute
+
+The recommended way to submit your changes is via a pull request.
+
+Before submitting a patch please ensure:
+
+  * Patched code compiles.
+  * The patch is fixing a specific issue or implementing a new feature
+    (it’s not doing multiple things at the same time).
+  * QJson unit tests have been updated.
+  * QJson unit tests are passing.
+
+## Unit testing
+
+QJson unit tests are located under the `tests` directory. You can enable them
+passing the `-DQJSON_BUILD_TESTS=yes` option to `cmake`.
+
+> Note well: make sure you followed the build instructions.
+
+
+To run all the unit tests move into the build directory and type:
+
+```
+make tests
+```
+
+If you want to run the `QJson::Parser` unit tests just type:
+
+```
+./test/parser/testparser
+```
+
+If you want to run the `QJson::Serializer` unit tests just type:
+
+```
+./test/serializer/testserializer
+```
+
+If you want to run the `QJson::QObjectHelper` tests just type:
+
+```
+./tests/qobjecthelper/testqobjecthelper
+```
+
+If you want to test the QJson parser against a specific JSON object you can
+use the `cmdline_tester` program.
+
+This binary is located under the `tests` directory and has a
+straightforward syntax:
+
+```
+./tests/cmdline_tester/cmdline_tester text_file_containing_json_object
+```
+
+The command will convert the JSON object to a `QVariant` and dump it to stdout.
+More options are available via cli options, just checkout the `--help` output.
+
+
+**Note well:** cmdline_tester relies on `qDebug()` to dump the object. `qDebug`
+has some limitations, like being unable to print utf8 chars.
+
 # License
   This library is licensed under the Lesser GNU General Public License version 2.1.
   See the COPYING.lib file for more information.
