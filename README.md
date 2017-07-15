@@ -1,4 +1,5 @@
-# QJson
+# QJson [![Build Status](https://travis-ci.org/flavio/qjson.svg?branch=master)](https://travis-ci.org/flavio/qjson)
+
 JSON (JavaScript Object Notation) is a lightweight data-interchange format.
 It can represents integer, real number, string, an ordered sequence of value, and a collection of name/value pairs.
 
