@@ -1,0 +1,15 @@
+language: cpp
+sudo: false
+dist: trusty
+compiler:
+  - gcc
+install:
+  - make
+  - cmake
+  - libqt4-dev
+before_script:
+  - mkdir build
+  - cd build
+  - cmake -DQJSON_BUILD_TESTS=yes ..
+script:
+  - make test
