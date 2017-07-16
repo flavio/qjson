@@ -71,7 +71,22 @@ Parser::~Parser()
   delete d;
 }
 
+
 QVariant Parser::parse (QIODevice* io, bool* ok)
+{
+  if (!io->isOpen()) {
+    if (!io->open(QIODevice::ReadOnly)) {
+      if (ok != 0)
+        *ok = false;
+      qCritical ("Error opening device");
+      return QVariant();
+    }
+  }
+  return parse(io, true, ok);
+}
+
+
+QVariant Parser::parse (QIODevice* io,bool alwaysCloseDevice, bool* ok)
 {
   d->reset();
 
@@ -82,13 +97,16 @@ QVariant Parser::parse (QIODevice* io, bool* ok)
       qCritical ("Error opening device");
       return QVariant();
     }
+    alwaysCloseDevice = true;
   }
 
   if (!io->isReadable()) {
     if (ok != 0)
       *ok = false;
     qCritical ("Device is not readable");
-    io->close();
+    if(alwaysCloseDevice) {
+      io->close();
+    }
     return QVariant();
   }
 
@@ -111,7 +129,10 @@ QVariant Parser::parse (QIODevice* io, bool* ok)
   if (ok != 0)
     *ok = !d->m_error;
 
-  io->close();
+  if(alwaysCloseDevice) {
+    io->close();
+  }
+
   return d->m_result;
 }
 
