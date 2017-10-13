@@ -7,5 +7,5 @@ Name: QJson
 Description: QJson is a qt-based library that maps JSON data to QVariant objects
 Version: @QJSON_LIB_MAJOR_VERSION@.@QJSON_LIB_MINOR_VERSION@.@QJSON_LIB_PATCH_VERSION@
 Requires: @PC_Requires@
-Libs: -L${libdir} -lqjson
+Libs: -L${libdir} -lqjson@QJSON_SUFFIX@
 Cflags: -I${includedir}
