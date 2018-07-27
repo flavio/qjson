@@ -3393,8 +3393,9 @@ YY_RULE_SETUP
 #line 82 "json_scanner.yy"
 {
                 m_yylloc->columns(yyleng);
-                *m_yylval = QVariant(strtoull(yytext, NULL, 10));
-                if (errno == ERANGE) {
+                unsigned long long val = strtoull(yytext, NULL, 10);
+                *m_yylval = QVariant(val);
+                if (val == ULLONG_MAX && errno == ERANGE) {
                     qCritical() << "Number is out of range: " << yytext;
                     return yy::json_parser::token::INVALID;
                 }
@@ -3408,8 +3409,9 @@ YY_RULE_SETUP
 #line 93 "json_scanner.yy"
 {
                 m_yylloc->columns(yyleng);
-                *m_yylval = QVariant(strtoll(yytext, NULL, 10));
-                if (errno == ERANGE) {
+                long long val = strtoll(yytext, NULL, 10);
+                *m_yylval = QVariant(val);
+                if ((val == LLONG_MAX || val == LLONG_MIN) && errno == ERANGE) {
                     qCritical() << "Number is out of range: " << yytext;
                     return yy::json_parser::token::INVALID;
                 }
