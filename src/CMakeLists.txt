@@ -45,7 +45,10 @@ if(NOT ANDROID)
 endif()
 
 if(NOT BUILD_SHARED_LIBS)
-	set_target_properties( qjson${QJSON_SUFFIX} PROPERTIES COMPILE_DEFINITIONS "QJSON_STATIC")
+    set_target_properties(qjson${QJSON_SUFFIX} PROPERTIES
+        COMPILE_DEFINITIONS "QJSON_STATIC"
+        INTERFACE_COMPILE_DEFINITIONS "QJSON_STATIC"
+    )
 endif()
 
 set_target_properties(qjson${QJSON_SUFFIX} PROPERTIES
