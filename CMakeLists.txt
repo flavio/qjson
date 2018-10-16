@@ -33,6 +33,11 @@ endif (WIN32)
 option(BUILD_SHARED_LIBS "Build shared library" ON)
 
 OPTION(OSX_FRAMEWORK "Build a Mac OS X Framework")
+
+# Allow to use shared Qt when compiling static version of QJSON.
+# Has effect only when BUILD_SHARED_LIBS is OFF.
+option(LINK_SHARED_QT "Force to link with shared Qt" OFF)
+
 SET(FRAMEWORK_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/Library/Frameworks"
     CACHE PATH "Where to place qjson.framework if OSX_FRAMEWORK is selected")
 
@@ -77,7 +82,7 @@ ELSE()
   ENDIF()
 
   # Ensure to be linked with static Qt library on Widnows
-  IF(WIN32 AND NOT BUILD_SHARED_LIBS)
+  IF(WIN32 AND NOT BUILD_SHARED_LIBS AND NOT LINK_SHARED_QT)
     STRING(REPLACE "-DQT_DLL" "" QT_DEFINITIONS "${QT_DEFINITIONS}")
     SET(QT_DEFINITIONS ${QT_DEFINITIONS} "-DQT_NODLL")
   ENDIF()
