@@ -18,6 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include <errno.h>
+
 #include <cmath>
 
 #include <QtCore/QVariant>
@@ -286,6 +288,7 @@ void TestParser::testNumbers() {
 
   Parser parser;
   bool ok;
+  errno = EACCES;
   QVariant result = parser.parse ('[' + input + ']', &ok);
   QVERIFY (ok);
 

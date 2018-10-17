@@ -30,6 +30,13 @@ ADD_EXECUTABLE(
 TARGET_LINK_LIBRARIES(
   cmdline_tester
   ${QT_LIBRARIES}
-  ${Qt5Widgets_LIBRARIES}
   qjson${QJSON_SUFFIX}
 )
+
+if(WIN32)
+    target_link_libraries(
+        cmdline_tester
+        ${QT_QTGUI_LIBRARY}
+        ${Qt5Widgets_LIBRARIES}
+    )
+endif()

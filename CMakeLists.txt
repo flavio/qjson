@@ -11,6 +11,10 @@ if(POLICY CMP0020)
 	cmake_policy(SET CMP0020 OLD)
 endif()
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin" )
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" )
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" )
+
 set(CMAKE_INSTALL_NAME_DIR ${LIB_INSTALL_DIR})
 
 IF("${CMAKE_BUILD_TYPE}" MATCHES "^Rel.*")
@@ -29,6 +33,8 @@ elseif (APPLE)
   set(CMAKE_DEBUG_POSTFIX "_debug")
 endif (WIN32)
 
+option(QJSON_BUILD_TESTS "Build tests" OFF)
+
 # BUILD_SHARED_LIBS is cmake variable. Need to change default value.
 option(BUILD_SHARED_LIBS "Build shared library" ON)
 
@@ -41,7 +47,23 @@ option(LINK_SHARED_QT "Force to link with shared Qt" OFF)
 SET(FRAMEWORK_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/Library/Frameworks"
     CACHE PATH "Where to place qjson.framework if OSX_FRAMEWORK is selected")
 
-option(QT4_BUILD "Force building with Qt4 even if Qt5 is found")
+if(QT_QMAKE_EXECUTABLE AND EXISTS ${QT_QMAKE_EXECUTABLE})
+    execute_process(COMMAND ${QT_QMAKE_EXECUTABLE} -query QT_VERSION OUTPUT_VARIABLE QT_VERSION)
+endif()
+
+if(QT_VERSION)
+    if(QT_VERSION MATCHES "^4\\.")
+        set(QT4_BUILD_DEFAULT ON)
+    else()
+        set(QT4_BUILD_DEFAULT OFF)
+    endif()
+elseif(WIN32)
+    set(QT5_BUILD_DEFAULT OFF)
+else()
+    set(QT5_BUILD_DEFAULT ON)
+endif()
+
+option(QT4_BUILD "Force building with Qt4 even if Qt5 is found" ${QT4_BUILD_DEFAULT})
 IF (NOT QT4_BUILD)
   FIND_PACKAGE( Qt5Core QUIET )
 ENDIF()
