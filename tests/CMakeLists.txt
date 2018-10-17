@@ -8,6 +8,14 @@ IF (Qt5Core_FOUND)
   SET (TEST_LIBRARIES ${Qt5Test_LIBRARIES})
 ENDIF()
 
+macro(add_unittest DESCRIPTION)
+    add_test(NAME "${DESCRIPTION}"
+             WORKING_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
+             COMMAND ${ARGN}
+    )
+endmacro()
+
+
 ADD_SUBDIRECTORY(cmdline_tester)
 ADD_SUBDIRECTORY(parser)
 ADD_SUBDIRECTORY(scanner)
