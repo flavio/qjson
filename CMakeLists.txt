@@ -29,6 +29,8 @@ elseif (APPLE)
   set(CMAKE_DEBUG_POSTFIX "_debug")
 endif (WIN32)
 
+option(QJSON_BUILD_TESTS "Build tests" OFF)
+
 # BUILD_SHARED_LIBS is cmake variable. Need to change default value.
 option(BUILD_SHARED_LIBS "Build shared library" ON)
 
