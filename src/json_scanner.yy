@@ -107,6 +107,10 @@ null          {
                 bool ok;
                 *m_yylval = QVariant(m_C_locale.toDouble(QLatin1String(yytext),&ok));
                 if (!ok) {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+                    // See QTBUG-71256
+                    *m_yylval = QVariant(0.);
+#endif
                     qCritical() << "Number is out of range: " << yytext;
                     return yy::json_parser::token::INVALID;
                 }
