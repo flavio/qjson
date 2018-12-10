@@ -18,8 +18,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <errno.h>
-
 #include <cmath>
 
 #include <QtCore/QVariant>
@@ -288,7 +286,10 @@ void TestParser::testNumbers() {
 
   Parser parser;
   bool ok;
-  errno = EACCES;
+  // Special case. Parser::parse() internally uses strtoll().
+  // strtoll() doesn't reset previously set errno.
+  // Need to be sure that Parser::parse correctly handle such case.
+  strtoll("11111111111111111111111111111111111111111111111", NULL, 10);
   QVariant result = parser.parse ('[' + input + ']', &ok);
   QVERIFY (ok);
 
