@@ -23,6 +23,8 @@ ENDIF()
 ADD_LIBRARY (qjson_test_support STATIC ${qjson_test_support_SRCS}
                                        ${qjson_test_support_MOC_SRCS})
 
+target_link_libraries(qjson_test_support ${QT_LIBRARIES} ${Qt5Core_LIBRARIES})
+
 SET( UNIT_TESTS
   testqobjecthelper
 )
