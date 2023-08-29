@@ -43,6 +43,7 @@ OPTION(OSX_FRAMEWORK "Build a Mac OS X Framework")
 # Allow to use shared Qt when compiling static version of QJSON.
 # Has effect only when BUILD_SHARED_LIBS is OFF.
 option(LINK_SHARED_QT "Force to link with shared Qt" OFF)
+option(QT4_BUILD "Force building with Qt4 even if Qt5 is found" OFF)
 
 SET(FRAMEWORK_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/Library/Frameworks"
     CACHE PATH "Where to place qjson.framework if OSX_FRAMEWORK is selected")
@@ -61,9 +62,10 @@ else()
     set(QT4_BUILD_DEFAULT ON)
 endif()
 
-option(QT4_BUILD "Force building with Qt4 even if Qt5 is found" ${QT4_BUILD_DEFAULT})
+set(QT4_BUILD ${QT4_BUILD_DEFAULT})
+
 IF (NOT QT4_BUILD)
-  FIND_PACKAGE( Qt5Core QUIET )
+  FIND_PACKAGE( Qt5 COMPONENTS Widgets REQUIRED QUIET )
 ENDIF()
 
 IF (Qt5Core_FOUND)
