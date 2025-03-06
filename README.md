@@ -57,7 +57,7 @@ passing the `-DQJSON_BUILD_TESTS=yes` option to `cmake`.
 To run all the unit tests move into the build directory and type:
 
 ```
-make tests
+make test
 ```
 
 If you want to run the `QJson::Parser` unit tests just type:
