@@ -13,29 +13,22 @@ set(qjson_MOC_HDRS
   serializerrunnable.h
 )
 
-IF (NOT Qt5Core_FOUND)
-  qt4_wrap_cpp(qjson_MOC_SRCS ${qjson_MOC_HDRS})
-ENDIF()
-
 set (qjson_SRCS parser.cpp qobjecthelper.cpp json_scanner.cpp json_parser.cc parserrunnable.cpp serializer.cpp serializerrunnable.cpp)
 set (qjson_HEADERS parser.h parserrunnable.h qobjecthelper.h serializer.h serializerrunnable.h qjson_export.h)
 
 # Required to use the intree copy of FlexLexer.h
-INCLUDE_DIRECTORIES(.)
+# INCLUDE_DIRECTORIES(.)
 
 # Special hack to fix scanner test compilation on Windows
 # JsonScanner class is not for export. So need to make static
 # lib what can be compiled against scanner test.
 if(WIN32 AND QJSON_BUILD_TESTS AND BUILD_SHARED_LIBS)
   add_library(qjson_scanner STATIC json_scanner.cpp)
+  target_link_libraries(qjson_scanner Qt::Core)
 endif()
 
 add_library (qjson${QJSON_SUFFIX} ${qjson_SRCS} ${qjson_MOC_SRCS} ${qjson_HEADERS})
-IF (Qt5Core_FOUND)
-  target_link_libraries( qjson${QJSON_SUFFIX} ${Qt5Core_LIBRARIES})
-ELSE()
-  target_link_libraries( qjson${QJSON_SUFFIX} ${QT_LIBRARIES})
-ENDIF()
+target_link_libraries(qjson${QJSON_SUFFIX} Qt::Core)
 
 if(NOT ANDROID)
 	set_target_properties(qjson${QJSON_SUFFIX} PROPERTIES
@@ -65,12 +58,13 @@ INSTALL(TARGETS qjson${QJSON_SUFFIX} EXPORT qjson-export
    PUBLIC_HEADER DESTINATION ${INCLUDE_INSTALL_DIR}/qjson${QJSON_SUFFIX}
 )
 
-if(MSVC)
-  get_target_property(LOCATION qjson LOCATION_DEBUG)
-  string(REGEX REPLACE "\\.[^.]*$" ".pdb" LOCATION "${LOCATION}")
-  install(FILES ${LOCATION} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin CONFIGURATIONS Debug)
+# TODO double check
+# if(MSVC)
+#   get_target_property(LOCATION qjson${QJSON_SUFFIX} LOCATION_DEBUG)
+#   string(REGEX REPLACE "\\.[^.]*$" ".pdb" LOCATION "${LOCATION}")
+#   install(FILES ${LOCATION} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin CONFIGURATIONS Debug)
 
-  get_target_property(LOCATION qjson LOCATION_RELWITHDEBINFO)
-  string(REGEX REPLACE "\\.[^.]*$" ".pdb" LOCATION "${LOCATION}")
-  install(FILES ${LOCATION} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin CONFIGURATIONS RelWithDebInfo)
-endif(MSVC)
+#   get_target_property(LOCATION qjson${QJSON_SUFFIX} LOCATION_RELWITHDEBINFO)
+#   string(REGEX REPLACE "\\.[^.]*$" ".pdb" LOCATION "${LOCATION}")
+#   install(FILES ${LOCATION} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin CONFIGURATIONS RelWithDebInfo)
+# endif(MSVC)

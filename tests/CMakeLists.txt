@@ -1,12 +1,4 @@
-IF (Qt5Core_FOUND)
-  FIND_PACKAGE( Qt5Test REQUIRED )
-
-  INCLUDE_DIRECTORIES(${Qt5Test_INCLUDE_DIRS})
-  ADD_DEFINITIONS(${Qt5Test_DEFINITIONS})
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Test_EXECUTABLE_COMPILE_FLAGS}")
-
-  SET (TEST_LIBRARIES ${Qt5Test_LIBRARIES})
-ENDIF()
+find_package(Qt6 CONFIG REQUIRED COMPONENTS Core Widgets Test)
 
 macro(add_unittest DESCRIPTION)
     add_test(NAME "${DESCRIPTION}"
@@ -14,7 +6,6 @@ macro(add_unittest DESCRIPTION)
              COMMAND ${ARGN}
     )
 endmacro()
-
 
 ADD_SUBDIRECTORY(cmdline_tester)
 ADD_SUBDIRECTORY(parser)
