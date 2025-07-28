@@ -20,11 +20,10 @@
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDebug>
+#include <QtCore/QElapsedTimer>
 #include <QtCore/QFile>
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
-#include <QtCore/QTextCodec>
-#include <QtCore/QTime>
 
 #include <QJson/Parser>
 #include <QJson/Serializer>
@@ -36,13 +35,8 @@ using namespace QJson;
 int main(int argc, char *argv[]) {
   QCoreApplication app (argc, argv);
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-  QTextCodec *codec = QTextCodec::codecForName("UTF-8");
-  QTextCodec::setCodecForCStrings(codec);
-#endif
-
-  QTime time;
-  int   duration;
+  QElapsedTimer time;
+  qint64 duration;
 
  
   CmdLineParser cmd (app.arguments());
