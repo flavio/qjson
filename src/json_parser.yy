@@ -104,7 +104,7 @@ object: CURLY_BRACKET_OPEN CURLY_BRACKET_CLOSE {
 members: STRING COLON value {
           QVariantMap* pair = new QVariantMap();
           pair->insert($1.toString(), $3);
-          $$.setValue<QVariantMap* >(pair);
+          $$.setValue(pair);
         }
       |  members COMMA STRING COLON value {
             $$.value<QVariantMap*>()->insert($3.toString(), $5);

@@ -149,7 +149,7 @@ namespace yy {
   {
     if (*yystr == '"')
       {
-        std::string yyr;
+        std::string yyr = "";
         char const *yyp = yystr;
 
         for (;;)
@@ -495,7 +495,7 @@ namespace yy {
     {
           QVariantMap* pair = new QVariantMap();
           pair->insert((yysemantic_stack_[(3) - (1)]).toString(), (yysemantic_stack_[(3) - (3)]));
-          (yyval).setValue<QVariantMap* >(pair);
+          (yyval).setValue(pair);
         }
     break;
 
