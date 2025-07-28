@@ -639,11 +639,5 @@ void TestSerializer::testEscapeChars_data()
     QTest::newRow("control chars") << QString(QChar(0x06)) << "\\u0006";
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-// using Qt4 rather then Qt5
-QTEST_MAIN(TestSerializer)
-#include "moc_testserializer.cxx"
-#else
 QTEST_GUILESS_MAIN(TestSerializer)
 #include "testserializer.moc"
-#endif

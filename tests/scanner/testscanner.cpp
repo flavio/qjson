@@ -252,11 +252,5 @@ void TestScanner::scanSpecialNumbers_data() {
   QTest::newRow("-Infinity") << QByteArray("-Infinity") << true << true << false << 1 << 0 << 1 << 9;
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-// using Qt4 rather then Qt5
-QTEST_MAIN(TestScanner)
-#include "moc_testscanner.cxx"
-#else
 QTEST_GUILESS_MAIN(TestScanner)
 #include "testscanner.moc"
-#endif

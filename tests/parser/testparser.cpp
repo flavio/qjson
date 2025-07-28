@@ -471,11 +471,5 @@ void TestParser::reuseSameParser()
   QVERIFY (ok);
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-// using Qt4 rather then Qt5
-QTEST_MAIN(TestParser)
-#include "moc_testparser.cxx"
-#else
 QTEST_GUILESS_MAIN(TestParser)
 #include "testparser.moc"
-#endif
