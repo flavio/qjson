@@ -1,20 +1,3 @@
-##### Probably don't want to edit below this line #####
-
-SET( QT_USE_QTTEST TRUE )
-
-IF (NOT Qt5Core_FOUND)
-  # Use it
-  INCLUDE( ${QT_USE_FILE} )
-ENDIF()
-
-INCLUDE(AddFileDependencies)
-
-# Include the library include directories, and the current build directory (moc)
-INCLUDE_DIRECTORIES(
-  ../../include
-  ${CMAKE_CURRENT_BINARY_DIR}
-)
-
 SET( UNIT_TESTS
   testparser
 )
@@ -22,21 +5,20 @@ SET( UNIT_TESTS
 # Build the tests
 FOREACH(test ${UNIT_TESTS})
   MESSAGE(STATUS "Building ${test}")
-  IF (NOT Qt5Core_FOUND)
-    QT4_WRAP_CPP(MOC_SOURCE ${test}.cpp)
-  ENDIF()
   ADD_EXECUTABLE(
     ${test}
     ${test}.cpp
   )
 
-  ADD_FILE_DEPENDENCIES(${test}.cpp ${MOC_SOURCE})
   TARGET_LINK_LIBRARIES(
     ${test}
-    ${QT_LIBRARIES}
-    ${TEST_LIBRARIES}
+    Qt::Core
+    Qt::Test
     qjson${QJSON_SUFFIX}
   )
+
+  target_include_directories(${test} PRIVATE ../../include)
+
   if (QJSON_TEST_OUTPUT STREQUAL "xml")
     # produce XML output
     add_unittest(${test} ${test} -xml -o ${test}.tml)

@@ -116,11 +116,5 @@ void TestQObjectHelper::testQVariant2QObject()
   QCOMPARE(person.luckyNumber(), luckyNumber);
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-// using Qt4 rather then Qt5
-QTEST_MAIN(TestQObjectHelper)
-#include "moc_testqobjecthelper.cxx"
-#else
 QTEST_GUILESS_MAIN(TestQObjectHelper)
 #include "testqobjecthelper.moc"
-#endif

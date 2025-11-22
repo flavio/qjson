@@ -272,9 +272,9 @@ void TestSerializer::valueTest( const QVariant& value, const QString& expectedRe
   QCOMPARE(serialized.isNull(), errorExpected);
   const QString serializedUnicode = QString::fromUtf8( serialized );
   if (!errorExpected) {
-    QRegExp expected( expectedRegExp );
+    QRegularExpression expected( QRegularExpression::anchoredPattern( expectedRegExp ) );
     QVERIFY( expected.isValid() );
-    QVERIFY2( expected.exactMatch( serializedUnicode ),
+    QVERIFY2( serializedUnicode.contains( expected ),
       qPrintable( QString( QLatin1String( "Expected regexp \"%1\" but got \"%2\"." ) )
         .arg( expectedRegExp ).arg( serializedUnicode ) ) );
   } else {
@@ -286,12 +286,12 @@ void TestSerializer::valueTest( const QObject* object, const QString& expectedRe
 {
   Serializer serializer;
   bool ok;
-  const QByteArray serialized = serializer.serialize( object, &ok);
+  const QByteArray serialized = serializer.serialize( QVariant::fromValue(object), &ok);
   QVERIFY(ok);
   const QString serializedUnicode = QString::fromUtf8( serialized );
-  QRegExp expected( expectedRegExp );
+  QRegularExpression expected( QRegularExpression::anchoredPattern( expectedRegExp ) );
   QVERIFY( expected.isValid() );
-  QVERIFY2( expected.exactMatch( serializedUnicode ),
+  QVERIFY2( serializedUnicode.contains( expected ),
     qPrintable( QString( QLatin1String( "Expected regexp \"%1\" but got \"%2\"." ) )
       .arg( expectedRegExp ).arg( serializedUnicode ) ) );
 }
@@ -639,11 +639,5 @@ void TestSerializer::testEscapeChars_data()
     QTest::newRow("control chars") << QString(QChar(0x06)) << "\\u0006";
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-// using Qt4 rather then Qt5
-QTEST_MAIN(TestSerializer)
-#include "moc_testserializer.cxx"
-#else
 QTEST_GUILESS_MAIN(TestSerializer)
 #include "testserializer.moc"
-#endif

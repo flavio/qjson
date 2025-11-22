@@ -1,15 +1,3 @@
-##### Probably don't want to edit below this line #####
-
-SET( QT_USE_QTTEST TRUE )
-
-INCLUDE(AddFileDependencies)
-
-# Include the library include directories, and the current build directory (moc)
-INCLUDE_DIRECTORIES(
-  ../../include
-  ${CMAKE_CURRENT_BINARY_DIR}
-)
-
 SET( UNIT_TESTS
   parsingbenchmark
   qlocalevsstrtod_l
@@ -25,10 +13,13 @@ FOREACH(test ${UNIT_TESTS})
 
   TARGET_LINK_LIBRARIES(
     ${test}
-    ${QT_LIBRARIES}
-    ${TEST_LIBRARIES}
+    Qt::Core
+    Qt::Test
     qjson${QJSON_SUFFIX}
   )
+
+  target_include_directories(${test} PRIVATE ../../include)
+
   if (QJSON_TEST_OUTPUT STREQUAL "xml")
     # produce XML output
     add_test( ${test} ${test} -xml -o ${test}.tml )

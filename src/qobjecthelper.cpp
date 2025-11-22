@@ -74,7 +74,7 @@ void QObjectHelper::qvariant2qobject(const QVariantMap& variant, QObject* object
     }
 
     QMetaProperty metaproperty = metaobject->property( pIdx );
-    QVariant::Type type = metaproperty.type();
+    QMetaType type = metaproperty.metaType();
     QVariant v( iter.value() );
     if ( v.canConvert( type ) ) {
       v.convert( type );
